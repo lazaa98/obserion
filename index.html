@@ -108,6 +108,119 @@ button,input,select,textarea{font:inherit}
 .btn-primary:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 0 70px rgba(0,229,255,.28)}
 .btn-ghost{border-color:var(--border-soft);color:var(--muted);background:rgba(255,255,255,.035)}
 .btn-ghost:hover{border-color:var(--cyan);color:var(--text);background:rgba(0,229,255,.07)}
+/* PRELOADER */
+.preloader{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 35%,rgba(0,229,255,.14),transparent 32%),
+    radial-gradient(circle at 70% 60%,rgba(139,92,246,.12),transparent 28%),
+    #030613;
+  transition:opacity .75s ease,visibility .75s ease;
+}
+.preloader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.preloader-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.055) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at 50% 50%,black 0%,transparent 74%);
+}
+.loader-card{
+  position:relative;
+  width:min(420px,calc(100% - 44px));
+  border-radius:34px;
+  padding:34px;
+  background:linear-gradient(180deg,rgba(14,26,52,.9),rgba(7,16,34,.78));
+  border:1px solid rgba(0,229,255,.2);
+  box-shadow:0 0 90px rgba(0,229,255,.16);
+  overflow:hidden;
+}
+.loader-card:before{
+  content:'';
+  position:absolute;
+  inset:-50%;
+  background:conic-gradient(from 0deg,transparent,rgba(0,229,255,.16),transparent,rgba(139,92,246,.13),transparent);
+  animation:loaderSpin 3.2s linear infinite;
+  z-index:-1;
+}
+.loader-brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  font-family:Syne,sans-serif;
+  font-size:32px;
+  font-weight:800;
+  letter-spacing:-.06em;
+  margin-bottom:22px;
+}
+.loader-mark{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 32px var(--cyan);
+  animation:loaderPulse 1.2s ease-in-out infinite;
+}
+.loader-status{
+  font-family:'Space Mono',monospace;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.loader-terminal{
+  display:grid;
+  gap:8px;
+  margin-bottom:22px;
+  color:var(--muted);
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+}
+.loader-terminal span{display:flex;justify-content:space-between;gap:12px}
+.loader-terminal b{color:var(--green);font-weight:400}
+.loader-bar{
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
+  position:relative;
+}
+.loader-bar:before{
+  content:'';
+  position:absolute;
+  inset:0;
+  width:42%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));
+  box-shadow:0 0 28px rgba(0,229,255,.35);
+  animation:loaderProgress 1.7s cubic-bezier(.22,1,.36,1) forwards;
+}
+.loader-scan{
+  position:absolute;
+  left:0;
+  right:0;
+  top:-40%;
+  height:80px;
+  background:linear-gradient(180deg,transparent,rgba(0,229,255,.16),transparent);
+  animation:loaderScan 1.8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes loaderSpin{to{transform:rotate(1turn)}}
+@keyframes loaderPulse{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.1);opacity:1}}
+@keyframes loaderProgress{from{width:0}to{width:100%}}
+@keyframes loaderScan{0%{top:-45%}100%{top:110%}}
+
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}
@@ -378,6 +491,21 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 </style>
 </head>
 <body>
+
+<div class='preloader' id='preloader' aria-label='Loading Obserion website'>
+  <div class='preloader-grid'></div>
+  <div class='loader-card'>
+    <div class='loader-scan'></div>
+    <div class='loader-brand'><span class='loader-mark'></span>Obserion<span class='grad'>.</span></div>
+    <div class='loader-status'><span>Initializing SOC</span><span id='loaderPercent'>0%</span></div>
+    <div class='loader-terminal'>
+      <span>Loading threat matrix <b>OK</b></span>
+      <span>Syncing telemetry <b>OK</b></span>
+      <span>Activating protection <b>OK</b></span>
+    </div>
+    <div class='loader-bar'></div>
+  </div>
+</div>
 
 <nav class='nav' id='navbar'>
   <div class='nav-inner'>
@@ -669,6 +797,24 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 </footer>
 
 <script>
+const preloader=document.getElementById('preloader');
+const loaderPercent=document.getElementById('loaderPercent');
+let loaderValue=0;
+const loaderTimer=setInterval(()=>{
+  loaderValue=Math.min(100,loaderValue+Math.floor(Math.random()*14)+6);
+  if(loaderPercent)loaderPercent.textContent=loaderValue+'%';
+  if(loaderValue>=100)clearInterval(loaderTimer);
+},120);
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    if(loaderPercent)loaderPercent.textContent='100%';
+    if(preloader)preloader.classList.add('hidden');
+  },650);
+});
+setTimeout(()=>{
+  if(preloader)preloader.classList.add('hidden');
+},3200);
+
 const nav=document.getElementById('navbar');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
 
