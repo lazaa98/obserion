@@ -414,8 +414,10 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   :root{--radius:22px}
   .container{width:calc(100% - 28px)}
   .nav-inner{width:calc(100% - 20px);gap:10px}
+  .nav-cta{gap:8px}
   .logo{font-size:19px}.logo-dot{width:8px;height:8px}
-  .nav .btn{padding:0 12px;min-height:40px;font-size:9px;letter-spacing:.08em}
+  .nav .btn{width:auto;padding:0 14px;min-height:38px;font-size:9px;letter-spacing:.06em;white-space:nowrap}
+  .nav .btn .arrow{display:none}
   .mobile-drawer a{font-size:28px}
 
   .hero{padding:96px 0 56px}
@@ -461,11 +463,9 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 }
 @media(max-width:430px){
   .container{width:calc(100% - 22px)}
-  .nav-inner{width:calc(100% - 16px);padding:10px 12px}
-  .logo{font-size:18px}
-  .nav .btn{font-size:0;width:auto;padding:0 12px;min-width:42px}
-  .nav .btn .arrow{display:none}
-  .nav .btn::after{content:'Start';font-size:10px;letter-spacing:.08em}
+  .nav-inner{width:calc(100% - 16px);padding:10px 12px;gap:8px}
+  .logo{font-size:17px}
+  .nav .btn{padding:0 12px;font-size:8.5px;letter-spacing:.05em;min-height:36px}
 
   .hero{padding-top:88px}
   .hero h1{font-size:clamp(38px,16vw,54px)}
