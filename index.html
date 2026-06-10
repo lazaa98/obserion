@@ -3,8 +3,8 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<title>Obserion — Cyber Monitoring & Security</title>
-<meta name='description' content='Obserion provides firewall setup, 24/7 monitoring, cloud security, Fortinet solutions, SOC visibility, security audits, and incident response.'>
+<title>Obserion — Managed SOC & Wazuh SIEM Deployment</title>
+<meta name='description' content='Obserion deploys Wazuh SIEM and runs your 24/7 Security Operations Center: threat detection, log analysis, MITRE ATT&CK mapped alerts, vulnerability detection, compliance reporting, and incident response — plus Fortinet firewall expertise.'>
 <meta name='theme-color' content='#030613'>
 <link rel='preconnect' href='https://fonts.googleapis.com'>
 <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
@@ -269,6 +269,136 @@ button,input,select,textarea{font:inherit}
 @keyframes spin{to{transform:rotate(1turn)}}
 @keyframes barIn{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
 
+/* TYPEWRITER (fixed-size box so layout never shifts) */
+.type-box{display:inline-grid;white-space:nowrap;text-align:left;vertical-align:top}
+.type-box>*{grid-area:1/1}
+.type-sizer{visibility:hidden;pointer-events:none;user-select:none}
+.type-cursor{display:inline-block;animation:blink 1s steps(1) infinite;font-weight:400;-webkit-text-stroke:0;color:var(--cyan);-webkit-text-fill-color:var(--cyan)}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* TERMINAL (Wazuh alert feed) */
+.term{grid-column:1/-1;border-radius:20px;background:rgba(2,4,12,.85);border:1px solid var(--border-soft);overflow:hidden;font-family:'Space Mono',monospace}
+.term-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--dim);font-size:10px;letter-spacing:.06em}
+.term-live{color:var(--red);font-weight:700;animation:blink 1.4s steps(1) infinite}
+.term-body{padding:12px 14px;display:grid;gap:7px;font-size:11px;line-height:1.5;min-height:118px}
+.term-body div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(6px);animation:termIn .35s ease forwards}
+@keyframes termIn{to{opacity:1;transform:translateY(0)}}
+.term-body .t-time{color:var(--dim)}
+.term-body .t-crit{color:var(--red)}
+.term-body .t-med{color:var(--yellow)}
+.term-body .t-ok{color:var(--green)}
+.term-body .t-info{color:var(--cyan)}
+
+/* DETECTION PIPELINE FLOW */
+.flow{display:flex;align-items:stretch;gap:0;margin:0 0 56px;border:1px solid var(--border-soft);border-radius:26px;padding:26px 22px;background:linear-gradient(180deg,rgba(14,26,52,.6),rgba(7,16,34,.7));position:relative;overflow:hidden}
+.flow:before{content:'';position:absolute;inset:0;background:radial-gradient(600px circle at 50% -40%,rgba(0,229,255,.08),transparent 60%);pointer-events:none}
+.flow-node{flex:1;text-align:center;padding:10px 8px;position:relative;z-index:1}
+.flow-ico{width:52px;height:52px;margin:0 auto 12px;border-radius:18px;background:rgba(0,229,255,.08);border:1px solid var(--border);display:grid;place-items:center;font-size:22px;animation:nodePulse 3s ease-in-out infinite}
+.flow-node:nth-child(3) .flow-ico{animation-delay:.5s}
+.flow-node:nth-child(5) .flow-ico{animation-delay:1s}
+.flow-node:nth-child(7) .flow-ico{animation-delay:1.5s}
+@keyframes nodePulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.0)}50%{box-shadow:0 0 26px 2px rgba(0,229,255,.22)}}
+.flow-node b{display:block;font-family:Syne,sans-serif;font-size:15px;letter-spacing:-.02em}
+.flow-node small{display:block;margin-top:4px;color:var(--dim);font-family:'Space Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em}
+.flow-alert .flow-ico{background:rgba(255,54,95,.1);border-color:rgba(255,54,95,.35);animation:alertPulse 2s ease-in-out infinite}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,54,95,0)}50%{box-shadow:0 0 28px 3px rgba(255,54,95,.3)}}
+.flow-link{flex:.6;position:relative;align-self:center;height:2px;margin-top:-34px;background:linear-gradient(90deg,rgba(0,229,255,.1),rgba(0,229,255,.3),rgba(0,229,255,.1))}
+.flow-link:before{content:'';position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan);transform:translateY(-50%);animation:packet 2.2s linear infinite}
+.flow-link:nth-of-type(4):before{animation-delay:.7s}
+.flow-link:nth-of-type(6):before{animation-delay:1.4s;background:var(--red);box-shadow:0 0 14px var(--red)}
+@keyframes packet{0%{left:-4%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:100%;opacity:0}}
+@keyframes packetV{0%{top:-8%;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+
+/* RADAR */
+.radar{width:58px;height:58px;border-radius:50%;position:relative;flex:none;border:1px solid rgba(0,229,255,.3);background:radial-gradient(circle,rgba(0,229,255,.05),transparent 70%);overflow:hidden}
+.radar:before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,229,255,.55),transparent 70deg);animation:radarSweep 2.6s linear infinite}
+.radar:after{content:'';position:absolute;inset:18%;border-radius:50%;border:1px solid rgba(0,229,255,.2)}
+@keyframes radarSweep{to{transform:rotate(1turn)}}
+.radar i{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blipFade 2.6s ease-in-out infinite}
+.radar i:nth-child(1){top:26%;left:58%}
+.radar i:nth-child(2){top:62%;left:30%;animation-delay:.9s}
+.radar i:nth-child(3){top:48%;left:70%;animation-delay:1.7s;background:var(--red);box-shadow:0 0 8px var(--red)}
+@keyframes blipFade{0%,15%{opacity:1}60%,100%{opacity:.12}}
+
+/* WAZUH DEMO — toolbar */
+.demo-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.demo-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em}
+.demo-btn{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,229,255,.06);color:var(--cyan);cursor:pointer;transition:.25s ease}
+.demo-btn:hover:not(:disabled){background:rgba(0,229,255,.15);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,229,255,.22)}
+.demo-btn:disabled{opacity:.35;cursor:not-allowed}
+.demo-reset{border-color:var(--border-soft);color:var(--muted);background:rgba(255,255,255,.04)}
+.demo-reset:hover:not(:disabled){background:rgba(255,255,255,.09);box-shadow:none;color:var(--text)}
+.demo-status{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;padding:11px 16px;border-radius:12px;border:1px solid transparent;transition:.4s ease;margin-left:auto}
+.demo-status.secure{color:var(--green);border-color:rgba(0,255,157,.3);background:rgba(0,255,157,.05)}
+.demo-status.attack{color:var(--red);border-color:rgba(255,54,95,.5);background:rgba(255,54,95,.08);animation:statusBlink 1s steps(1) infinite}
+.demo-status.contained{color:var(--cyan);border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.07)}
+@keyframes statusBlink{50%{opacity:.5}}
+
+/* WAZUH REPLICA — light app window */
+.wz{position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 110px rgba(0,0,0,.55),0 0 80px rgba(0,229,255,.07);background:#fff;color:#343741;font-family:Inter,system-ui,sans-serif;text-align:left}
+.wz-chrome{display:flex;align-items:center;gap:14px;background:#0b1428;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.wz-url{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:rgba(255,255,255,.07);border-radius:8px;padding:6px 12px;flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wz-top{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#fff;border-bottom:1px solid #d3dae6}
+.wz-burger{display:none;border:1px solid #d3dae6;background:#fff;border-radius:6px;width:34px;height:34px;cursor:pointer;color:#343741;font-size:15px}
+.wz-logo{font-weight:800;color:#1a1c21;font-size:17px;display:flex;align-items:center;gap:7px;letter-spacing:-.02em}
+.wz-search{flex:1;display:flex;align-items:center;gap:8px;border:1px solid #d3dae6;border-radius:6px;padding:8px 12px;color:#69707d;background:#fbfcfd;font-family:'Space Mono',monospace;font-size:11px;white-space:nowrap;overflow:hidden}
+.wz-search b{color:#3585F9;font-weight:400}
+.wz-time{font-size:12px;color:#343741;border:1px solid #d3dae6;border-radius:6px;padding:8px 11px;white-space:nowrap}
+.wz-avatar{width:30px;height:30px;border-radius:50%;background:#3585F9;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.wz-body{display:flex;min-height:560px;background:#f7f8fc;position:relative}
+.wz-nav{width:216px;flex:none;background:#fff;border-right:1px solid #d3dae6;padding:8px 0 16px;overflow-y:auto;z-index:4}
+.wz-group{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#98a2b3;padding:16px 16px 5px;font-weight:700}
+.wz-nav a{display:block;padding:7px 16px;font-size:13px;color:#343741;cursor:pointer;border-left:3px solid transparent;transition:.15s ease}
+.wz-nav a:hover{background:#f0f4fa;color:#006bb4}
+.wz-nav a.on{background:#e6f0fa;color:#006bb4;border-left-color:#006bb4;font-weight:600}
+.wz-main{flex:1;padding:18px;min-width:0}
+.wz-h{font-size:19px;font-weight:700;margin-bottom:3px;color:#1a1c21}
+.wz-sub{font-size:12px;color:#69707d;margin-bottom:16px}
+.wz-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.wz-card{background:#fff;border:1px solid #d3dae6;border-radius:8px;padding:13px 15px;transition:.25s ease}
+.wz-card.bump{box-shadow:0 0 0 2px rgba(53,133,249,.35);transform:translateY(-2px)}
+.wz-card small{font-size:11px;color:#69707d;display:block;margin-bottom:3px}
+.wz-card b{font-size:25px;font-weight:700;color:#1a1c21}
+.sv-crit{color:#bd271e!important}.sv-high{color:#e7664c!important}.sv-med{color:#d6a100!important}.sv-low{color:#6092c0!important}.sv-ok{color:#007871!important}
+.wz-panel{background:#fff;border:1px solid #d3dae6;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.wz-panel-h{padding:11px 14px;font-size:13px;font-weight:600;border-bottom:1px solid #eef1f7;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#1a1c21;flex-wrap:wrap}
+.wz-scroll{overflow-x:auto}
+.wz-table{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
+.wz-table th{text-align:left;padding:8px 12px;color:#69707d;font-weight:600;border-bottom:1px solid #d3dae6;background:#fbfcfd;white-space:nowrap}
+.wz-table td{padding:8px 12px;border-bottom:1px solid #eef1f7;vertical-align:top;color:#343741}
+.wz-table tr.click{cursor:pointer}
+.wz-table tr.click:hover{background:#f0f4fa}
+.wz-table tr.new-row td{animation:wzNew 1.6s ease}
+@keyframes wzNew{0%{background:#fff8e1}100%{background:transparent}}
+.wz-mono{font-family:'Space Mono',monospace;font-size:10.5px;color:#69707d;white-space:nowrap}
+.wz-lvl{display:inline-block;min-width:30px;text-align:center;border-radius:4px;font-weight:700;font-size:11px;padding:2px 7px;color:#fff}
+.wz-lvl.l0{background:#6092c0}.wz-lvl.l7{background:#d6a100}.wz-lvl.l12{background:#e7664c}.wz-lvl.l15{background:#bd271e}
+.wz-pill{display:inline-block;border-radius:10px;padding:2px 9px;font-size:11px;font-weight:600}
+.wz-pill.act{background:#e6f5f3;color:#007871}.wz-pill.dis{background:#fbe9e7;color:#bd271e}.wz-pill.iso{background:#fff3d6;color:#9a7b00}
+.wz-tag{display:inline-block;background:#e6f0fa;color:#006bb4;border-radius:4px;padding:2px 6px;font-size:10.5px;margin:1px 3px 1px 0;font-family:'Space Mono',monospace}
+.wz-json{font-family:'Space Mono',monospace;font-size:10.5px;white-space:pre-wrap;word-break:break-word;color:#343741;padding:12px 14px;background:#f7f8fc;border-radius:6px;line-height:1.7;margin:6px 0}
+.wz-json .k{color:#006bb4}.wz-json .s{color:#007871}.wz-json .n{color:#bd271e}
+.wz-cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wz-evo{display:flex;align-items:flex-end;gap:4px;height:120px;padding:14px}
+.wz-evo i{flex:1;background:#6092c0;border-radius:2px 2px 0 0;min-height:3px;transition:height .5s ease}
+.wz-evo i.hot{background:#e7664c}
+.wz-donut-wrap{display:flex;align-items:center;gap:18px;padding:14px}
+.wz-donut{width:118px;height:118px;border-radius:50%;flex:none;position:relative}
+.wz-donut:after{content:'';position:absolute;inset:26%;border-radius:50%;background:#fff}
+.wz-legend{font-size:12px;display:grid;gap:6px}
+.wz-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px}
+.wz-input{border:1px solid #d3dae6;border-radius:6px;padding:7px 11px;font-size:12px;width:240px;max-width:100%;outline:none;font-family:inherit;color:#343741}
+.wz-input:focus{border-color:#3585F9;box-shadow:0 0 0 2px rgba(53,133,249,.15)}
+.wz-bar{height:8px;border-radius:4px;background:#eef1f7;overflow:hidden;min-width:90px}
+.wz-bar i{display:block;height:100%;border-radius:4px;background:#007871}
+.wz-toasts{position:absolute;top:108px;right:14px;display:grid;gap:8px;z-index:9;max-width:300px}
+.wz-toast{background:#fff;border:1px solid #d3dae6;border-left:4px solid #007871;border-radius:8px;padding:10px 13px;font-size:12px;color:#343741;box-shadow:0 10px 30px rgba(0,0,0,.18);animation:toastIn .35s ease}
+.wz-toast b{display:block;font-size:12px;margin-bottom:2px}
+.wz-toast small{color:#69707d;font-size:11px}
+.wz-toast.warn{border-left-color:#bd271e}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.wz-empty{padding:36px 20px;text-align:center;color:#98a2b3;font-size:12px}
+
 /* STRIP */
 .strip{overflow:hidden;background:linear-gradient(90deg,var(--cyan),#7dd3fc);padding:13px 0;color:#03111f;position:relative}
 .strip-track{display:flex;width:max-content;animation:marquee 24s linear infinite}
@@ -405,6 +535,15 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   section{padding:88px 0}
 
   .stack,.ops,.faq-wrap,.contact-grid{grid-template-columns:1fr}
+  .wz-burger{display:block}
+  .wz-nav{position:absolute;left:0;top:0;bottom:0;transform:translateX(-103%);transition:.3s ease;box-shadow:20px 0 50px rgba(0,0,0,.12)}
+  .wz.nav-open .wz-nav{transform:none}
+  .wz-search{display:none}
+  .wz-cards{grid-template-columns:repeat(2,1fr)}
+  .wz-cols2{grid-template-columns:1fr}
+  .flow{flex-direction:column;gap:4px;padding:22px 18px}
+  .flow-link{width:2px;height:34px;flex:none;margin:0 auto;background:linear-gradient(180deg,rgba(0,229,255,.1),rgba(0,229,255,.3),rgba(0,229,255,.1))}
+  .flow-link:before{animation:packetV 2.2s linear infinite;left:50%;transform:translateX(-50%)}
   .soc-grid{grid-template-columns:repeat(2,1fr)}
   .pricing-grid{grid-template-columns:1fr;max-width:620px;margin-inline:auto}
   .testimonials{grid-template-columns:1fr}
@@ -434,9 +573,17 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   .window-top{margin-bottom:14px}.command-title{font-size:9px;letter-spacing:.08em;text-align:right}
   .command-grid{grid-template-columns:1fr 1fr;gap:10px}
   .metric{padding:14px;border-radius:16px}.metric small{font-size:11px}.metric b{font-size:28px}
-  .chart,.alert-list{grid-column:1/-1}
+  .chart,.alert-list,.term{grid-column:1/-1}
   .chart{padding:14px;border-radius:18px}.bars{height:120px;gap:5px}.bars i{border-radius:7px 7px 0 0}
   .alert-row{font-size:12px;padding:11px 12px;align-items:flex-start}.sev{font-size:9px;white-space:nowrap}
+  .term-body{font-size:10px;min-height:104px}
+  .demo-btn{padding:9px 12px;font-size:10px;flex:1}
+  .demo-label,.demo-status{width:100%;text-align:center}
+  .wz{border-radius:16px}
+  .wz-time{display:none}
+  .wz-main{padding:12px}
+  .wz-cards{gap:8px}.wz-card b{font-size:21px}
+  .wz-toasts{top:96px;right:8px;max-width:240px}
 
   .strip{padding:10px 0}.strip span{font-size:10px;padding-right:28px;gap:28px}
   section{padding:72px 0}
@@ -474,7 +621,7 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   .stat{padding:14px 12px}.stat-num{font-size:25px}
 
   .command-grid{grid-template-columns:1fr}
-  .chart,.alert-list{grid-column:auto}
+  .chart,.alert-list,.term{grid-column:auto}
   .bars{height:110px}
   .metric b{font-size:26px}
   .monitor-bars{grid-template-columns:repeat(8,1fr);height:135px}
@@ -500,9 +647,9 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='loader-brand'><span class='loader-mark'></span>Obserion<span class='grad'>.</span></div>
     <div class='loader-status'><span>Initializing SOC</span><span id='loaderPercent'>0%</span></div>
     <div class='loader-terminal'>
-      <span>Loading threat matrix <b>OK</b></span>
-      <span>Syncing telemetry <b>OK</b></span>
-      <span>Activating protection <b>OK</b></span>
+      <span>Starting wazuh-manager <b>OK</b></span>
+      <span>Connecting agents <b>OK</b></span>
+      <span>Loading detection rules <b>OK</b></span>
     </div>
     <div class='loader-bar'></div>
   </div>
@@ -514,7 +661,8 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <ul class='nav-links' id='navLinks'>
       <li><a href='#services'>Services</a></li>
       <li><a href='#soc'>SOC</a></li>
-      <li><a href='#stack'>Stack</a></li>
+      <li><a href='#demo'>Demo</a></li>
+      <li><a href='#stack'>Wazuh</a></li>
       <li><a href='#pricing'>Pricing</a></li>
       <li><a href='#faq'>FAQ</a></li>
     </ul>
@@ -528,7 +676,8 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <div class='mobile-drawer' id='mobileDrawer'>
   <a href='#services'>Services</a>
   <a href='#soc'>SOC</a>
-  <a href='#stack'>Stack</a>
+  <a href='#demo'>Demo</a>
+  <a href='#stack'>Wazuh</a>
   <a href='#pricing'>Pricing</a>
   <a href='#faq'>FAQ</a>
   <a href='#contact'>Contact</a>
@@ -538,46 +687,45 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <canvas id='hero-canvas'></canvas>
   <div class='container hero-layout'>
     <div>
-      <div class='hero-badge reveal'><span class='live-dot'></span>Fortinet Expertise · SOC Ready</div>
-      <h1 class='reveal delay-1'>Security that <span class='grad'>never sleeps.</span><span class='outline'>Built for trust.</span></h1>
-      <p class='reveal delay-2'>Obserion protects your endpoints, network, users, and data with practical cybersecurity assessments, firewall engineering, 24/7 monitoring, security hardening, and incident-response support for small and medium businesses.</p>
+      <div class='hero-badge reveal'><span class='live-dot'></span>Wazuh SIEM · SOC-as-a-Service · 24/7</div>
+      <h1 class='reveal delay-1'>Threats <span class='type-box'><span class='type-sizer' aria-hidden='true'>contained._</span><span class='type-live'><span class='grad' id='typeWord'>detected.</span><span class='type-cursor'>_</span></span></span><span class='outline'>Before damage.</span></h1>
+      <p class='reveal delay-2'>Obserion deploys <strong style='color:var(--text)'>Wazuh SIEM</strong> into your environment and operates it as your outsourced Security Operations Center — agent rollout, log collection, custom detection rules, MITRE ATT&CK mapped alerts, vulnerability detection, and 24/7 eyes on your infrastructure. No security team to hire. No SIEM license to pay.</p>
       <div class='hero-actions reveal delay-3'>
-        <a href='#pricing' class='btn btn-primary' data-magnetic><span>View Plans</span><span class='arrow'>→</span></a>
-        <a href='#services' class='btn btn-ghost' data-magnetic>Explore Services</a>
+        <a href='#contact' class='btn btn-primary' data-magnetic><span>Get a SOC Quote</span><span class='arrow'>→</span></a>
+        <a href='#soc' class='btn btn-ghost' data-magnetic>See the SOC</a>
       </div>
       <div class='trust-row reveal delay-3'>
+        <span><span class='tick'>✓</span> Open-source SIEM — €0 license</span>
+        <span><span class='tick'>✓</span> MITRE ATT&CK aligned</span>
         <span><span class='tick'>✓</span> No long-term lock-in</span>
-        <span><span class='tick'>✓</span> Plain-language reports</span>
-        <span><span class='tick'>✓</span> SMB-focused</span>
       </div>
       <div class='stats-row reveal delay-3'>
-        <div class='stat'><div class='stat-num' data-count='4' data-suffix='+'>0<span>+</span></div><div class='stat-label'>Years Experience</div></div>
-        <div class='stat'><div class='stat-num'>24<span>/7</span></div><div class='stat-label'>Active Monitoring</div></div>
-        <div class='stat'><div class='stat-num'>ISO<span>27001</span></div><div class='stat-label'>Aligned Process</div></div>
-        <div class='stat'><div class='stat-num' data-count='0' data-suffix='%'>0<span>%</span></div><div class='stat-label'>Breach Tolerance</div></div>
+        <div class='stat'><div class='stat-num'>24<span>/7</span></div><div class='stat-label'>SOC Coverage</div></div>
+        <div class='stat'><div class='stat-num'>€<span>0</span></div><div class='stat-label'>SIEM License Cost</div></div>
+        <div class='stat'><div class='stat-num' data-count='90' data-suffix='%'>0<span>%</span></div><div class='stat-label'>Alert Noise Filtered</div></div>
+        <div class='stat'><div class='stat-num'>&lt;15<span>min</span></div><div class='stat-label'>Critical Alert Triage</div></div>
       </div>
     </div>
 
     <div class='command reveal delay-2' id='heroCommand'>
       <div class='window-top'>
         <div class='dots'><span></span><span></span><span></span></div>
-        <div class='command-title'>Obserion Command Center</div>
+        <div class='command-title'>Obserion SOC · Wazuh Console</div>
       </div>
       <div class='command-grid'>
-        <div class='metric'><small>Threat Score</small><b style='color:var(--red)'>84%</b></div>
-        <div class='metric'><small>Protected Assets</small><b>1,248</b></div>
+        <div class='metric'><small>Agents Online</small><b style='color:var(--green)'><span data-count='132'>0</span></b></div>
+        <div class='metric'><small>Events / sec</small><b id='epsMetric'>418</b></div>
         <div class='chart'>
           <div style='display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:14px'>
-            <span>Live traffic analysis</span><span style='color:var(--green)'>+18%</span>
+            <span>Live event ingestion</span><span style='color:var(--green)'>● wazuh-manager: active</span>
           </div>
           <div class='bars'>
             <i style='height:35%;animation-delay:.05s'></i><i style='height:52%;animation-delay:.1s'></i><i style='height:68%;animation-delay:.15s'></i><i style='height:44%;animation-delay:.2s'></i><i style='height:80%;animation-delay:.25s'></i><i class='alert' style='height:94%;animation-delay:.3s'></i><i style='height:72%;animation-delay:.35s'></i><i style='height:88%;animation-delay:.4s'></i><i style='height:61%;animation-delay:.45s'></i><i style='height:78%;animation-delay:.5s'></i>
           </div>
         </div>
-        <div class='alert-list'>
-          <div class='alert-row'><span>Suspicious login attempt</span><span class='sev red'>Critical</span></div>
-          <div class='alert-row'><span>Firewall rule triggered</span><span class='sev yellow'>Medium</span></div>
-          <div class='alert-row'><span>Endpoint secured</span><span class='sev green'>Resolved</span></div>
+        <div class='term' aria-hidden='true'>
+          <div class='term-head'><span>tail -f /var/ossec/logs/alerts.json</span><span class='term-live'>LIVE</span></div>
+          <div class='term-body' id='socTerminal'></div>
         </div>
       </div>
     </div>
@@ -586,8 +734,8 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 
 <div class='strip'>
   <div class='strip-track'>
-    <span>Cyber Security</span><span>24/7 Monitoring</span><span>Fortinet Expertise</span><span>Security Assessment</span><span>ISO 27001</span><span>Incident Response</span><span>Network Segmentation</span><span>Firewall Hardening</span>
-    <span>Cyber Security</span><span>24/7 Monitoring</span><span>Fortinet Expertise</span><span>Security Assessment</span><span>ISO 27001</span><span>Incident Response</span><span>Network Segmentation</span><span>Firewall Hardening</span>
+    <span>Wazuh SIEM</span><span>SOC-as-a-Service</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Incident Response</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
+    <span>Wazuh SIEM</span><span>SOC-as-a-Service</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Incident Response</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
   </div>
 </div>
 
@@ -596,27 +744,27 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='split-head'>
       <div>
         <div class='kicker reveal'>Services</div>
-        <h2 class='section-title reveal delay-1'>Practical protection — <span>without enterprise noise.</span></h2>
+        <h2 class='section-title reveal delay-1'>Enterprise-grade SOC — <span>at SMB cost.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>Focused on the services that actually move the needle for SMBs: cybersecurity assessment, firewall and network security, continuous monitoring, and hands-on Fortinet expertise.</p>
+      <p class='section-copy reveal delay-2'>One core offer: we deploy Wazuh SIEM in your environment and operate it as your Security Operations Center — detection, triage, response, and reporting. Firewall and Fortinet expertise included where it matters.</p>
     </div>
 
     <div class='services-grid'>
       <article class='card service tilt reveal'>
         <div class='num'>01</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M4 5h16v5c0 5.2-3.4 9.4-8 11-4.6-1.6-8-5.8-8-11V5z' stroke-width='1.7'/><path d='M8 12h8M8 15h5M8 9h8' stroke-width='1.7'/></svg></div>
-        <h3>Cybersecurity Assessment</h3><p>A practical security review of your network, endpoints, firewall rules, user access, exposed services, backups, and monitoring readiness. You get a clear report with prioritized fixes.</p>
+        <h3>Wazuh SIEM Deployment</h3><p>Full Wazuh rollout: manager, indexer, and dashboard installation, agent deployment across servers and endpoints, log source onboarding, custom rules and decoders, and noise tuning — sized for your environment.</p>
       </article>
       <article class='card service tilt reveal delay-1'>
-        <div class='num'>02</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M12 3l7 3v5c0 5-3.3 8.7-7 10-3.7-1.3-7-5-7-10V6l7-3z' stroke-width='1.7'/><path d='M8.5 12l2.4 2.4L16 9.2' stroke-width='1.7'/></svg></div>
-        <h3>Firewall & Network Security</h3><p>Firewall configuration, VPN access, secure rules, segmentation, NAT policies, IPS profiles, and network hardening designed for real SMB environments.</p>
+        <div class='num'>02</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><circle cx='12' cy='12' r='8' stroke-width='1.7'/><circle cx='12' cy='12' r='3' stroke-width='1.7'/><path d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke-width='1.7'/></svg></div>
+        <h3>Managed SOC · 24/7</h3><p>We operate your Wazuh SIEM as a service: continuous alert monitoring, triage, escalation of real threats, monthly reporting, and ongoing rule tuning — your SOC team, without the hiring.</p>
       </article>
       <article class='card service tilt reveal delay-2'>
-        <div class='num'>03</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><circle cx='12' cy='12' r='8' stroke-width='1.7'/><circle cx='12' cy='12' r='3' stroke-width='1.7'/><path d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke-width='1.7'/></svg></div>
-        <h3>24/7 Monitoring</h3><p>Continuous monitoring of important security events, suspicious activity, endpoint alerts, firewall logs, and availability signals with escalation for high-risk issues.</p>
+        <div class='num'>03</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M12 3l7 3v5c0 5-3.3 8.7-7 10-3.7-1.3-7-5-7-10V6l7-3z' stroke-width='1.7'/><path d='M8.5 12l2.4 2.4L16 9.2' stroke-width='1.7'/></svg></div>
+        <h3>Threat Detection & Response</h3><p>MITRE ATT&CK mapped detections, brute-force and lateral-movement alerts, file integrity monitoring, vulnerability detection, and active response that contains threats automatically.</p>
       </article>
       <article class='card service tilt reveal delay-3'>
         <div class='num'>04</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><rect x='3' y='5' width='7' height='5' stroke-width='1.7'/><rect x='14' y='5' width='7' height='5' stroke-width='1.7'/><rect x='8.5' y='14' width='7' height='5' stroke-width='1.7'/><path d='M6.5 10v2h5.5v2M17.5 10v2H12v2' stroke-width='1.7'/></svg></div>
-        <h3>Fortinet Expertise</h3><p>FortiGate configuration, VPN, policies, IPS/IDS profiles, FortiAnalyzer reporting, log review, troubleshooting, and best-practice security tuning.</p>
+        <h3>Firewall & Fortinet</h3><p>FortiGate configuration, VPN, segmentation, IPS profiles, and firewall log integration into Wazuh — so your network layer feeds the same SOC pipeline as your endpoints.</p>
       </article>
     </div>
   </div>
@@ -625,26 +773,26 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <section id='stack'>
   <div class='container stack'>
     <div class='card stack-panel reveal'>
-      <div class='kicker'>Security Workflow</div>
-      <h2 class='section-title'>From assessment to <span>real protection.</span></h2>
-      <p class='section-copy' style='margin-top:22px'>A workflow that matches the offer: first assess the environment, then fix the most important risks, then monitor continuously, and improve the security baseline over time.</p>
+      <div class='kicker'>Wazuh Deployment</div>
+      <h2 class='section-title'>From zero to <span>operational SIEM.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>A proven rollout path: design the architecture, deploy the stack, tune detections to your environment, then hand it to our 24/7 SOC — or to your team, fully documented.</p>
       <div class='pipeline'>
-        <div class='pipe'><div class='pipe-index'>01</div><div><strong>Assess</strong><small>Review firewall, network, endpoints, users, backups, and exposed services.</small></div><span class='pipe-tag'>Start</span></div>
-        <div class='pipe'><div class='pipe-index'>02</div><div><strong>Harden</strong><small>Fix risky rules, weak access, missing segmentation, and security misconfigurations.</small></div><span class='pipe-tag'>Improve</span></div>
-        <div class='pipe'><div class='pipe-index'>03</div><div><strong>Monitor</strong><small>Track security events, endpoint alerts, firewall logs, and suspicious behavior.</small></div><span class='pipe-tag'>Active</span></div>
-        <div class='pipe'><div class='pipe-index'>04</div><div><strong>Report</strong><small>Deliver clear findings, incident notes, and next-step recommendations.</small></div><span class='pipe-tag'>Ready</span></div>
+        <div class='pipe'><div class='pipe-index'>01</div><div><strong>Scope & Design</strong><small>Sizing, log sources, single-node or cluster architecture, retention planning.</small></div><span class='pipe-tag'>Week 1</span></div>
+        <div class='pipe'><div class='pipe-index'>02</div><div><strong>Deploy</strong><small>Wazuh manager, indexer, dashboard, agent rollout, firewall and cloud log onboarding.</small></div><span class='pipe-tag'>Week 1–2</span></div>
+        <div class='pipe'><div class='pipe-index'>03</div><div><strong>Tune</strong><small>Custom rules and decoders, CDB lists, noise reduction, MITRE ATT&CK mapping.</small></div><span class='pipe-tag'>Week 2–3</span></div>
+        <div class='pipe'><div class='pipe-index'>04</div><div><strong>Operate</strong><small>24/7 monitoring, triage, active response, monthly reports — SOC goes live.</small></div><span class='pipe-tag'>Live</span></div>
       </div>
     </div>
 
     <div class='card stack-panel reveal delay-1'>
-      <div class='kicker'>Coverage</div>
-      <h3 style='font-family:Syne,sans-serif;font-size:34px;letter-spacing:-.05em;margin-bottom:12px'>Security that fits SMB reality.</h3>
-      <p class='section-copy'>Instead of over-selling cloud and pentesting, the focus is on the security gaps most small and medium companies actually have.</p>
+      <div class='kicker'>Out of the Box</div>
+      <h3 style='font-family:Syne,sans-serif;font-size:34px;letter-spacing:-.05em;margin-bottom:12px'>What Wazuh watches for you.</h3>
+      <p class='section-copy'>One open-source platform, no license fees — covering the capabilities SMBs usually pay enterprise prices for.</p>
       <div class='health'>
-        <div class='health-card'><b>Rules</b><small>Firewall policy review</small></div>
-        <div class='health-card'><b>VPN</b><small>Remote access security</small></div>
-        <div class='health-card'><b>Logs</b><small>Monitoring readiness</small></div>
-        <div class='health-card'><b>Users</b><small>Access risk review</small></div>
+        <div class='health-card'><b>FIM</b><small>File integrity monitoring</small></div>
+        <div class='health-card'><b>Vulns</b><small>CVE detection on every agent</small></div>
+        <div class='health-card'><b>SCA</b><small>Configuration assessment & hardening</small></div>
+        <div class='health-card'><b>Compliance</b><small>PCI DSS · GDPR · ISO 27001 reports</small></div>
       </div>
     </div>
   </div>
@@ -655,25 +803,38 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='split-head'>
       <div>
         <div class='kicker reveal'>Obserion SOC</div>
-        <h2 class='section-title reveal delay-1'>Your security <span>command center.</span></h2>
+        <h2 class='section-title reveal delay-1'>SOC-as-a-Service, <span>built on Wazuh.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>A clean monitoring and response workflow for businesses that need better visibility without hiring a full internal SOC team.</p>
+      <p class='section-copy reveal delay-2'>Every log from every endpoint, server, and firewall flows into one detection pipeline — analyzed in real time, mapped to MITRE ATT&CK, and watched by people who escalate only what matters.</p>
+    </div>
+
+    <div class='flow reveal' aria-label='Wazuh detection pipeline'>
+      <div class='flow-node'><div class='flow-ico'>🖥</div><b>Endpoints & Servers</b><small>Wazuh agents</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node'><div class='flow-ico'>⚙</div><b>Wazuh Manager</b><small>Rules · decoders</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node'><div class='flow-ico'>🗄</div><b>Indexer</b><small>Search & retention</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node flow-alert'><div class='flow-ico'>⚡</div><b>SOC Analyst</b><small>Triage & response</small></div>
     </div>
 
     <div class='soc-grid'>
-      <div class='soc-card reveal'><b>01</b><h3>Real-Time Monitoring</h3><p>Visibility over important firewall, endpoint, availability, and security events.</p></div>
-      <div class='soc-card reveal delay-1'><b>02</b><h3>Smart Alerts</h3><p>High-risk issues are separated from noise so you know what actually matters.</p></div>
-      <div class='soc-card reveal delay-2'><b>03</b><h3>Incident Reports</h3><p>Simple reports with what happened, what was affected, and what should be fixed.</p></div>
-      <div class='soc-card reveal'><b>04</b><h3>Network Segmentation</h3><p>Separate risky devices and critical systems to reduce blast radius.</p></div>
-      <div class='soc-card reveal delay-1'><b>05</b><h3>Log Analysis</h3><p>Firewall and endpoint logs reviewed for suspicious patterns and misconfigurations.</p></div>
-      <div class='soc-card reveal delay-2'><b>06</b><h3>Security Hardening</h3><p>Practical fixes for weak rules, access risks, VPN exposure, and missing visibility.</p></div>
+      <div class='soc-card reveal'><b>01</b><h3>Log Analysis & Correlation</h3><p>Endpoint, server, firewall, and cloud logs correlated in real time by the Wazuh ruleset — thousands of events reduced to the alerts that matter.</p></div>
+      <div class='soc-card reveal delay-1'><b>02</b><h3>MITRE ATT&CK Mapping</h3><p>Every detection is mapped to ATT&CK tactics and techniques, so you see exactly what stage of an attack triggered the alert.</p></div>
+      <div class='soc-card reveal delay-2'><b>03</b><h3>File Integrity Monitoring</h3><p>Critical files, registries, and configs watched for unauthorized changes — ransomware and tampering caught at first touch.</p></div>
+      <div class='soc-card reveal'><b>04</b><h3>Vulnerability Detection</h3><p>Continuous CVE scanning on every agent, matched against installed software — know what's exploitable before attackers do.</p></div>
+      <div class='soc-card reveal delay-1'><b>05</b><h3>Active Response</h3><p>Automated containment: block brute-force sources, isolate suspicious processes, and disable compromised accounts in seconds.</p></div>
+      <div class='soc-card reveal delay-2'><b>06</b><h3>Compliance Reporting</h3><p>PCI DSS, GDPR, NIST, and ISO 27001 oriented reports generated from real telemetry — evidence your auditors can use.</p></div>
     </div>
 
     <div class='ops'>
       <div class='card monitor reveal'>
         <div class='monitor-head'>
-          <div><div class='kicker' style='margin-bottom:8px'>Live Security Events</div><h3 style='font-family:Syne,sans-serif;font-size:30px;letter-spacing:-.04em'>Monitoring Activity</h3></div>
-          <span style='color:var(--green);font-family:Space Mono,monospace;font-size:11px'>● OPERATIONAL</span>
+          <div><div class='kicker' style='margin-bottom:8px'>Live Security Events</div><h3 style='font-family:Syne,sans-serif;font-size:30px;letter-spacing:-.04em'>Wazuh Event Ingestion</h3></div>
+          <div style='display:flex;align-items:center;gap:14px'>
+            <div class='radar' aria-hidden='true'><i></i><i></i><i></i></div>
+            <span style='color:var(--green);font-family:Space Mono,monospace;font-size:11px'>● OPERATIONAL</span>
+          </div>
         </div>
         <div class='monitor-bars' id='monitorBars'></div>
         <div style='display:flex;justify-content:space-between;color:var(--muted);font-family:Space Mono,monospace;font-size:10px;margin-top:18px'>
@@ -684,12 +845,72 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
       </div>
 
       <div class='card event-stream reveal delay-1'>
-        <div class='kicker'>Event Feed</div>
-        <div class='event'><small>Critical</small><strong>Suspicious login pattern</strong><p>Multiple failed logins across privileged accounts.</p></div>
-        <div class='event'><small>Medium</small><strong>Firewall policy risk</strong><p>Exposed service detected outside recommended baseline.</p></div>
-        <div class='event'><small>Resolved</small><strong>Endpoint secured</strong><p>Suspicious process contained and system returned to baseline.</p></div>
+        <div class='kicker'>Alert Feed</div>
+        <div class='event'><small>Level 12 · T1110</small><strong>SSH brute-force detected</strong><p>40+ failed logins from single source. Active response blocked the IP.</p></div>
+        <div class='event'><small>Level 10 · T1078</small><strong>Privileged login anomaly</strong><p>Admin account authenticated outside business hours from new device.</p></div>
+        <div class='event'><small>Level 7 · FIM</small><strong>System file modified</strong><p>Unexpected change in /etc/passwd flagged by file integrity monitoring.</p></div>
+        <div class='event'><small>Resolved</small><strong>Endpoint contained</strong><p>Suspicious process isolated; system returned to baseline and verified.</p></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id='demo'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Interactive Demo</div>
+        <h2 class='section-title reveal delay-1'>The real Wazuh — <span>click around.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>A faithful replica of the Wazuh dashboard we deploy: same navigation, same modules, same rule IDs and alert format. Browse Threat Hunting, FIM, vulnerabilities, MITRE ATT&CK and agents — then launch an attack and watch it light up.</p>
+    </div>
+
+    <div class='demo-toolbar reveal'>
+      <span class='demo-label'>Simulate attack ▸</span>
+      <button class='demo-btn' data-scenario='brute'>SSH Brute-Force</button>
+      <button class='demo-btn' data-scenario='ransom'>Ransomware</button>
+      <button class='demo-btn' data-scenario='recon'>Network Recon</button>
+      <button class='demo-btn demo-reset' id='demoReset'>↺ Reset</button>
+      <span class='demo-status secure' id='demoStatus'>● SYSTEM SECURE</span>
+    </div>
+
+    <div class='wz reveal' id='wzApp'>
+      <div class='wz-chrome'>
+        <div class='dots'><span></span><span></span><span></span></div>
+        <div class='wz-url'>🔒 https://siem.demo.obserion.local/app/wz-home — Wazuh v4.12</div>
+      </div>
+      <div class='wz-top'>
+        <button class='wz-burger' id='wzBurger' aria-label='Toggle menu'>☰</button>
+        <div class='wz-logo'><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M2 6l4.5 12L12 8l5.5 10L22 6' stroke='#3585F9' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>wazuh<span style='color:#3585F9'>.</span></div>
+        <div class='wz-search'><span style='opacity:.55'>⌕</span> rule.level >= 3 AND agent.name : <b>*</b></div>
+        <div class='wz-time'>🗓 Last 24 hours ▾</div>
+        <div class='wz-avatar'>OB</div>
+      </div>
+      <div class='wz-body'>
+        <nav class='wz-nav' id='wzNav'>
+          <a data-page='home' class='on'>⌂&ensp;Overview</a>
+          <div class='wz-group'>Endpoint security</div>
+          <a data-page='sca'>Configuration Assessment</a>
+          <a data-page='malware'>Malware Detection</a>
+          <a data-page='fim'>File Integrity Monitoring</a>
+          <div class='wz-group'>Threat intelligence</div>
+          <a data-page='th'>Threat Hunting</a>
+          <a data-page='vuln'>Vulnerability Detection</a>
+          <a data-page='mitre'>MITRE ATT&CK</a>
+          <div class='wz-group'>Security operations</div>
+          <a data-page='pci'>PCI DSS</a>
+          <a data-page='gdpr'>GDPR</a>
+          <div class='wz-group'>Agents management</div>
+          <a data-page='agents'>Summary</a>
+          <div class='wz-group'>Server management</div>
+          <a data-page='rules'>Rules</a>
+          <a data-page='status'>Status</a>
+        </nav>
+        <main class='wz-main' id='wzMain'></main>
+      </div>
+      <div class='wz-toasts' id='wzToasts'></div>
+    </div>
+    <p class='reveal' style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Simulated data for illustration — the interface mirrors a real Wazuh 4.x deployment. Want it on your infrastructure? <a href='#contact' style='color:var(--cyan)'>Book a live demo →</a></p>
   </div>
 </section>
 
@@ -698,35 +919,35 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='split-head'>
       <div>
         <div class='kicker reveal'>Pricing</div>
-        <h2 class='section-title reveal delay-1'>Realistic pricing for <span>Serbian SMBs.</span></h2>
+        <h2 class='section-title reveal delay-1'>SIEM power, <span>SMB pricing.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>Prices are adjusted for smaller Serbian businesses and the actual services offered. Final price depends on number of devices, firewall complexity, monitoring scope, and current risk level.</p>
+      <p class='section-copy reveal delay-2'>Wazuh is open source — you pay for expertise and operations, not licenses. Final price depends on number of agents, log sources, retention requirements, and response scope.</p>
     </div>
 
     <div class='pricing-grid'>
       <article class='card price-card tilt reveal'>
-        <span class='badge'>Assessment</span>
-        <div class='price'>€150<small> one-time</small></div>
-        <p class='price-desc'>A practical first step for businesses that want to understand their real security risks before committing to monthly monitoring.</p>
-        <ul class='features'><li>Firewall and network review</li><li>Endpoint and user access review</li><li>Backup and exposure check</li><li>Basic log visibility review</li><li>Prioritized remediation report</li></ul>
-        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=Cybersecurity Assessment'>Book Assessment</a>
+        <span class='badge'>Wazuh Deployment</span>
+        <div class='price'>From €350<small> one-time</small></div>
+        <p class='price-desc'>Production-ready Wazuh SIEM deployed in your environment (on-prem or cloud) — yours to keep, fully documented.</p>
+        <ul class='features'><li>Architecture design and sizing</li><li>Manager, indexer & dashboard setup</li><li>Agent rollout (up to 15 endpoints)</li><li>Firewall & log source onboarding</li><li>Baseline rule tuning and handover docs</li></ul>
+        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=Wazuh SIEM Deployment'>Book Deployment</a>
       </article>
       <article class='card price-card featured tilt reveal delay-1'>
-        <span class='badge'>Most Popular · Managed Security</span>
+        <span class='badge'>Most Popular · Managed SOC</span>
         <div class='price'>€250<small>/mo</small></div>
-        <p class='price-desc'>Managed security monitoring and firewall support for small businesses that need ongoing protection without hiring a full security team.</p>
-        <ul class='features'><li>Everything from assessment baseline</li><li>24/7 important alert monitoring</li><li>Firewall rule review and tuning</li><li>Monthly security report</li><li>Priority email support</li><li>Up to 10 devices included</li></ul>
-        <a class='btn btn-primary' style='width:100%' href='mailto:info@obserion.com?subject=Managed Security Plan'><span>Start Managed Security</span></a>
+        <p class='price-desc'>We run your Wazuh SIEM as your 24/7 SOC — detection, triage, escalation, and reporting, without hiring a security team.</p>
+        <ul class='features'><li>24/7 alert monitoring and triage</li><li>Critical alerts escalated &lt;15 min</li><li>Continuous rule and noise tuning</li><li>Vulnerability detection reports</li><li>Monthly security report in plain language</li><li>Up to 15 agents included</li></ul>
+        <a class='btn btn-primary' style='width:100%' href='mailto:info@obserion.com?subject=Managed SOC Plan'><span>Start Managed SOC</span></a>
       </article>
       <article class='card price-card tilt reveal delay-2'>
-        <span class='badge'>Advanced</span>
-        <div class='price'>From €400<small>/mo</small></div>
-        <p class='price-desc'>For businesses that need deeper monitoring, more devices, segmentation, incident support, or Fortinet-focused security operations.</p>
-        <ul class='features'><li>Everything in Managed Security</li><li>More devices and locations</li><li>Network segmentation planning</li><li>Fortinet/FortiGate advanced tuning</li><li>Incident response support</li><li>Custom reporting and recommendations</li></ul>
-        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=Advanced Security Plan'>Request Quote</a>
+        <span class='badge'>SOC Complete</span>
+        <div class='price'>From €450<small>/mo</small></div>
+        <p class='price-desc'>For businesses that need more agents, active response, compliance reporting, and Fortinet-integrated security operations.</p>
+        <ul class='features'><li>Everything in Managed SOC</li><li>More agents, sites, and log sources</li><li>Active response (auto-containment)</li><li>PCI DSS / GDPR / ISO 27001 reporting</li><li>FortiGate integration and tuning</li><li>Incident response support</li></ul>
+        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=SOC Complete Plan'>Request Quote</a>
       </article>
     </div>
-    <p style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Initial setup, firewall implementation, and larger environments may be charged separately after assessment.</p>
+    <p style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Wazuh is free and open source — no SIEM license fees, ever. Larger environments and custom integrations quoted after a short scoping call.</p>
   </div>
 </section>
 
@@ -758,15 +979,16 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div>
       <div class='kicker reveal'>FAQ</div>
       <h2 class='section-title reveal delay-1'>Quick <span>answers.</span></h2>
-      <p class='section-copy reveal delay-2' style='margin-top:22px'>Straight answers about assessments, firewall and network security, monitoring, Fortinet expertise, and pricing.</p>
+      <p class='section-copy reveal delay-2' style='margin-top:22px'>Straight answers about Wazuh, SIEM deployment, the managed SOC, and pricing.</p>
     </div>
     <div class='faq-list reveal delay-2'>
-      <div class='faq-item open'><div class='faq-q'>Do you offer penetration testing?<span class='faq-icon'>+</span></div><div class='faq-a'>No. The main offer is cybersecurity assessment, firewall and network security, monitoring, hardening, and incident-response support. The assessment focuses on practical risk discovery and remediation, not formal pentesting.</div></div>
-      <div class='faq-item'><div class='faq-q'>Are you a Fortinet partner?<span class='faq-icon'>+</span></div><div class='faq-a'>No. Obserion does not claim official Fortinet partner status. The offer is based on hands-on Fortinet and FortiGate expertise, including configuration, troubleshooting, policies, VPN, IPS profiles, and reporting.</div></div>
-      <div class='faq-item'><div class='faq-q'>What is included in the cybersecurity assessment?<span class='faq-icon'>+</span></div><div class='faq-a'>The assessment reviews firewall rules, network exposure, user access, endpoint security, backups, remote access, logging visibility, and the biggest practical risks. You receive a clear prioritized report.</div></div>
-      <div class='faq-item'><div class='faq-q'>Do you provide cloud services?<span class='faq-icon'>+</span></div><div class='faq-a'>Cloud services are not a core standalone offer. If cloud accounts or services are part of the environment, they can be reviewed from a security perspective during assessment or monitoring.</div></div>
-      <div class='faq-item'><div class='faq-q'>How are prices calculated?<span class='faq-icon'>+</span></div><div class='faq-a'>Pricing depends on the number of devices, firewall complexity, number of locations, monitoring scope, and how much remediation is needed. The listed prices are realistic starting points for Serbian SMBs.</div></div>
-      <div class='faq-item'><div class='faq-q'>How can I get started?<span class='faq-icon'>+</span></div><div class='faq-a'>Start with a cybersecurity assessment. It gives a clear view of your current risk and helps decide whether you need monthly monitoring, firewall hardening, or advanced support.</div></div>
+      <div class='faq-item open'><div class='faq-q'>What is Wazuh, and why do you use it?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh is the world's most widely deployed open-source SIEM and XDR platform. It delivers log analysis, threat detection, file integrity monitoring, vulnerability detection, and compliance reporting — with zero license cost. You get enterprise-grade visibility for the price of expertise and operations only.</div></div>
+      <div class='faq-item'><div class='faq-q'>Where does the SIEM run — your cloud or ours?<span class='faq-icon'>+</span></div><div class='faq-a'>Your choice. Wazuh can run on-premises on your hardware, in your cloud (AWS, Azure, Hetzner, etc.), or on a VPS we manage for you. Your logs stay where you decide — important for GDPR and data-sovereignty requirements.</div></div>
+      <div class='faq-item'><div class='faq-q'>What does the managed SOC actually do day-to-day?<span class='faq-icon'>+</span></div><div class='faq-a'>We watch Wazuh alerts around the clock, filter noise, investigate suspicious activity, escalate real threats with clear instructions, keep detection rules tuned, and deliver a monthly plain-language security report. Critical alerts are escalated within 15 minutes.</div></div>
+      <div class='faq-item'><div class='faq-q'>Do we keep the SIEM if we cancel?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. The Wazuh deployment is yours — installed in your environment with full documentation and handover. If you stop the managed service, the platform keeps working and your team keeps full access. No lock-in.</div></div>
+      <div class='faq-item'><div class='faq-q'>Do you also handle firewalls and Fortinet?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. Hands-on FortiGate expertise — configuration, VPN, IPS profiles, segmentation — and firewall logs are integrated into Wazuh so the SOC sees your network and endpoints in one pipeline. (No official Fortinet partner status claimed.)</div></div>
+      <div class='faq-item'><div class='faq-q'>How are prices calculated?<span class='faq-icon'>+</span></div><div class='faq-a'>Pricing depends on the number of agents, log sources, retention requirements, number of locations, and response scope. Because Wazuh has no license fees, costs stay predictable as you grow. Listed prices are realistic starting points for SMBs.</div></div>
+      <div class='faq-item'><div class='faq-q'>How can I get started?<span class='faq-icon'>+</span></div><div class='faq-a'>Book a short scoping call or request a live Wazuh demo. We'll map your log sources, size the deployment, and give you a fixed quote — deployment typically goes live within two weeks.</div></div>
     </div>
   </div>
 </section>
@@ -775,8 +997,8 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container contact-grid'>
     <div class='card contact-info reveal'>
       <div class='kicker'>Contact</div>
-      <h2 class='section-title'>Start with a <span>security assessment.</span></h2>
-      <p class='section-copy' style='margin-top:22px'>The most realistic first step is an assessment, followed by hardening or monthly monitoring depending on the results.</p>
+      <h2 class='section-title'>See your logs in a <span>live Wazuh demo.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>A short scoping call is all it takes: we map your log sources, size the deployment, and show you exactly what your SOC dashboard will look like.</p>
       <div class='contact-methods'>
         <div class='method'><div class='method-dot'>@</div><div><small>Email</small><b><a href='mailto:info@obserion.com'>info@obserion.com</a></b></div></div>
         <div class='method'><div class='method-dot'>☎</div><div><small>Phone</small><b><a href='tel:+381000000000'>+381 00 000 0000</a></b></div></div>
@@ -791,7 +1013,7 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
       </div>
       <div class='field'><label>Business Email</label><input type='email' placeholder='marko@company.com' required></div>
       <div class='field'><label>Company</label><input type='text' placeholder='Your company name'></div>
-      <div class='field'><label>Service Interest</label><select><option>Cybersecurity Assessment</option><option>Firewall & Network Security</option><option>24/7 Monitoring</option><option>Fortinet Expertise</option><option>Managed Security Plan</option></select></div>
+      <div class='field'><label>Service Interest</label><select><option>Wazuh SIEM Deployment</option><option>Managed SOC (24/7)</option><option>SOC Complete</option><option>Firewall & Fortinet</option><option>Incident Response</option></select></div>
       <div class='field'><label>Message</label><textarea placeholder='Tell us about your security needs...'></textarea></div>
       <button class='btn btn-primary' type='submit'><span>Send Message</span><span class='arrow'>→</span></button>
       <div class='success' id='form-success'>✓ Message sent. We'll be in touch shortly.</div>
@@ -804,9 +1026,9 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='footer-grid'>
       <div>
         <a class='logo' href='#hero'><span class='logo-dot'></span>Obserion<span class='grad'>.</span></a>
-        <p style='margin-top:16px;max-width:310px'>Cybersecurity assessments, firewall hardening, 24/7 monitoring, and Fortinet-focused expertise for businesses that cannot afford to compromise.</p>
+        <p style='margin-top:16px;max-width:310px'>Wazuh SIEM deployment and 24/7 SOC-as-a-Service — threat detection, response, compliance reporting, and Fortinet expertise for businesses that cannot afford to compromise.</p>
       </div>
-      <div><div class='footer-title'>Services</div><ul class='footer-links'><li><a href='#services'>Cybersecurity Assessment</a></li><li><a href='#services'>Firewall Security</a></li><li><a href='#services'>24/7 Monitoring</a></li><li><a href='#services'>Fortinet Expertise</a></li><li><a href='#pricing'>Pricing</a></li></ul></div>
+      <div><div class='footer-title'>Services</div><ul class='footer-links'><li><a href='#services'>Wazuh SIEM Deployment</a></li><li><a href='#services'>Managed SOC · 24/7</a></li><li><a href='#services'>Threat Detection & Response</a></li><li><a href='#services'>Firewall & Fortinet</a></li><li><a href='#pricing'>Pricing</a></li></ul></div>
       <div><div class='footer-title'>Company</div><ul class='footer-links'><li><a href='#soc'>Obserion SOC</a></li><li><a href='#testimonials'>Clients</a></li><li><a href='#faq'>FAQ</a></li><li><a href='#contact'>Contact</a></li></ul></div>
       <div><div class='footer-title'>Legal</div><ul class='footer-links'><li><a href='#'>Privacy Policy</a></li><li><a href='#'>Terms of Service</a></li><li><a href='#'>Cookie Policy</a></li><li><a href='#'>GDPR</a></li></ul></div>
     </div>
@@ -980,6 +1202,57 @@ if(!reduceMotion && window.matchMedia('(hover:hover)').matches){
   });
 }
 
+/* HERO TYPEWRITER */
+const typeEl=document.getElementById('typeWord');
+const phrases=['detected.','triaged.','contained.','reported.'];
+if(typeEl&&!reduceMotion){
+  let pi=0,ci=phrases[0].length,deleting=true;
+  setTimeout(function tick(){
+    const word=phrases[pi];
+    if(deleting){
+      ci--;typeEl.textContent=word.slice(0,ci);
+      if(ci===0){deleting=false;pi=(pi+1)%phrases.length;}
+      setTimeout(tick,45);
+    }else{
+      ci++;typeEl.textContent=phrases[pi].slice(0,ci);
+      if(ci===phrases[pi].length){deleting=true;setTimeout(tick,2400);}
+      else setTimeout(tick,90);
+    }
+  },2200);
+}
+
+/* WAZUH TERMINAL FEED */
+const termBody=document.getElementById('socTerminal');
+const termLines=[
+  ['t-crit','rule 5712 level 12','sshd: brute-force attack — active-response: IP blocked'],
+  ['t-info','rule 533 level 3','netstat: new listening port detected on srv-db01'],
+  ['t-med','rule 550 level 7','syscheck: integrity checksum changed /etc/passwd'],
+  ['t-ok','agent 014','keepalive OK — finance-pc-03 reconnected'],
+  ['t-med','rule 31151 level 10','MITRE T1078: admin login outside business hours'],
+  ['t-info','vulnerability-detector','CVE-2026-1337 matched on web-srv02 (high)'],
+  ['t-crit','rule 92657 level 12','MITRE T1486: mass file rename — possible ransomware'],
+  ['t-ok','active-response','threat contained — process isolated on host hr-lap-07'],
+];
+function termTime(){const d=new Date();return d.toTimeString().slice(0,8);}
+function pushTermLine(){
+  if(!termBody)return;
+  const l=termLines[Math.floor(Math.random()*termLines.length)];
+  const div=document.createElement('div');
+  div.innerHTML="<span class='t-time'>"+termTime()+"</span> <span class='"+l[0]+"'>["+l[1]+"]</span> "+l[2];
+  termBody.appendChild(div);
+  while(termBody.children.length>5)termBody.removeChild(termBody.firstChild);
+}
+if(termBody){
+  pushTermLine();pushTermLine();pushTermLine();pushTermLine();
+  if(!reduceMotion)setInterval(pushTermLine,2600);
+}
+
+/* EVENTS PER SECOND TICKER */
+const eps=document.getElementById('epsMetric');
+if(eps&&!reduceMotion){
+  setInterval(()=>{eps.textContent=(380+Math.floor(Math.random()*160)).toLocaleString();},1600);
+}
+
 /* HERO LIVE TRAFFIC BARS (continuous) */
 const heroBars=document.querySelectorAll('#heroCommand .bars i');
 if(heroBars.length&&!reduceMotion){
@@ -1019,6 +1292,358 @@ function updateTime(){
   if(el)el.textContent=new Date().toLocaleTimeString('en-GB');
 }
 updateTime();setInterval(updateTime,1000);
+
+/* ============ WAZUH DASHBOARD REPLICA ============ */
+(function(){
+  const app=document.getElementById('wzApp');if(!app)return;
+  const main=document.getElementById('wzMain');
+  const navEl=document.getElementById('wzNav');
+  const toasts=document.getElementById('wzToasts');
+  const statusEl=document.getElementById('demoStatus');
+  const btns=[...document.querySelectorAll('.demo-btn[data-scenario]')];
+  const resetBtn=document.getElementById('demoReset');
+  const urlEl=document.querySelector('.wz-url');
+
+  /* ---------- reference data ---------- */
+  const TQ={
+    T1110:['Brute Force','Credential Access'],T1486:['Data Encrypted for Impact','Impact'],
+    T1046:['Network Service Discovery','Discovery'],T1021:['Remote Services','Lateral Movement'],
+    T1078:['Valid Accounts','Initial Access'],T1548:['Abuse Elevation Control Mechanism','Privilege Escalation'],
+    T1565:['Data Manipulation','Impact'],T1595:['Active Scanning','Reconnaissance'],
+    T1490:['Inhibit System Recovery','Impact'],T1083:['File and Directory Discovery','Discovery']
+  };
+  let AGENTS=[
+    {id:'001',name:'web-srv02',ip:'10.0.1.12',os:'Ubuntu 22.04 LTS',grp:'linux,web',ver:'v4.12.0',st:'active'},
+    {id:'002',name:'dc-srv01',ip:'10.0.1.5',os:'Windows Server 2022',grp:'windows,domain-controllers',ver:'v4.12.0',st:'active'},
+    {id:'003',name:'srv-db01',ip:'10.0.1.20',os:'Debian 12',grp:'linux,db',ver:'v4.12.0',st:'active'},
+    {id:'004',name:'fin-pc-02',ip:'10.0.2.31',os:'Windows 11 Pro',grp:'windows,workstations',ver:'v4.12.0',st:'active'},
+    {id:'005',name:'hr-lap-07',ip:'10.0.2.44',os:'Windows 11 Pro',grp:'windows,workstations',ver:'v4.12.0',st:'active'},
+    {id:'006',name:'mail-srv01',ip:'10.0.1.25',os:'Ubuntu 24.04 LTS',grp:'linux,mail',ver:'v4.11.2',st:'disconnected'}
+  ];
+  const VULNS=[
+    {cve:'CVE-2024-3094',pkg:'xz-utils',vsn:'5.6.0',a:'web-srv02',sev:'Critical',cvss:10.0},
+    {cve:'CVE-2021-44228',pkg:'log4j-core',vsn:'2.14.1',a:'srv-db01',sev:'Critical',cvss:10.0},
+    {cve:'CVE-2024-21413',pkg:'Microsoft Outlook',vsn:'16.0.17126',a:'hr-lap-07',sev:'Critical',cvss:9.8},
+    {cve:'CVE-2023-4863',pkg:'libwebp',vsn:'1.2.4',a:'fin-pc-02',sev:'High',cvss:8.8},
+    {cve:'CVE-2024-6387',pkg:'openssh-server',vsn:'9.6p1',a:'web-srv02',sev:'High',cvss:8.1},
+    {cve:'CVE-2023-44487',pkg:'nginx',vsn:'1.24.0',a:'web-srv02',sev:'High',cvss:7.5},
+    {cve:'CVE-2024-28085',pkg:'util-linux',vsn:'2.39.3',a:'srv-db01',sev:'Medium',cvss:6.7},
+    {cve:'CVE-2023-50387',pkg:'bind9',vsn:'9.18.18',a:'mail-srv01',sev:'Medium',cvss:5.3}
+  ];
+  const RULES=[
+    {id:5710,l:5,d:'sshd: Attempt to login using a non-existent user',g:'syslog,sshd,authentication_failed',f:'0095-sshd_rules.xml'},
+    {id:5712,l:10,d:'sshd: SSHD brute force trying to get access to the system',g:'syslog,sshd,authentication_failures',f:'0095-sshd_rules.xml'},
+    {id:5715,l:3,d:'sshd: authentication success',g:'syslog,sshd,authentication_success',f:'0095-sshd_rules.xml'},
+    {id:5763,l:10,d:'sshd: brute force attack (multiple failed logins from same source)',g:'syslog,sshd,authentication_failures',f:'0095-sshd_rules.xml'},
+    {id:5402,l:3,d:'Successful sudo to ROOT executed',g:'syslog,sudo',f:'0025-sudo_rules.xml'},
+    {id:550,l:7,d:'Integrity checksum changed',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:554,l:5,d:'File added to the system',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:553,l:7,d:'File deleted',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',g:'ossec',f:'0015-ossec_rules.xml'},
+    {id:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',f:'0245-web_rules.xml'},
+    {id:31151,l:10,d:'Multiple web server 400 error codes from same source ip',g:'web,web_scan,recon',f:'0245-web_rules.xml'},
+    {id:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',f:'0015-ossec_rules.xml'},
+    {id:87105,l:12,d:'VirusTotal: Alert - file detected as malicious by multiple engines',g:'virustotal,malware',f:'0490-virustotal_rules.xml'},
+    {id:100210,l:12,d:'Custom: Mass file rename detected - possible ransomware activity',g:'local,syscheck,ransomware',f:'local_rules.xml'},
+    {id:100211,l:12,d:'Custom: Shadow copy deletion attempt detected (vssadmin)',g:'local,windows,ransomware',f:'local_rules.xml'}
+  ];
+  const SCA=[
+    {p:'CIS Ubuntu Linux 22.04 LTS Benchmark v2.0.0',a:'web-srv02',pass:182,fail:63,na:12},
+    {p:'CIS Microsoft Windows Server 2022 Benchmark v3.0.0',a:'dc-srv01',pass:301,fail:94,na:28},
+    {p:'CIS Debian Linux 12 Benchmark v1.1.0',a:'srv-db01',pass:158,fail:51,na:9},
+    {p:'CIS Microsoft Windows 11 Enterprise Benchmark v3.0.0',a:'hr-lap-07',pass:214,fail:88,na:17}
+  ];
+  const DAEMONS=['wazuh-analysisd','wazuh-remoted','wazuh-logcollector','wazuh-syscheckd','wazuh-modulesd','wazuh-db','wazuh-execd','wazuh-authd'];
+
+  /* ---------- alert store ---------- */
+  let uid=0,alerts=[],page='home',timers=[],running=false,expanded=new Set();
+  const H=3600e3;
+  function mk(o){o.u=++uid;return o;}
+  function seed(){
+    uid=0;expanded.clear();
+    const n=Date.now();
+    alerts=[
+      mk({t:n-21*H,a:'web-srv02',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-20*H,a:'srv-db01',r:5402,l:3,d:'Successful sudo to ROOT executed',m:'T1548',g:'syslog,sudo',pci:'10.2.2',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-18*H,a:'fin-pc-02',r:550,l:7,d:'Integrity checksum changed',m:'T1565',g:'ossec,syscheck',pci:'11.5',gd:'II_5.1.f',fim:{p:'C:\\Windows\\System32\\drivers\\etc\\hosts',ac:'modified'},loc:'syscheck'}),
+      mk({t:n-16*H,a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',pci:'6.5,11.4',loc:'/var/log/nginx/access.log'}),
+      mk({t:n-14*H,a:'srv-db01',r:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',m:'T1046',g:'ossec',pci:'10.2.7',loc:'netstat listening ports'}),
+      mk({t:n-11*H,a:'dc-srv01',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-9*H,a:'web-srv02',r:23505,l:10,d:'CVE-2024-6387 affects openssh-server (high severity)',g:'vulnerability-detector',pci:'11.2.1',loc:'vulnerability-detector'}),
+      mk({t:n-7*H,a:'hr-lap-07',r:554,l:5,d:'File added to the system',g:'ossec,syscheck',pci:'11.5',fim:{p:'C:\\Users\\mira\\Downloads\\invoice_2641.zip',ac:'added'},loc:'syscheck'}),
+      mk({t:n-5*H,a:'mail-srv01',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}),
+      mk({t:n-3*H,a:'fin-pc-02',r:550,l:7,d:'Integrity checksum changed',m:'T1565',g:'ossec,syscheck',pci:'11.5',gd:'II_5.1.f',fim:{p:'C:\\Program Files\\FinApp\\config.xml',ac:'modified'},loc:'syscheck'}),
+      mk({t:n-2*H,a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',pci:'6.5',loc:'/var/log/nginx/access.log'}),
+      mk({t:n-1*H,a:'srv-db01',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'})
+    ];
+  }
+
+  /* ---------- helpers ---------- */
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const fmtT=t=>{const d=new Date(t);return d.toLocaleDateString('en-GB',{month:'short',day:'2-digit'})+' '+d.toTimeString().slice(0,8);};
+  const sevCls=l=>l>=15?'l15':l>=12?'l12':l>=7?'l7':'l0';
+  const sevName=l=>l>=15?'Critical':l>=12?'High':l>=7?'Medium':'Low';
+  function lvlBadge(l){return "<span class='wz-lvl "+sevCls(l)+"'>"+l+"</span>";}
+  function agentOf(n){return AGENTS.find(x=>x.name===n)||{id:'000',ip:'-'};}
+  function tags(s,cls){return s?s.split(',').map(x=>"<span class='wz-tag'>"+esc(x.trim())+"</span>").join(''):'—';}
+
+  function alertJson(al){
+    const ag=agentOf(al.a);const ru=RULES.find(r=>r.id===al.r);
+    const lines=[];
+    lines.push('{');
+    lines.push('  <span class="k">"timestamp"</span>: <span class="s">"'+new Date(al.t).toISOString()+'"</span>,');
+    lines.push('  <span class="k">"agent"</span>: { <span class="k">"id"</span>: <span class="s">"'+ag.id+'"</span>, <span class="k">"name"</span>: <span class="s">"'+al.a+'"</span>, <span class="k">"ip"</span>: <span class="s">"'+ag.ip+'"</span> },');
+    let rule='  <span class="k">"rule"</span>: {\n    <span class="k">"id"</span>: <span class="n">"'+al.r+'"</span>,\n    <span class="k">"level"</span>: <span class="n">'+al.l+'</span>,\n    <span class="k">"description"</span>: <span class="s">"'+esc(al.d)+'"</span>,\n    <span class="k">"groups"</span>: ['+(al.g||'').split(',').map(x=>'<span class="s">"'+x.trim()+'"</span>').join(', ')+'],\n    <span class="k">"firedtimes"</span>: <span class="n">'+(1+(al.u%7))+'</span>';
+    if(al.m&&TQ[al.m])rule+=',\n    <span class="k">"mitre"</span>: { <span class="k">"id"</span>: [<span class="s">"'+al.m+'"</span>], <span class="k">"technique"</span>: [<span class="s">"'+TQ[al.m][0]+'"</span>], <span class="k">"tactic"</span>: [<span class="s">"'+TQ[al.m][1]+'"</span>] }';
+    if(al.pci)rule+=',\n    <span class="k">"pci_dss"</span>: ['+al.pci.split(',').map(x=>'<span class="s">"'+x.trim()+'"</span>').join(', ')+']';
+    if(al.gd)rule+=',\n    <span class="k">"gdpr"</span>: [<span class="s">"'+al.gd+'"</span>]';
+    rule+='\n  },';
+    lines.push(rule);
+    if(al.fim)lines.push('  <span class="k">"syscheck"</span>: { <span class="k">"path"</span>: <span class="s">"'+esc(al.fim.p)+'"</span>, <span class="k">"event"</span>: <span class="s">"'+al.fim.ac+'"</span> },');
+    lines.push('  <span class="k">"location"</span>: <span class="s">"'+esc(al.loc||'')+'"</span>,');
+    lines.push('  <span class="k">"decoder"</span>: { <span class="k">"name"</span>: <span class="s">"'+(al.loc==='syscheck'?'syscheck_integrity_changed':(al.r>=31100&&al.r<31200?'web-accesslog':'sshd'))+'"</span> },');
+    lines.push('  <span class="k">"manager"</span>: { <span class="k">"name"</span>: <span class="s">"wazuh-manager-01"</span> }');
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  function alertTable(list,opts){
+    opts=opts||{};
+    if(!list.length)return "<div class='wz-empty'>No alerts found for the selected filters in the last 24 hours.</div>";
+    let h="<div class='wz-scroll'><table class='wz-table'><thead><tr><th>Time ↓</th><th>Agent</th>";
+    if(opts.fim)h+="<th>Path</th><th>Action</th>";
+    else h+="<th>Technique(s)</th><th>Tactic(s)</th><th>Description</th>";
+    if(opts.pci)h+="<th>PCI DSS</th>";
+    if(opts.gdpr)h+="<th>GDPR</th>";
+    h+="<th>Level</th><th>Rule ID</th></tr></thead><tbody>";
+    list.forEach(al=>{
+      h+="<tr class='click"+(al._new?" new-row":"")+"' data-u='"+al.u+"'><td class='wz-mono'>"+fmtT(al.t)+"</td><td>"+al.a+"</td>";
+      if(opts.fim)h+="<td class='wz-mono' style='white-space:normal;word-break:break-all'>"+esc(al.fim?al.fim.p:'—')+"</td><td>"+(al.fim?"<span class='wz-pill "+(al.fim.ac==='deleted'?'dis':al.fim.ac==='added'?'act':'iso')+"'>"+al.fim.ac+"</span>":'—')+"</td>";
+      else h+="<td>"+(al.m?"<span class='wz-tag'>"+al.m+"</span>":'—')+"</td><td style='font-size:11.5px'>"+(al.m&&TQ[al.m]?TQ[al.m][1]:'—')+"</td><td>"+esc(al.d)+"</td>";
+      if(opts.pci)h+="<td>"+tags(al.pci)+"</td>";
+      if(opts.gdpr)h+="<td>"+tags(al.gd)+"</td>";
+      h+="<td>"+lvlBadge(al.l)+"</td><td class='wz-mono'>"+al.r+"</td></tr>";
+      if(expanded.has(al.u)){
+        const cols=(opts.fim?6:7)+(opts.pci?1:0)+(opts.gdpr?1:0)-(opts.fim?1:0);
+        h+="<tr class='wz-expand'><td colspan='9'><div class='wz-json'>"+alertJson(al)+"</div></td></tr>";
+      }
+      al._new=false;
+    });
+    return h+"</tbody></table></div>";
+  }
+
+  function evoBars(list){
+    const buckets=new Array(24).fill(0),hot=new Array(24).fill(false);
+    const n=Date.now();
+    list.forEach(al=>{const i=23-Math.min(23,Math.floor((n-al.t)/H));buckets[i]++;if(al.l>=12)hot[i]=true;});
+    const mx=Math.max.apply(null,buckets.concat([1]));
+    return "<div class='wz-evo'>"+buckets.map((b,i)=>"<i class='"+(hot[i]?'hot':'')+"' style='height:"+(b?8+(b/mx)*92:3)+"%' title='"+b+" alerts'></i>").join('')+"</div>";
+  }
+
+  function donut(segs){
+    const total=segs.reduce((s,x)=>s+x[1],0)||1;let acc=0;
+    const stops=segs.map(s=>{const a=acc/total*360;acc+=s[1];return s[2]+' '+a+'deg '+(acc/total*360)+'deg';}).join(',');
+    let h="<div class='wz-donut-wrap'><div class='wz-donut' style='background:conic-gradient("+stops+")'></div><div class='wz-legend'>";
+    segs.forEach(s=>{h+="<span><i style='background:"+s[2]+"'></i>"+s[0]+" — <b>"+s[1]+"</b></span>";});
+    return h+"</div></div>";
+  }
+
+  /* ---------- pages ---------- */
+  const PAGES={
+    home(){
+      const act=AGENTS.filter(a=>a.st==='active').length,dis=AGENTS.filter(a=>a.st==='disconnected').length,iso=AGENTS.filter(a=>a.st==='isolated').length;
+      const c={Critical:0,High:0,Medium:0,Low:0};alerts.forEach(a=>c[sevName(a.l)]++);
+      return "<div class='wz-h'>Overview</div><div class='wz-sub'>Global security posture — last 24 hours · index: wazuh-alerts-4.x-*</div>"
+      +"<div class='wz-cards'>"
+      +"<div class='wz-card'><small>Active agents</small><b class='sv-ok'>"+act+"</b></div>"
+      +"<div class='wz-card'><small>Disconnected"+(iso?' / isolated':'')+"</small><b class='"+((dis+iso)?'sv-crit':'sv-ok')+"'>"+(dis+iso)+"</b></div>"
+      +"<div class='wz-card'><small>Alerts (24h)</small><b>"+alerts.length+"</b></div>"
+      +"<div class='wz-card'><small>Level 12+ alerts</small><b class='"+(c.High+c.Critical?'sv-crit':'sv-ok')+"'>"+(c.High+c.Critical)+"</b></div>"
+      +"</div><div class='wz-cols2'>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts by severity</div>"+donut([['Critical',c.Critical,'#bd271e'],['High',c.High,'#e7664c'],['Medium',c.Medium,'#d6a100'],['Low',c.Low,'#6092c0']])+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts evolution <span class='wz-mono'>24 hours</span></div>"+evoBars(alerts)+"</div>"
+      +"</div><div class='wz-panel'><div class='wz-panel-h'>Latest alerts</div>"+alertTable(alerts.slice(0,6))+"</div>";
+    },
+    th(){
+      const a12=alerts.filter(a=>a.l>=12).length;
+      const af=alerts.filter(a=>[5710,5712,5760,5763].includes(a.r)).length;
+      const as=alerts.filter(a=>[5715,5402].includes(a.r)).length;
+      return "<div class='wz-h'>Threat Hunting</div><div class='wz-sub'>Browse through your security alerts, identifying issues and threats in your environment</div>"
+      +"<div class='wz-cards'>"
+      +"<div class='wz-card'><small>Total alerts</small><b>"+alerts.length+"</b></div>"
+      +"<div class='wz-card'><small>Level 12 or above</small><b class='"+(a12?'sv-crit':'sv-ok')+"'>"+a12+"</b></div>"
+      +"<div class='wz-card'><small>Authentication failure</small><b class='"+(af>3?'sv-high':'')+"'>"+af+"</b></div>"
+      +"<div class='wz-card'><small>Authentication success</small><b class='sv-ok'>"+as+"</b></div>"
+      +"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts evolution <span class='wz-mono'>splitted by rule.level</span></div>"+evoBars(alerts)+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Security alerts <span class='wz-mono'>click a row to inspect the alert document</span></div>"+alertTable(alerts)+"</div>";
+    },
+    fim(){
+      const f=alerts.filter(a=>a.fim);
+      const add=f.filter(a=>a.fim.ac==='added').length,mod=f.filter(a=>a.fim.ac==='modified').length,del=f.filter(a=>a.fim.ac==='deleted').length;
+      return "<div class='wz-h'>File Integrity Monitoring</div><div class='wz-sub'>Alerts related to file changes, including permissions, content, ownership and attributes</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Total FIM events</small><b>"+f.length+"</b></div><div class='wz-card'><small>Added</small><b class='sv-ok'>"+add+"</b></div><div class='wz-card'><small>Modified</small><b class='sv-med'>"+mod+"</b></div><div class='wz-card'><small>Deleted</small><b class='sv-crit'>"+del+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>FIM events</div>"+alertTable(f,{fim:true})+"</div>";
+    },
+    vuln(){
+      const c={Critical:0,High:0,Medium:0,Low:0};VULNS.forEach(v=>c[v.sev]++);
+      let rows=VULNS.map(v=>"<tr><td class='wz-mono'>"+v.cve+"</td><td>"+v.pkg+"</td><td class='wz-mono'>"+v.vsn+"</td><td>"+v.a+"</td><td><b class='sv-"+(v.sev==='Critical'?'crit':v.sev==='High'?'high':'med')+"'>"+v.sev+"</b></td><td class='wz-mono'>"+v.cvss.toFixed(1)+"</td></tr>").join('');
+      return "<div class='wz-h'>Vulnerability Detection</div><div class='wz-sub'>Discover what applications in your environment are affected by well-known vulnerabilities</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Critical</small><b class='sv-crit'>"+c.Critical+"</b></div><div class='wz-card'><small>High</small><b class='sv-high'>"+c.High+"</b></div><div class='wz-card'><small>Medium</small><b class='sv-med'>"+c.Medium+"</b></div><div class='wz-card'><small>Low</small><b class='sv-low'>"+c.Low+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Vulnerabilities <span class='wz-mono'>wazuh-states-vulnerabilities-*</span></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>CVE ID</th><th>Package</th><th>Version</th><th>Agent</th><th>Severity</th><th>CVSS3</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    mitre(){
+      const tc={};alerts.forEach(a=>{if(a.m&&TQ[a.m]){tc[a.m]=(tc[a.m]||0)+1;}});
+      const tacs={};Object.keys(tc).forEach(m=>{const t=TQ[m][1];tacs[t]=(tacs[t]||0)+tc[m];});
+      const cards=Object.entries(tacs).sort((x,y)=>y[1]-x[1]).slice(0,4).map(t=>"<div class='wz-card'><small>"+t[0]+"</small><b>"+t[1]+"</b></div>").join('')||"<div class='wz-card'><small>No tactics detected</small><b>0</b></div>";
+      const rows=Object.entries(tc).sort((x,y)=>y[1]-x[1]).map(m=>{
+        const last=alerts.find(a=>a.m===m[0]);
+        return "<tr><td><span class='wz-tag'>"+m[0]+"</span></td><td>"+TQ[m[0]][0]+"</td><td>"+TQ[m[0]][1]+"</td><td><b>"+m[1]+"</b></td><td class='wz-mono'>"+fmtT(last.t)+"</td></tr>";}).join('');
+      return "<div class='wz-h'>MITRE ATT&CK</div><div class='wz-sub'>Explore security alerts mapped to adversary tactics and techniques</div>"
+      +"<div class='wz-cards'>"+cards+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Techniques by alert count</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Technique ID</th><th>Technique</th><th>Tactic</th><th>Alerts</th><th>Last seen</th></tr></thead><tbody>"+(rows||"<tr><td colspan='5' class='wz-empty'>No technique activity</td></tr>")+"</tbody></table></div></div>";
+    },
+    sca(){
+      const rows=SCA.map(s=>{const tot=s.pass+s.fail;const sc=Math.round(s.pass/tot*100);
+        return "<tr><td>"+s.p+"</td><td>"+s.a+"</td><td class='sv-ok'><b>"+s.pass+"</b></td><td class='sv-crit'><b>"+s.fail+"</b></td><td class='wz-mono'>"+s.na+"</td><td><div style='display:flex;align-items:center;gap:8px'><div class='wz-bar' style='flex:1'><i style='width:"+sc+"%;background:"+(sc>75?'#007871':sc>55?'#d6a100':'#bd271e')+"'></i></div><b>"+sc+"%</b></div></td></tr>";}).join('');
+      return "<div class='wz-h'>Configuration Assessment</div><div class='wz-sub'>Scan your assets as part of a configuration assessment audit (CIS benchmarks)</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Policies</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Policy</th><th>Agent</th><th>Passed</th><th>Failed</th><th>N/A</th><th>Score</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    malware(){
+      const m=alerts.filter(a=>(a.g||'').match(/malware|virustotal|ransomware|rootcheck/));
+      return "<div class='wz-h'>Malware Detection</div><div class='wz-sub'>Check indicators of compromise triggered by malware infections or cyberattacks</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Malware alerts</small><b class='"+(m.length?'sv-crit':'sv-ok')+"'>"+m.length+"</b></div><div class='wz-card'><small>Rootcheck events</small><b>0</b></div><div class='wz-card'><small>VirusTotal hits</small><b class='"+(m.some(x=>x.r===87105)?'sv-crit':'sv-ok')+"'>"+m.filter(x=>x.r===87105).length+"</b></div><div class='wz-card'><small>Quarantined files</small><b>"+m.filter(x=>x.r===87105).length+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Malware-related alerts</div>"+alertTable(m)+"</div>";
+    },
+    pci(){
+      const p=alerts.filter(a=>a.pci);
+      return "<div class='wz-h'>PCI DSS</div><div class='wz-sub'>Global requirements for protecting cardholder data — alerts mapped to PCI DSS controls</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts with PCI DSS requirements</div>"+alertTable(p,{pci:true})+"</div>";
+    },
+    gdpr(){
+      const g=alerts.filter(a=>a.gd);
+      return "<div class='wz-h'>GDPR</div><div class='wz-sub'>General Data Protection Regulation — alerts mapped to GDPR articles</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts with GDPR tags</div>"+alertTable(g,{gdpr:true})+"</div>";
+    },
+    agents(){
+      const act=AGENTS.filter(a=>a.st==='active').length,dis=AGENTS.filter(a=>a.st==='disconnected').length,iso=AGENTS.filter(a=>a.st==='isolated').length;
+      const rows=AGENTS.map(a=>"<tr><td class='wz-mono'>"+a.id+"</td><td><b>"+a.name+"</b></td><td class='wz-mono'>"+a.ip+"</td><td>"+tags(a.grp)+"</td><td>"+a.os+"</td><td class='wz-mono'>"+a.ver+"</td><td><span class='wz-pill "+(a.st==='active'?'act':a.st==='isolated'?'iso':'dis')+"'>"+a.st+"</span></td></tr>").join('');
+      return "<div class='wz-h'>Endpoints summary</div><div class='wz-sub'>Manage your agents, group them and check their status</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Active</small><b class='sv-ok'>"+act+"</b></div><div class='wz-card'><small>Disconnected</small><b class='"+(dis?'sv-crit':'sv-ok')+"'>"+dis+"</b></div><div class='wz-card'><small>Isolated (AR)</small><b class='"+(iso?'sv-med':'sv-ok')+"'>"+iso+"</b></div><div class='wz-card'><small>Coverage</small><b>"+Math.round(act/AGENTS.length*100)+"%</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Agents <button class='wz-input' style='width:auto;cursor:pointer;color:#006bb4;border-color:#006bb4;font-weight:600' onclick=\"document.getElementById('contact').scrollIntoView({behavior:'smooth'})\">⊕ Deploy new agent</button></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>ID</th><th>Name</th><th>IP</th><th>Group(s)</th><th>Operating system</th><th>Version</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    rules(){
+      return "<div class='wz-h'>Rules</div><div class='wz-sub'>Query and manage the detection ruleset (Wazuh Query Language)</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Ruleset <input class='wz-input' id='wzRuleFilter' placeholder='Filter rules… e.g. sshd'></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>ID</th><th>Description</th><th>Groups</th><th>Level</th><th>File</th></tr></thead><tbody id='wzRuleRows'>"+ruleRows('')+"</tbody></table></div></div>";
+    },
+    status(){
+      const rows=DAEMONS.map(d=>"<tr><td class='wz-mono'>"+d+"</td><td><span class='wz-pill act'>running</span></td></tr>").join('');
+      return "<div class='wz-h'>Status</div><div class='wz-sub'>Wazuh server daemons and analysis statistics</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Events processed (24h)</small><b>2,418,907</b></div><div class='wz-card'><small>Events per second</small><b>"+(390+Math.floor(Math.random()*120))+"</b></div><div class='wz-card'><small>Alerts written</small><b>"+alerts.length+"</b></div><div class='wz-card'><small>Cluster</small><b class='sv-ok'>healthy</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Daemons</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Daemon</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    }
+  };
+  function ruleRows(q){
+    q=q.toLowerCase();
+    return RULES.filter(r=>!q||String(r.id).includes(q)||r.d.toLowerCase().includes(q)||r.g.includes(q))
+      .map(r=>"<tr><td class='wz-mono'>"+r.id+"</td><td>"+esc(r.d)+"</td><td>"+tags(r.g)+"</td><td>"+lvlBadge(r.l)+"</td><td class='wz-mono'>"+r.f+"</td></tr>").join('')
+      ||"<tr><td colspan='5' class='wz-empty'>No rules match your filter.</td></tr>";
+  }
+
+  function render(){
+    main.innerHTML=PAGES[page]();
+    if(urlEl)urlEl.textContent='🔒 https://siem.demo.obserion.local/app/wz-'+page+' — Wazuh v4.12';
+    const rf=document.getElementById('wzRuleFilter');
+    if(rf)rf.addEventListener('input',()=>{document.getElementById('wzRuleRows').innerHTML=ruleRows(rf.value);});
+  }
+
+  /* ---------- interactions ---------- */
+  navEl.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-page]');if(!a)return;
+    navEl.querySelectorAll('a').forEach(x=>x.classList.remove('on'));
+    a.classList.add('on');page=a.dataset.page;render();
+    app.classList.remove('nav-open');
+  });
+  document.getElementById('wzBurger').addEventListener('click',()=>app.classList.toggle('nav-open'));
+  main.addEventListener('click',e=>{
+    const tr=e.target.closest('tr.click');if(!tr)return;
+    const u=+tr.dataset.u;
+    expanded.has(u)?expanded.delete(u):expanded.add(u);
+    render();
+  });
+
+  function toast(title,sub,warn){
+    const t=document.createElement('div');
+    t.className='wz-toast'+(warn?' warn':'');
+    t.innerHTML='<b>'+title+'</b><small>'+sub+'</small>';
+    toasts.appendChild(t);
+    timers.push(setTimeout(()=>{t.style.transition='opacity .5s';t.style.opacity='0';timers.push(setTimeout(()=>t.remove(),520));},5200));
+  }
+  function addAlert(o){o.t=Date.now();o._new=true;alerts.unshift(mk(o));render();}
+
+  /* ---------- attack scenarios ---------- */
+  const SC={
+    brute:{go:'th',steps:[
+      [400,{a:'web-srv02',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [1600,{a:'web-srv02',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [2800,{a:'web-srv02',r:5712,l:10,d:'sshd: SSHD brute force trying to get access to the system',m:'T1110',g:'sshd,authentication_failures',pci:'11.4,10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [4200,{a:'web-srv02',r:5763,l:10,d:'sshd: brute force attack — 40+ failures from 185.220.101.45',m:'T1110',g:'sshd,authentication_failures',pci:'11.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
+    ],ar:[
+      [5200,'Active response executed','firewall-drop: 185.220.101.45 blocked for 600s',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'SOC escalation','Analyst notified — case #2640 opened',null]
+    ],end:7000},
+    ransom:{go:'fim',iso:'hr-lap-07',steps:[
+      [400,{a:'hr-lap-07',r:554,l:5,d:'File added to the system',g:'ossec,syscheck',pci:'11.5',fim:{p:'C:\\Users\\mira\\AppData\\Local\\Temp\\svchost.exe',ac:'added'},loc:'syscheck'}],
+      [1600,{a:'hr-lap-07',r:87105,l:12,d:'VirusTotal: Alert - file detected as malicious by multiple engines',m:'T1486',g:'virustotal,malware',pci:'5.1,11.4',loc:'virustotal'}],
+      [2900,{a:'hr-lap-07',r:550,l:7,d:'Integrity checksum changed — 14 files in C:\\Users\\mira\\Documents',m:'T1486',g:'ossec,syscheck,ransomware',pci:'11.5',fim:{p:'C:\\Users\\mira\\Documents\\Q2_report.xlsx.lockbit',ac:'modified'},loc:'syscheck'}],
+      [4100,{a:'hr-lap-07',r:100210,l:12,d:'Custom: Mass file rename detected - possible ransomware activity',m:'T1486',g:'local,syscheck,ransomware',pci:'11.5',loc:'syscheck'}],
+      [5200,{a:'hr-lap-07',r:100211,l:12,d:'Custom: Shadow copy deletion attempt detected (vssadmin)',m:'T1490',g:'local,windows,ransomware',loc:'EventChannel'}]
+    ],ar:[
+      [6000,'Active response executed','host-isolation: hr-lap-07 quarantined from network',null],
+      [6900,'Process terminated','kill-process: PID 4412 (svchost.exe) on hr-lap-07',null],
+      [7700,'SOC escalation','Incident #2641 opened — analyst engaged',null]
+    ],end:8400},
+    recon:{go:'th',steps:[
+      [400,{a:'dc-srv01',r:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',m:'T1046',g:'ossec',pci:'10.2.7',loc:'netstat listening ports'}],
+      [1700,{a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',m:'T1595',g:'web,accesslog',pci:'6.5',loc:'/var/log/nginx/access.log'}],
+      [3000,{a:'web-srv02',r:31151,l:10,d:'Multiple web server 400 error codes from same source ip (91.240.118.20)',m:'T1595',g:'web,web_scan,recon',pci:'11.4',loc:'/var/log/nginx/access.log'}],
+      [4300,{a:'dc-srv01',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
+    ],ar:[
+      [5300,'Active response executed','firewall-drop: 91.240.118.20 added to blocklist',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'Perimeter hardened','FortiGate: source ASN rate-limited',null]
+    ],end:7000}
+  };
+
+  function setBtns(dis){btns.forEach(b=>b.disabled=dis);}
+  function goPage(p){navEl.querySelectorAll('a').forEach(x=>x.classList.toggle('on',x.dataset.page===p));page=p;render();}
+
+  function run(key){
+    if(running)return;
+    running=true;setBtns(true);
+    const sc=SC[key];
+    statusEl.className='demo-status attack';statusEl.textContent='● ATTACK IN PROGRESS';
+    goPage(sc.go);
+    sc.steps.forEach(s=>timers.push(setTimeout(()=>addAlert(Object.assign({},s[1])),s[0])));
+    if(sc.iso)timers.push(setTimeout(()=>{const ag=AGENTS.find(a=>a.name===sc.iso);if(ag)ag.st='isolated';render();},5800));
+    sc.ar.forEach(s=>timers.push(setTimeout(()=>{toast(s[1],s[2],s[1].indexOf('escalation')<0);if(s[3])addAlert(Object.assign({},s[3]));},s[0])));
+    timers.push(setTimeout(()=>{
+      statusEl.className='demo-status contained';
+      statusEl.textContent='✓ THREAT CONTAINED · MTTD '+(Math.random()*3+1.2).toFixed(1)+'s';
+      running=false;setBtns(false);
+    },sc.end));
+  }
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];running=false;
+    AGENTS.forEach(a=>{a.st=a.name==='mail-srv01'?'disconnected':'active';});
+    toasts.innerHTML='';seed();
+    statusEl.className='demo-status secure';statusEl.textContent='● SYSTEM SECURE';
+    setBtns(false);goPage('home');
+  }
+
+  btns.forEach(b=>b.addEventListener('click',()=>run(b.dataset.scenario)));
+  resetBtn.addEventListener('click',reset);
+  seed();render();
+})();
 
 /* HERO PARTICLE NETWORK (mouse-reactive) */
 const canvas=document.getElementById('hero-canvas');
