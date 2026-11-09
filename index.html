@@ -1,11 +1,34 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='sr-Latn'>
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<title>Obserion — Managed SOC & Wazuh SIEM Deployment</title>
-<meta name='description' content='Obserion deploys Wazuh SIEM and runs your 24/7 Security Operations Center: threat detection, log analysis, MITRE ATT&CK mapped alerts, vulnerability detection, compliance reporting, and incident response — plus Fortinet firewall expertise.'>
+<title>Obserion — Implementacija Wazuh SIEM-a i upravljano praćenje</title>
+<meta name='description' content='Implementacija Wazuh SIEM-a na vašoj infrastrukturi i upravljano praćenje za mala i srednja preduzeća: automatsko alarmiranje, pregled alarma radnim danima, mesečni bezbednosni izveštaj i ekspertiza za Fortinet firewall.'>
 <meta name='theme-color' content='#030613'>
+<link rel='icon' type='image/png' href='logo.png'>
+<link rel='apple-touch-icon' href='logo.png'>
+<meta property='og:type' content='website'>
+<meta property='og:title' content='Obserion — Implementacija Wazuh SIEM-a i upravljano praćenje'>
+<meta property='og:description' content='Implementacija Wazuh SIEM-a na vašoj infrastrukturi i upravljano praćenje: automatsko alarmiranje, pregled alarma radnim danima, mesečni bezbednosni izveštaj i ekspertiza za Fortinet firewall.'>
+<meta property='og:image' content='logo.png'>
+<meta property='og:locale' content='sr_Latn_RS'>
+<meta name='twitter:card' content='summary'>
+<meta name='twitter:title' content='Obserion — Implementacija Wazuh SIEM-a i upravljano praćenje'>
+<meta name='twitter:description' content='Implementacija Wazuh SIEM-a na vašoj infrastrukturi i upravljano praćenje za mala i srednja preduzeća.'>
+<script type='application/ld+json'>
+{
+  "@context":"https://schema.org",
+  "@type":"ProfessionalService",
+  "name":"Obserion",
+  "inLanguage":"sr-Latn",
+  "description":"Implementacija Wazuh SIEM-a na infrastrukturi klijenta i upravljano praćenje: automatsko alarmiranje, pregled alarma radnim danima, mesečni bezbednosni izveštaji i ekspertiza za Fortinet firewall.",
+  "email":"info@obserion.com",
+  "address":{"@type":"PostalAddress","addressLocality":"Pirot","addressCountry":"RS"},
+  "areaServed":"Srbija i Evropa",
+  "knowsAbout":["Wazuh SIEM","Detekcija pretnji","Upravljano praćenje","Fortinet","PCI DSS","GDPR"]
+}
+</script>
 <link rel='preconnect' href='https://fonts.googleapis.com'>
 <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@600;700;800&display=swap' rel='stylesheet'>
@@ -205,6 +228,10 @@ button,input,select,textarea{font:inherit}
 .nav-links a.active{color:var(--cyan)}
 .nav-links a.active:after{content:'';position:absolute;left:12px;right:12px;bottom:2px;height:1px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 .nav-cta{display:flex;align-items:center;gap:10px}
+.lang{display:flex;gap:2px;border:1px solid var(--border-soft);border-radius:12px;padding:3px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em}
+.lang a{padding:5px 9px;border-radius:9px;color:var(--muted);transition:.25s ease}
+.lang a:hover{color:var(--text)}
+.lang a.on{background:rgba(0,229,255,.12);color:var(--cyan)}
 .hamburger{display:none;width:44px;height:44px;border-radius:13px;border:1px solid var(--border-soft);background:rgba(255,255,255,.04);cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:5px}
 .hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:.3s ease}
 .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -431,7 +458,7 @@ section{padding:112px 0;position:relative}
 .health-card:hover{border-color:var(--border);background:rgba(0,229,255,.05)}
 .health-card b{font-family:Syne,sans-serif;font-size:30px}.health-card small{display:block;color:var(--muted);margin-top:4px}
 .soc{position:relative;overflow:hidden}
-.soc:before{content:'SOC';position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-family:Syne,sans-serif;font-weight:800;font-size:30vw;color:rgba(0,229,255,.025);letter-spacing:-.12em;z-index:-1}
+.soc:before{content:'SIEM';position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-family:Syne,sans-serif;font-weight:800;font-size:30vw;color:rgba(0,229,255,.025);letter-spacing:-.12em;z-index:-1}
 .soc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);border-radius:30px;overflow:hidden}
 .soc-card{background:rgba(7,16,34,.82);padding:32px;min-height:240px;position:relative;transition:.35s ease;overflow:hidden}
 .soc-card:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(0,229,255,.12),transparent 45%);opacity:0;transition:.35s ease}
@@ -455,12 +482,13 @@ section{padding:112px 0;position:relative}
 .event:nth-child(3):before{background:var(--yellow)}
 .event:nth-child(4):before{background:var(--green)}
 .event small{font-family:'Space Mono',monospace;color:var(--dim);font-size:10px;text-transform:uppercase}.event strong{display:block;margin:6px 0;color:var(--text)}.event p{color:var(--muted);font-size:13px;line-height:1.55}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:start;max-width:940px;margin-inline:auto}
 .price-card{padding:34px}
 .price-card.featured{border-color:rgba(0,229,255,.55);box-shadow:var(--glow)}
 .price-card.featured:before{opacity:.6}
 .badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(0,229,255,.09);border:1px solid var(--border);font-family:'Space Mono',monospace;color:var(--cyan);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
 .price{font-family:Syne,sans-serif;font-size:56px;font-weight:800;letter-spacing:-.07em;margin:20px 0 4px}.price small{font-family:Inter,sans-serif;font-size:16px;color:var(--muted);font-weight:400;letter-spacing:0}
+.price-fine{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
 .price-desc{color:var(--muted);font-size:14px;line-height:1.65;margin-bottom:24px}
 .features{list-style:none;display:grid;gap:11px;margin:24px 0 30px}
 .features li{color:var(--muted);font-size:14px;display:flex;gap:10px;align-items:flex-start}.features li:before{content:'✓';color:var(--cyan);font-weight:700;flex:none}
@@ -495,6 +523,7 @@ section{padding:112px 0;position:relative}
 .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2300e5ff' d='M6 8 0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
 .field option{background:#0b1428;color:var(--text)}
 .success{display:none;color:var(--green);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.08em}
+.form-consent{color:var(--dim);font-size:12px;line-height:1.6}.form-consent a{color:var(--cyan)}
 footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,6,19,.55)}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px;margin-bottom:36px}
 .footer-copy,.footer p,.footer-links a{color:var(--muted);font-size:13px;line-height:1.7}
@@ -640,12 +669,12 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <div class='cursor-glow' id='cursorGlow'></div>
 <div class='scroll-progress' id='scrollProgress'></div>
 
-<div class='preloader' id='preloader' aria-label='Loading Obserion website'>
+<div class='preloader' id='preloader' aria-label='Učitavanje Obserion sajta'>
   <div class='preloader-grid'></div>
   <div class='loader-card'>
     <div class='loader-scan'></div>
     <div class='loader-brand'><span class='loader-mark'></span>Obserion<span class='grad'>.</span></div>
-    <div class='loader-status'><span>Initializing SOC</span><span id='loaderPercent'>0%</span></div>
+    <div class='loader-status'><span>Pokretanje SIEM-a</span><span id='loaderPercent'>0%</span></div>
     <div class='loader-terminal'>
       <span>Starting wazuh-manager <b>OK</b></span>
       <span>Connecting agents <b>OK</b></span>
@@ -659,65 +688,67 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='nav-inner'>
     <a class='logo' href='#hero'><span class='logo-dot'></span>Obserion<span class='grad'>.</span></a>
     <ul class='nav-links' id='navLinks'>
-      <li><a href='#services'>Services</a></li>
-      <li><a href='#soc'>SOC</a></li>
+      <li><a href='#services'>Usluge</a></li>
+      <li><a href='#soc'>Kako funkcioniše</a></li>
       <li><a href='#demo'>Demo</a></li>
       <li><a href='#stack'>Wazuh</a></li>
-      <li><a href='#pricing'>Pricing</a></li>
-      <li><a href='#faq'>FAQ</a></li>
+      <li><a href='#pricing'>Cenovnik</a></li>
+      <li><a href='#faq'>Pitanja</a></li>
     </ul>
     <div class='nav-cta'>
-      <a class='btn btn-primary' data-magnetic href='#contact'><span>Get Protected</span><span class='arrow'>→</span></a>
-      <button class='hamburger' id='hamburger' aria-label='Open menu'><span></span><span></span><span></span></button>
+      <div class='lang'><a href='index.html' class='on'>SR</a><a href='en.html'>EN</a></div>
+      <a class='btn btn-primary' data-magnetic href='#contact'><span>Zaštitite se</span><span class='arrow'>→</span></a>
+      <button class='hamburger' id='hamburger' aria-label='Otvori meni'><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
 
 <div class='mobile-drawer' id='mobileDrawer'>
-  <a href='#services'>Services</a>
-  <a href='#soc'>SOC</a>
+  <a href='#services'>Usluge</a>
+  <a href='#soc'>Kako funkcioniše</a>
   <a href='#demo'>Demo</a>
   <a href='#stack'>Wazuh</a>
-  <a href='#pricing'>Pricing</a>
-  <a href='#faq'>FAQ</a>
-  <a href='#contact'>Contact</a>
+  <a href='#pricing'>Cenovnik</a>
+  <a href='#faq'>Pitanja</a>
+  <a href='#contact'>Kontakt</a>
+  <a class='drawer-lang' href='en.html'>EN · English</a>
 </div>
 
 <header class='hero' id='hero'>
   <canvas id='hero-canvas'></canvas>
   <div class='container hero-layout'>
     <div>
-      <div class='hero-badge reveal'><span class='live-dot'></span>Wazuh SIEM · SOC-as-a-Service · 24/7</div>
-      <h1 class='reveal delay-1'>Threats <span class='type-box'><span class='type-sizer' aria-hidden='true'>contained._</span><span class='type-live'><span class='grad' id='typeWord'>detected.</span><span class='type-cursor'>_</span></span></span><span class='outline'>Before damage.</span></h1>
-      <p class='reveal delay-2'>Obserion deploys <strong style='color:var(--text)'>Wazuh SIEM</strong> into your environment and operates it as your outsourced Security Operations Center — agent rollout, log collection, custom detection rules, MITRE ATT&CK mapped alerts, vulnerability detection, and 24/7 eyes on your infrastructure. No security team to hire. No SIEM license to pay.</p>
+      <div class='hero-badge reveal'><span class='live-dot'></span>Wazuh SIEM · Vaša infrastruktura · Upravljano praćenje</div>
+      <h1 class='reveal delay-1'>Pretnje <span class='type-box'><span class='type-sizer' aria-hidden='true'>zaustavljene._</span><span class='type-live'><span class='grad' id='typeWord'>otkrivene.</span><span class='type-cursor'>_</span></span></span><span class='outline'>Pre štete.</span></h1>
+      <p class='reveal delay-2'>Obserion implementira <strong style='color:var(--text)'>Wazuh SIEM</strong> na vašem serveru ili u vašem cloud nalogu i, ako želite, nastavlja da ga prati za vas: uvođenje agenata, prikupljanje logova, prilagođena pravila, alarmi mapirani na MITRE ATT&CK, detekcija ranjivosti i mesečni bezbednosni izveštaj. Bez SIEM licence. Vaši logovi ostaju kod vas.</p>
       <div class='hero-actions reveal delay-3'>
-        <a href='#contact' class='btn btn-primary' data-magnetic><span>Get a SOC Quote</span><span class='arrow'>→</span></a>
-        <a href='#soc' class='btn btn-ghost' data-magnetic>See the SOC</a>
+        <a href='#contact' class='btn btn-primary' data-magnetic><span>Zatražite ponudu</span><span class='arrow'>→</span></a>
+        <a href='#soc' class='btn btn-ghost' data-magnetic>Kako funkcioniše</a>
       </div>
       <div class='trust-row reveal delay-3'>
-        <span><span class='tick'>✓</span> Open-source SIEM — €0 license</span>
-        <span><span class='tick'>✓</span> MITRE ATT&CK aligned</span>
-        <span><span class='tick'>✓</span> No long-term lock-in</span>
+        <span><span class='tick'>✓</span> Open-source SIEM — licenca €0</span>
+        <span><span class='tick'>✓</span> Usklađeno sa MITRE ATT&CK</span>
+        <span><span class='tick'>✓</span> Bez dugoročnog vezivanja</span>
       </div>
       <div class='stats-row reveal delay-3'>
-        <div class='stat'><div class='stat-num'>24<span>/7</span></div><div class='stat-label'>SOC Coverage</div></div>
-        <div class='stat'><div class='stat-num'>€<span>0</span></div><div class='stat-label'>SIEM License Cost</div></div>
-        <div class='stat'><div class='stat-num' data-count='90' data-suffix='%'>0<span>%</span></div><div class='stat-label'>Alert Noise Filtered</div></div>
-        <div class='stat'><div class='stat-num'>&lt;15<span>min</span></div><div class='stat-label'>Critical Alert Triage</div></div>
+        <div class='stat'><div class='stat-num'>24<span>/7</span></div><div class='stat-label'>Automatsko alarmiranje</div></div>
+        <div class='stat'><div class='stat-num'>€<span>0</span></div><div class='stat-label'>Cena SIEM licence</div></div>
+        <div class='stat'><div class='stat-num'>1<span style='font-size:17px'> radni dan</span></div><div class='stat-label'>Pregled kritičnih alarma od analitičara</div></div>
+        <div class='stat'><div class='stat-num' style='font-size:26px;line-height:38px'>Mesečno</div><div class='stat-label'>Bezbednosni izveštaj jednostavnim jezikom</div></div>
       </div>
     </div>
 
     <div class='command reveal delay-2' id='heroCommand'>
       <div class='window-top'>
         <div class='dots'><span></span><span></span><span></span></div>
-        <div class='command-title'>Obserion SOC · Wazuh Console</div>
+        <div class='command-title'>Obserion · Wazuh konzola</div>
       </div>
       <div class='command-grid'>
-        <div class='metric'><small>Agents Online</small><b style='color:var(--green)'><span data-count='132'>0</span></b></div>
-        <div class='metric'><small>Events / sec</small><b id='epsMetric'>418</b></div>
+        <div class='metric'><small>Agenti online</small><b style='color:var(--green)'><span data-count='12'>0</span></b></div>
+        <div class='metric'><small>Događaja / sek</small><b id='epsMetric'>418</b></div>
         <div class='chart'>
           <div style='display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:14px'>
-            <span>Live event ingestion</span><span style='color:var(--green)'>● wazuh-manager: active</span>
+            <span>Prijem događaja uživo</span><span style='color:var(--green)'>● wazuh-manager: aktivan</span>
           </div>
           <div class='bars'>
             <i style='height:35%;animation-delay:.05s'></i><i style='height:52%;animation-delay:.1s'></i><i style='height:68%;animation-delay:.15s'></i><i style='height:44%;animation-delay:.2s'></i><i style='height:80%;animation-delay:.25s'></i><i class='alert' style='height:94%;animation-delay:.3s'></i><i style='height:72%;animation-delay:.35s'></i><i style='height:88%;animation-delay:.4s'></i><i style='height:61%;animation-delay:.45s'></i><i style='height:78%;animation-delay:.5s'></i>
@@ -734,8 +765,8 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 
 <div class='strip'>
   <div class='strip-track'>
-    <span>Wazuh SIEM</span><span>SOC-as-a-Service</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Incident Response</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
-    <span>Wazuh SIEM</span><span>SOC-as-a-Service</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Incident Response</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
+    <span>Wazuh SIEM</span><span>Upravljano praćenje</span><span>Detekcija pretnji</span><span>MITRE ATT&CK</span><span>Praćenje integriteta fajlova</span><span>Detekcija ranjivosti</span><span>Vaša infrastruktura</span><span>Usklađenost · PCI DSS · GDPR</span><span>Fortinet ekspertiza</span>
+    <span>Wazuh SIEM</span><span>Upravljano praćenje</span><span>Detekcija pretnji</span><span>MITRE ATT&CK</span><span>Praćenje integriteta fajlova</span><span>Detekcija ranjivosti</span><span>Vaša infrastruktura</span><span>Usklađenost · PCI DSS · GDPR</span><span>Fortinet ekspertiza</span>
   </div>
 </div>
 
@@ -743,28 +774,28 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container'>
     <div class='split-head'>
       <div>
-        <div class='kicker reveal'>Services</div>
-        <h2 class='section-title reveal delay-1'>Enterprise-grade SOC — <span>at SMB cost.</span></h2>
+        <div class='kicker reveal'>Usluge</div>
+        <h2 class='section-title reveal delay-1'>Vidljivost enterprise nivoa — <span>po ceni za mala i srednja preduzeća.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>One core offer: we deploy Wazuh SIEM in your environment and operate it as your Security Operations Center — detection, triage, response, and reporting. Firewall and Fortinet expertise included where it matters.</p>
+      <p class='section-copy reveal delay-2'>Jedna ključna ponuda: implementiramo Wazuh SIEM na vašoj infrastrukturi i, ako želite, nastavljamo da ga pratimo — detekcija, pregled alarma, podešavanje i izveštavanje. Ekspertiza za firewall i Fortinet uključena tamo gde je bitna.</p>
     </div>
 
     <div class='services-grid'>
       <article class='card service tilt reveal'>
         <div class='num'>01</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M4 5h16v5c0 5.2-3.4 9.4-8 11-4.6-1.6-8-5.8-8-11V5z' stroke-width='1.7'/><path d='M8 12h8M8 15h5M8 9h8' stroke-width='1.7'/></svg></div>
-        <h3>Wazuh SIEM Deployment</h3><p>Full Wazuh rollout: manager, indexer, and dashboard installation, agent deployment across servers and endpoints, log source onboarding, custom rules and decoders, and noise tuning — sized for your environment.</p>
+        <h3>Implementacija Wazuh SIEM-a</h3><p>Kompletno uvođenje Wazuh platforme: instalacija managera, indexera i dashboarda, raspoređivanje agenata na servere i računare, povezivanje izvora logova, prilagođena pravila i dekoderi, smanjenje šuma — dimenzionisano za vaše okruženje.</p>
       </article>
       <article class='card service tilt reveal delay-1'>
         <div class='num'>02</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><circle cx='12' cy='12' r='8' stroke-width='1.7'/><circle cx='12' cy='12' r='3' stroke-width='1.7'/><path d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke-width='1.7'/></svg></div>
-        <h3>Managed SOC · 24/7</h3><p>We operate your Wazuh SIEM as a service: continuous alert monitoring, triage, escalation of real threats, monthly reporting, and ongoing rule tuning — your SOC team, without the hiring.</p>
+        <h3>Upravljano praćenje</h3><p>Automatsko alarmiranje, pregled alarma od strane analitičara radnim danima, eskalacija stvarnih pretnji, kontinuirano podešavanje pravila, ažuriranje platforme i mesečni izveštaj.</p>
       </article>
       <article class='card service tilt reveal delay-2'>
         <div class='num'>03</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M12 3l7 3v5c0 5-3.3 8.7-7 10-3.7-1.3-7-5-7-10V6l7-3z' stroke-width='1.7'/><path d='M8.5 12l2.4 2.4L16 9.2' stroke-width='1.7'/></svg></div>
-        <h3>Threat Detection & Response</h3><p>MITRE ATT&CK mapped detections, brute-force and lateral-movement alerts, file integrity monitoring, vulnerability detection, and active response that contains threats automatically.</p>
+        <h3>Detekcija i odgovor na pretnje</h3><p>Detekcije mapirane na MITRE ATT&CK, alarmi za brute-force i lateralno kretanje, praćenje integriteta fajlova i detekcija ranjivosti. Active response je dostupan kao opcija i uključuje se isključivo na vaš pisani zahtev.</p>
       </article>
       <article class='card service tilt reveal delay-3'>
         <div class='num'>04</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><rect x='3' y='5' width='7' height='5' stroke-width='1.7'/><rect x='14' y='5' width='7' height='5' stroke-width='1.7'/><rect x='8.5' y='14' width='7' height='5' stroke-width='1.7'/><path d='M6.5 10v2h5.5v2M17.5 10v2H12v2' stroke-width='1.7'/></svg></div>
-        <h3>Firewall & Fortinet</h3><p>FortiGate configuration, VPN, segmentation, IPS profiles, and firewall log integration into Wazuh — so your network layer feeds the same SOC pipeline as your endpoints.</p>
+        <h3>Firewall i Fortinet</h3><p>Konfiguracija FortiGate uređaja, VPN, segmentacija, IPS profili i integracija firewall logova u Wazuh — tako da mrežni sloj ulazi u isti sistem praćenja kao i vaši računari.</p>
       </article>
     </div>
   </div>
@@ -773,26 +804,26 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <section id='stack'>
   <div class='container stack'>
     <div class='card stack-panel reveal'>
-      <div class='kicker'>Wazuh Deployment</div>
-      <h2 class='section-title'>From zero to <span>operational SIEM.</span></h2>
-      <p class='section-copy' style='margin-top:22px'>A proven rollout path: design the architecture, deploy the stack, tune detections to your environment, then hand it to our 24/7 SOC — or to your team, fully documented.</p>
+      <div class='kicker'>Implementacija Wazuh-a</div>
+      <h2 class='section-title'>Od nule do <span>operativnog SIEM-a.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>Proveren put uvođenja: projektujemo arhitekturu, implementiramo platformu na vašoj infrastrukturi, podešavamo detekcije za vaše okruženje, a zatim je uz punu dokumentaciju predajemo vašem timu — ili je preuzima upravljano praćenje.</p>
       <div class='pipeline'>
-        <div class='pipe'><div class='pipe-index'>01</div><div><strong>Scope & Design</strong><small>Sizing, log sources, single-node or cluster architecture, retention planning.</small></div><span class='pipe-tag'>Week 1</span></div>
-        <div class='pipe'><div class='pipe-index'>02</div><div><strong>Deploy</strong><small>Wazuh manager, indexer, dashboard, agent rollout, firewall and cloud log onboarding.</small></div><span class='pipe-tag'>Week 1–2</span></div>
-        <div class='pipe'><div class='pipe-index'>03</div><div><strong>Tune</strong><small>Custom rules and decoders, CDB lists, noise reduction, MITRE ATT&CK mapping.</small></div><span class='pipe-tag'>Week 2–3</span></div>
-        <div class='pipe'><div class='pipe-index'>04</div><div><strong>Operate</strong><small>24/7 monitoring, triage, active response, monthly reports — SOC goes live.</small></div><span class='pipe-tag'>Live</span></div>
+        <div class='pipe'><div class='pipe-index'>01</div><div><strong>Analiza i dizajn</strong><small>Dimenzionisanje, izvori logova, arhitektura sa jednim čvorom ili klaster, planiranje retencije.</small></div><span class='pipe-tag'>Nedelja 1</span></div>
+        <div class='pipe'><div class='pipe-index'>02</div><div><strong>Implementacija</strong><small>Wazuh manager, indexer, dashboard, uvođenje agenata, povezivanje firewall i cloud logova.</small></div><span class='pipe-tag'>Nedelja 1–2</span></div>
+        <div class='pipe'><div class='pipe-index'>03</div><div><strong>Podešavanje</strong><small>Prilagođena pravila i dekoderi, CDB liste, smanjenje šuma, mapiranje na MITRE ATT&CK.</small></div><span class='pipe-tag'>Nedelja 2–3</span></div>
+        <div class='pipe'><div class='pipe-index'>04</div><div><strong>Rad</strong><small>Primopredaja vašem timu, ili počinje upravljano praćenje.</small></div><span class='pipe-tag'>Uživo</span></div>
       </div>
     </div>
 
     <div class='card stack-panel reveal delay-1'>
-      <div class='kicker'>Out of the Box</div>
-      <h3 style='font-family:Syne,sans-serif;font-size:34px;letter-spacing:-.05em;margin-bottom:12px'>What Wazuh watches for you.</h3>
-      <p class='section-copy'>One open-source platform, no license fees — covering the capabilities SMBs usually pay enterprise prices for.</p>
+      <div class='kicker'>Odmah dostupno</div>
+      <h3 style='font-family:Syne,sans-serif;font-size:34px;letter-spacing:-.05em;margin-bottom:12px'>Šta Wazuh prati za vas.</h3>
+      <p class='section-copy'>Jedna open-source platforma, bez troškova licence — pokriva mogućnosti koje mala i srednja preduzeća obično plaćaju po enterprise cenama.</p>
       <div class='health'>
-        <div class='health-card'><b>FIM</b><small>File integrity monitoring</small></div>
-        <div class='health-card'><b>Vulns</b><small>CVE detection on every agent</small></div>
-        <div class='health-card'><b>SCA</b><small>Configuration assessment & hardening</small></div>
-        <div class='health-card'><b>Compliance</b><small>PCI DSS · GDPR · ISO 27001 reports</small></div>
+        <div class='health-card'><b>FIM</b><small>Praćenje integriteta fajlova</small></div>
+        <div class='health-card'><b>Vulns</b><small>Detekcija CVE ranjivosti na svakom agentu</small></div>
+        <div class='health-card'><b>SCA</b><small>Procena konfiguracije i hardening</small></div>
+        <div class='health-card'><b>Usklađenost</b><small>Izveštaji: PCI DSS · GDPR · ISO 27001</small></div>
       </div>
     </div>
   </div>
@@ -802,54 +833,54 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container'>
     <div class='split-head'>
       <div>
-        <div class='kicker reveal'>Obserion SOC</div>
-        <h2 class='section-title reveal delay-1'>SOC-as-a-Service, <span>built on Wazuh.</span></h2>
+        <div class='kicker reveal'>Kako funkcioniše</div>
+        <h2 class='section-title reveal delay-1'>Upravljano praćenje, <span>izgrađeno na Wazuh-u.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>Every log from every endpoint, server, and firewall flows into one detection pipeline — analyzed in real time, mapped to MITRE ATT&CK, and watched by people who escalate only what matters.</p>
+      <p class='section-copy reveal delay-2'>Svaki log sa svakog računara, servera i firewalla sliva se u jedan sistem detekcije na vašoj infrastrukturi — analizira se u realnom vremenu, mapira na MITRE ATT&CK, a analitičar eskalira samo ono što je zaista bitno.</p>
     </div>
 
-    <div class='flow reveal' aria-label='Wazuh detection pipeline'>
-      <div class='flow-node'><div class='flow-ico'>🖥</div><b>Endpoints & Servers</b><small>Wazuh agents</small></div>
+    <div class='flow reveal' aria-label='Wazuh tok detekcije'>
+      <div class='flow-node'><div class='flow-ico'>🖥</div><b>Računari i serveri</b><small>Wazuh agenti</small></div>
       <div class='flow-link'></div>
-      <div class='flow-node'><div class='flow-ico'>⚙</div><b>Wazuh Manager</b><small>Rules · decoders</small></div>
+      <div class='flow-node'><div class='flow-ico'>⚙</div><b>Wazuh Manager</b><small>Na vašoj infrastrukturi</small></div>
       <div class='flow-link'></div>
-      <div class='flow-node'><div class='flow-ico'>🗄</div><b>Indexer</b><small>Search & retention</small></div>
+      <div class='flow-node'><div class='flow-ico'>🗄</div><b>Indexer</b><small>Na vašoj infrastrukturi</small></div>
       <div class='flow-link'></div>
-      <div class='flow-node flow-alert'><div class='flow-ico'>⚡</div><b>SOC Analyst</b><small>Triage & response</small></div>
+      <div class='flow-node flow-alert'><div class='flow-ico'>⚡</div><b>Pregled analitičara</b><small>Radnim danima</small></div>
     </div>
 
     <div class='soc-grid'>
-      <div class='soc-card reveal'><b>01</b><h3>Log Analysis & Correlation</h3><p>Endpoint, server, firewall, and cloud logs correlated in real time by the Wazuh ruleset — thousands of events reduced to the alerts that matter.</p></div>
-      <div class='soc-card reveal delay-1'><b>02</b><h3>MITRE ATT&CK Mapping</h3><p>Every detection is mapped to ATT&CK tactics and techniques, so you see exactly what stage of an attack triggered the alert.</p></div>
-      <div class='soc-card reveal delay-2'><b>03</b><h3>File Integrity Monitoring</h3><p>Critical files, registries, and configs watched for unauthorized changes — ransomware and tampering caught at first touch.</p></div>
-      <div class='soc-card reveal'><b>04</b><h3>Vulnerability Detection</h3><p>Continuous CVE scanning on every agent, matched against installed software — know what's exploitable before attackers do.</p></div>
-      <div class='soc-card reveal delay-1'><b>05</b><h3>Active Response</h3><p>Automated containment: block brute-force sources, isolate suspicious processes, and disable compromised accounts in seconds.</p></div>
-      <div class='soc-card reveal delay-2'><b>06</b><h3>Compliance Reporting</h3><p>PCI DSS, GDPR, NIST, and ISO 27001 oriented reports generated from real telemetry — evidence your auditors can use.</p></div>
+      <div class='soc-card reveal'><b>01</b><h3>Analiza i korelacija logova</h3><p>Logovi sa računara, servera, firewalla i iz clouda koreliraju se u realnom vremenu kroz Wazuh pravila — hiljade događaja svedene na alarme koji su zaista važni.</p></div>
+      <div class='soc-card reveal delay-1'><b>02</b><h3>Mapiranje na MITRE ATT&CK</h3><p>Svaka detekcija se mapira na ATT&CK taktike i tehnike, pa tačno vidite u kojoj fazi napada je alarm nastao.</p></div>
+      <div class='soc-card reveal delay-2'><b>03</b><h3>Praćenje integriteta fajlova</h3><p>Ključni fajlovi, registry i konfiguracije prate se zbog neovlašćenih izmena — ransomware i manipulacije uhvaćeni pri prvom dodiru.</p></div>
+      <div class='soc-card reveal'><b>04</b><h3>Detekcija ranjivosti</h3><p>Kontinuirano CVE skeniranje na svakom agentu, upareno sa instaliranim softverom — znajte šta je ranjivo pre nego što to saznaju napadači.</p></div>
+      <div class='soc-card reveal delay-1'><b>05</b><h3>Active Response</h3><p>Opciono automatsko obuzdavanje — blokiranje brute-force izvora, izolacija sumnjivih procesa, gašenje kompromitovanih naloga — uključuje se isključivo na vaš pisani zahtev.</p></div>
+      <div class='soc-card reveal delay-2'><b>06</b><h3>Izveštavanje o usklađenosti</h3><p>Izveštaji orijentisani na PCI DSS, GDPR, NIST i ISO 27001, generisani iz stvarne telemetrije — dokazi koje vaši revizori mogu da koriste.</p></div>
     </div>
 
     <div class='ops'>
       <div class='card monitor reveal'>
         <div class='monitor-head'>
-          <div><div class='kicker' style='margin-bottom:8px'>Live Security Events</div><h3 style='font-family:Syne,sans-serif;font-size:30px;letter-spacing:-.04em'>Wazuh Event Ingestion</h3></div>
+          <div><div class='kicker' style='margin-bottom:8px'>Bezbednosni događaji uživo</div><h3 style='font-family:Syne,sans-serif;font-size:30px;letter-spacing:-.04em'>Prijem Wazuh događaja</h3></div>
           <div style='display:flex;align-items:center;gap:14px'>
             <div class='radar' aria-hidden='true'><i></i><i></i><i></i></div>
-            <span style='color:var(--green);font-family:Space Mono,monospace;font-size:11px'>● OPERATIONAL</span>
+            <span style='color:var(--green);font-family:Space Mono,monospace;font-size:11px'>● OPERATIVNO</span>
           </div>
         </div>
         <div class='monitor-bars' id='monitorBars'></div>
         <div style='display:flex;justify-content:space-between;color:var(--muted);font-family:Space Mono,monospace;font-size:10px;margin-top:18px'>
-          <span><span style='color:var(--cyan)'>■</span> Normal traffic</span>
-          <span><span style='color:var(--red)'>■</span> Anomaly</span>
-          <span>Updated: <span id='liveTime'></span></span>
+          <span><span style='color:var(--cyan)'>■</span> Normalan saobraćaj</span>
+          <span><span style='color:var(--red)'>■</span> Anomalija</span>
+          <span>Ažurirano: <span id='liveTime'></span></span>
         </div>
       </div>
 
       <div class='card event-stream reveal delay-1'>
-        <div class='kicker'>Alert Feed</div>
-        <div class='event'><small>Level 12 · T1110</small><strong>SSH brute-force detected</strong><p>40+ failed logins from single source. Active response blocked the IP.</p></div>
-        <div class='event'><small>Level 10 · T1078</small><strong>Privileged login anomaly</strong><p>Admin account authenticated outside business hours from new device.</p></div>
-        <div class='event'><small>Level 7 · FIM</small><strong>System file modified</strong><p>Unexpected change in /etc/passwd flagged by file integrity monitoring.</p></div>
-        <div class='event'><small>Resolved</small><strong>Endpoint contained</strong><p>Suspicious process isolated; system returned to baseline and verified.</p></div>
+        <div class='kicker'>Tok alarma</div>
+        <div class='event'><small>Nivo 12 · T1110</small><strong>Otkriven SSH brute-force</strong><p>40+ neuspešnih prijava sa jedne adrese. Active response je blokirao IP.</p></div>
+        <div class='event'><small>Nivo 10 · T1078</small><strong>Anomalija privilegovane prijave</strong><p>Admin nalog prijavljen van radnog vremena sa novog uređaja.</p></div>
+        <div class='event'><small>Nivo 7 · FIM</small><strong>Izmenjen sistemski fajl</strong><p>Neočekivana izmena /etc/passwd označena praćenjem integriteta fajlova.</p></div>
+        <div class='event'><small>Rešeno</small><strong>Računar obuzdan</strong><p>Sumnjivi proces izolovan; sistem vraćen na osnovno stanje i proveren.</p></div>
       </div>
     </div>
   </div>
@@ -859,19 +890,19 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container'>
     <div class='split-head'>
       <div>
-        <div class='kicker reveal'>Interactive Demo</div>
-        <h2 class='section-title reveal delay-1'>The real Wazuh — <span>click around.</span></h2>
+        <div class='kicker reveal'>Demo</div>
+        <h2 class='section-title reveal delay-1'>Interaktivni demo — <span>simulirani podaci.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>A faithful replica of the Wazuh dashboard we deploy: same navigation, same modules, same rule IDs and alert format. Browse Threat Hunting, FIM, vulnerabilities, MITRE ATT&CK and agents — then launch an attack and watch it light up.</p>
+      <p class='section-copy reveal delay-2'>Verna replika Wazuh dashboarda koji implementiramo: ista navigacija, isti moduli, isti ID-jevi pravila i format alarma. Prođite kroz Threat Hunting, FIM, ranjivosti, MITRE ATT&CK i agente — zatim pokrenite napad i gledajte kako se sve pali.</p>
     </div>
 
     <div class='demo-toolbar reveal'>
-      <span class='demo-label'>Simulate attack ▸</span>
+      <span class='demo-label'>Simuliraj napad ▸</span>
       <button class='demo-btn' data-scenario='brute'>SSH Brute-Force</button>
       <button class='demo-btn' data-scenario='ransom'>Ransomware</button>
-      <button class='demo-btn' data-scenario='recon'>Network Recon</button>
+      <button class='demo-btn' data-scenario='recon'>Mrežno izviđanje</button>
       <button class='demo-btn demo-reset' id='demoReset'>↺ Reset</button>
-      <span class='demo-status secure' id='demoStatus'>● SYSTEM SECURE</span>
+      <span class='demo-status secure' id='demoStatus'>● SISTEM BEZBEDAN</span>
     </div>
 
     <div class='wz reveal' id='wzApp'>
@@ -910,7 +941,19 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
       </div>
       <div class='wz-toasts' id='wzToasts'></div>
     </div>
-    <p class='reveal' style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Simulated data for illustration — the interface mirrors a real Wazuh 4.x deployment. Want it on your infrastructure? <a href='#contact' style='color:var(--cyan)'>Book a live demo →</a></p>
+    <p class='reveal' style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Simulirani podaci radi ilustracije — interfejs odgovara stvarnoj Wazuh 4.x instalaciji i, kao i pravi Wazuh, prikazan je na engleskom. Želite ovo na svojoj infrastrukturi? <a href='#contact' style='color:var(--cyan)'>Zakažite demo uživo →</a></p>
+  </div>
+</section>
+
+<section id='law'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Usklađenost</div>
+        <h2 class='section-title reveal delay-1'>Zakon o <span>informacionoj bezbednosti.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>Zakon o informacionoj bezbednosti („Službeni glasnik RS“, br. 91/2025) među merama zaštite navodi praćenje IKT sistema i čuvanje podataka o bezbednosnim događajima, a od operatora zahteva da incidente prijave u roku od 24 sata od saznanja. Implementiran i podešen SIEM daje vam i logove i alarme potrebne za oboje. Da li se zakon odnosi na vas zavisi od vašeg sektora i veličine. Ne pružamo pravne savete.</p>
+    </div>
   </div>
 </section>
 
@@ -918,36 +961,31 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container'>
     <div class='split-head'>
       <div>
-        <div class='kicker reveal'>Pricing</div>
-        <h2 class='section-title reveal delay-1'>SIEM power, <span>SMB pricing.</span></h2>
+        <div class='kicker reveal'>Cenovnik</div>
+        <h2 class='section-title reveal delay-1'>Snaga SIEM-a, <span>cene po meri SMB-a.</span></h2>
       </div>
-      <p class='section-copy reveal delay-2'>Wazuh is open source — you pay for expertise and operations, not licenses. Final price depends on number of agents, log sources, retention requirements, and response scope.</p>
+      <p class='section-copy reveal delay-2'>Wazuh je open source — plaćate znanje i rad, ne licence. Jednostavne cene prema broju uređaja.</p>
     </div>
 
     <div class='pricing-grid'>
       <article class='card price-card tilt reveal'>
-        <span class='badge'>Wazuh Deployment</span>
-        <div class='price'>From €350<small> one-time</small></div>
-        <p class='price-desc'>Production-ready Wazuh SIEM deployed in your environment (on-prem or cloud) — yours to keep, fully documented.</p>
-        <ul class='features'><li>Architecture design and sizing</li><li>Manager, indexer & dashboard setup</li><li>Agent rollout (up to 15 endpoints)</li><li>Firewall & log source onboarding</li><li>Baseline rule tuning and handover docs</li></ul>
-        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=Wazuh SIEM Deployment'>Book Deployment</a>
+        <span class='badge'>Implementacija SIEM-a</span>
+        <div class='price'>€490<small> jednokratno</small></div>
+        <div class='price-fine'>Do 25 uređaja · €790 za 26–50 uređaja</div>
+        <p class='price-desc'>Produkcijski spreman Wazuh SIEM na vašem serveru ili u vašem cloudu — ostaje vaš, uz punu dokumentaciju.</p>
+        <ul class='features'><li>Dizajn arhitekture i dimenzionisanje</li><li>Instalacija managera, indexera i dashboarda na vašem serveru ili cloudu</li><li>Uvođenje agenata, povezivanje firewalla i izvora logova</li><li>14 dana podešavanja pravila i smanjenja šuma</li><li>Dokumentacija za primopredaju i obuka od sat vremena</li><li>SIEM je vaš. Bez mesečne naknade.</li></ul>
+        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=Implementacija%20SIEM-a'>Zatražite implementaciju</a>
       </article>
       <article class='card price-card featured tilt reveal delay-1'>
-        <span class='badge'>Most Popular · Managed SOC</span>
-        <div class='price'>€250<small>/mo</small></div>
-        <p class='price-desc'>We run your Wazuh SIEM as your 24/7 SOC — detection, triage, escalation, and reporting, without hiring a security team.</p>
-        <ul class='features'><li>24/7 alert monitoring and triage</li><li>Critical alerts escalated &lt;15 min</li><li>Continuous rule and noise tuning</li><li>Vulnerability detection reports</li><li>Monthly security report in plain language</li><li>Up to 15 agents included</li></ul>
-        <a class='btn btn-primary' style='width:100%' href='mailto:info@obserion.com?subject=Managed SOC Plan'><span>Start Managed SOC</span></a>
-      </article>
-      <article class='card price-card tilt reveal delay-2'>
-        <span class='badge'>SOC Complete</span>
-        <div class='price'>From €450<small>/mo</small></div>
-        <p class='price-desc'>For businesses that need more agents, active response, compliance reporting, and Fortinet-integrated security operations.</p>
-        <ul class='features'><li>Everything in Managed SOC</li><li>More agents, sites, and log sources</li><li>Active response (auto-containment)</li><li>PCI DSS / GDPR / ISO 27001 reporting</li><li>FortiGate integration and tuning</li><li>Incident response support</li></ul>
-        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=SOC Complete Plan'>Request Quote</a>
+        <span class='badge'>Najpopularnije · Implementacija + upravljano praćenje</span>
+        <div class='price'>€7<small> po uređaju / mesečno</small></div>
+        <div class='price-fine'>Minimum €150 mesečno · plus jednokratna naknada za implementaciju</div>
+        <p class='price-desc'>Implementiramo SIEM, a zatim nastavljamo da ga pratimo za vas — alarmi, pregled, podešavanje i mesečni izveštaj.</p>
+        <ul class='features'><li>Sve iz paketa Implementacija SIEM-a</li><li>Automatski kritični alarmi 24/7 na email</li><li>Pregled alarma od strane analitičara radnim danima</li><li>Kontinuirano podešavanje pravila i smanjenje šuma</li><li>Ažuriranja Wazuh-a i provere stanja sistema</li><li>Mesečni bezbednosni izveštaj jednostavnim jezikom</li><li>Udaljeni pristup preko konekcije koju vi kontrolišete</li><li>Minimum 3 meseca, zatim otkaz uz 30 dana najave</li></ul>
+        <a class='btn btn-primary' style='width:100%' href='mailto:info@obserion.com?subject=Implementacija%20%2B%20upravljano%20pra%C4%87enje'><span>Zatražite ponudu</span></a>
       </article>
     </div>
-    <p style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Wazuh is free and open source — no SIEM license fees, ever. Larger environments and custom integrations quoted after a short scoping call.</p>
+    <p style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px;line-height:1.7'>Uređaj je svaki računar ili server sa Wazuh agentom, kao i svaki izvor logova poput firewalla. Više od 50 uređaja, više lokacija ili Fortinet radovi: fiksna ponuda posle kratkog uvodnog razgovora. SIEM radi na vašem serveru ili u vašem cloud nalogu; mi ga ne hostujemo. Wazuh nema troškove licence.</p>
   </div>
 </section>
 
@@ -955,20 +993,20 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
   <div class='container'>
     <div class='split-head'>
       <div>
-        <div class='kicker reveal'>Testimonials</div>
-        <h2 class='section-title reveal delay-1'>Trusted by <span>real businesses.</span></h2>
+        <div class='kicker reveal'>Preporuke</div>
+        <h2 class='section-title reveal delay-1'>Veruju nam <span>stvarna preduzeća.</span></h2>
       </div>
     </div>
     <div class='testimonials'>
       <article class='card quote tilt reveal'>
         <span class='mark'>&ldquo;</span>
-        <p>Managing and working with Lazar has been a pleasure. He gives it his all when dealing with problems. Very goal driven and hard working individual.</p>
-        <div class='author'><div class='avatar'>AD</div><div><strong>Adrian Dunbar</strong><div class='role'>Founder, Resolute SA Pirot</div></div></div>
+        <p>Rad i saradnja sa Lazarom su pravo zadovoljstvo. Problemima pristupa sa punom posvećenošću — izuzetno vredan i usmeren na cilj.</p>
+        <div class='author'><div class='avatar'>AD</div><div><strong>Adrian Dunbar</strong><div class='role'>Osnivač, Resolute SA Pirot</div></div></div>
       </article>
       <article class='card quote tilt reveal delay-1'>
         <span class='mark'>&ldquo;</span>
-        <p>Lazar is a highly capable Security Engineer with deep Fortinet expertise. He is quick to understand complex issues and offer a suitable solution for any problem.</p>
-        <div class='author'><div class='avatar'>FR</div><div><strong>Frank Raa</strong><div class='role'>Founder, Netkey Security</div></div></div>
+        <p>Lazar je izuzetno sposoban bezbednosni inženjer sa dubokim poznavanjem Fortinet tehnologija. Brzo razume složene probleme i za svaki nudi odgovarajuće rešenje.</p>
+        <div class='author'><div class='avatar'>FR</div><div><strong>Frank Raa</strong><div class='role'>Osnivač, Netkey Security</div></div></div>
       </article>
     </div>
   </div>
@@ -977,18 +1015,21 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <section id='faq'>
   <div class='container faq-wrap'>
     <div>
-      <div class='kicker reveal'>FAQ</div>
-      <h2 class='section-title reveal delay-1'>Quick <span>answers.</span></h2>
-      <p class='section-copy reveal delay-2' style='margin-top:22px'>Straight answers about Wazuh, SIEM deployment, the managed SOC, and pricing.</p>
+      <div class='kicker reveal'>Pitanja</div>
+      <h2 class='section-title reveal delay-1'>Brzi <span>odgovori.</span></h2>
+      <p class='section-copy reveal delay-2' style='margin-top:22px'>Direktni odgovori o Wazuh-u, implementaciji SIEM-a, upravljanom praćenju i cenama.</p>
     </div>
     <div class='faq-list reveal delay-2'>
-      <div class='faq-item open'><div class='faq-q'>What is Wazuh, and why do you use it?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh is the world's most widely deployed open-source SIEM and XDR platform. It delivers log analysis, threat detection, file integrity monitoring, vulnerability detection, and compliance reporting — with zero license cost. You get enterprise-grade visibility for the price of expertise and operations only.</div></div>
-      <div class='faq-item'><div class='faq-q'>Where does the SIEM run — your cloud or ours?<span class='faq-icon'>+</span></div><div class='faq-a'>Your choice. Wazuh can run on-premises on your hardware, in your cloud (AWS, Azure, Hetzner, etc.), or on a VPS we manage for you. Your logs stay where you decide — important for GDPR and data-sovereignty requirements.</div></div>
-      <div class='faq-item'><div class='faq-q'>What does the managed SOC actually do day-to-day?<span class='faq-icon'>+</span></div><div class='faq-a'>We watch Wazuh alerts around the clock, filter noise, investigate suspicious activity, escalate real threats with clear instructions, keep detection rules tuned, and deliver a monthly plain-language security report. Critical alerts are escalated within 15 minutes.</div></div>
-      <div class='faq-item'><div class='faq-q'>Do we keep the SIEM if we cancel?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. The Wazuh deployment is yours — installed in your environment with full documentation and handover. If you stop the managed service, the platform keeps working and your team keeps full access. No lock-in.</div></div>
-      <div class='faq-item'><div class='faq-q'>Do you also handle firewalls and Fortinet?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. Hands-on FortiGate expertise — configuration, VPN, IPS profiles, segmentation — and firewall logs are integrated into Wazuh so the SOC sees your network and endpoints in one pipeline. (No official Fortinet partner status claimed.)</div></div>
-      <div class='faq-item'><div class='faq-q'>How are prices calculated?<span class='faq-icon'>+</span></div><div class='faq-a'>Pricing depends on the number of agents, log sources, retention requirements, number of locations, and response scope. Because Wazuh has no license fees, costs stay predictable as you grow. Listed prices are realistic starting points for SMBs.</div></div>
-      <div class='faq-item'><div class='faq-q'>How can I get started?<span class='faq-icon'>+</span></div><div class='faq-a'>Book a short scoping call or request a live Wazuh demo. We'll map your log sources, size the deployment, and give you a fixed quote — deployment typically goes live within two weeks.</div></div>
+      <div class='faq-item open'><div class='faq-q'>Šta je Wazuh i zašto baš on?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh je široko korišćena open-source SIEM i XDR platforma. Pruža analizu logova, detekciju pretnji, praćenje integriteta fajlova, detekciju ranjivosti i izveštavanje o usklađenosti — bez troškova licence. Dobijate vidljivost enterprise nivoa, a plaćate samo znanje i rad.</div></div>
+      <div class='faq-item'><div class='faq-q'>Gde radi SIEM?<span class='faq-icon'>+</span></div><div class='faq-a'>Na vašoj infrastrukturi: na serveru u vašim prostorijama ili u vašem cloud nalogu. Ne hostujemo SIEM-ove klijenata, pa vaši logovi ostaju kod vas. Za upravljano praćenje povezujemo se udaljeno, preko bezbedne konekcije koju vi kontrolišete i možete je isključiti u svakom trenutku.</div></div>
+      <div class='faq-item'><div class='faq-q'>Kakav server nam je potreban?<span class='faq-icon'>+</span></div><div class='faq-a'>Za do 25 uređaja: 4 vCPU, 8 GB RAM-a i 50 GB diska za 90 dana alarma. Za 26–50 uređaja: 8 vCPU, 8 GB RAM-a i 100 GB diska. Dimenzionišemo ga zajedno sa vama na uvodnom razgovoru.</div></div>
+      <div class='faq-item'><div class='faq-q'>Šta obuhvata upravljano praćenje?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh šalje automatske alarme 24/7. Analitičar radnim danima pregleda alarme, filtrira šum, istražuje i stvarne pretnje eskalira vama na email, najkasnije do kraja sledećeg radnog dana. Pravila kontinuirano podešavamo i šaljemo mesečni izveštaj.</div></div>
+      <div class='faq-item'><div class='faq-q'>Da li je ovo 24/7 SOC?<span class='faq-icon'>+</span></div><div class='faq-a'>Ne. Alarmiranje je automatsko 24/7, ali analitičar pregleda alarme radnim danima. Ako vam je potreban SOC sa dežurnim analitičarima 24/7, reći ćemo vam to otvoreno na uvodnom razgovoru.</div></div>
+      <div class='faq-item'><div class='faq-q'>Šta sadrži mesečni izveštaj?<span class='faq-icon'>+</span></div><div class='faq-a'>Šta je otkriveno, šta smo povodom toga uradili, otvorene ranjivosti i šta bi trebalo da popravite — jednostavnim jezikom.</div></div>
+      <div class='faq-item'><div class='faq-q'>Da li SIEM ostaje nama ako otkažemo?<span class='faq-icon'>+</span></div><div class='faq-a'>Da. Wazuh instalacija je vaša — postavljena u vašem okruženju, uz punu dokumentaciju i primopredaju. Ako prekinete upravljano praćenje, platforma nastavlja da radi, a vaš tim zadržava pun pristup. Bez vezivanja.</div></div>
+      <div class='faq-item'><div class='faq-q'>Da li radite i firewall i Fortinet?<span class='faq-icon'>+</span></div><div class='faq-a'>Da. Praktično iskustvo sa FortiGate uređajima — konfiguracija, VPN, IPS profili, segmentacija — a firewall logovi se integrišu u Wazuh, pa praćenje pokriva i mrežu i računare u jednom sistemu. (Ne tvrdimo zvanični Fortinet partnerski status.)</div></div>
+      <div class='faq-item'><div class='faq-q'>Kako se formiraju cene?<span class='faq-icon'>+</span></div><div class='faq-a'>Implementacija je jednokratna naknada prema broju uređaja: €490 do 25 uređaja, €790 za 26–50. Upravljano praćenje je €7 po uređaju mesečno, uz minimum od €150 mesečno — minimalno trajanje 3 meseca, zatim otkaz uz 30 dana najave. Uređaj je svaki računar ili server sa Wazuh agentom, kao i svaki izvor logova poput firewalla. Veća okruženja dobijaju fiksnu ponudu posle uvodnog razgovora.</div></div>
+      <div class='faq-item'><div class='faq-q'>Kako da počnemo?<span class='faq-icon'>+</span></div><div class='faq-a'>Zakažite kratak uvodni razgovor. Mapiraćemo vaše izvore logova, dimenzionisati implementaciju i dati vam fiksnu ponudu — implementacija je obično završena u roku od dve nedelje.</div></div>
     </div>
   </div>
 </section>
@@ -996,27 +1037,27 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
 <section id='contact'>
   <div class='container contact-grid'>
     <div class='card contact-info reveal'>
-      <div class='kicker'>Contact</div>
-      <h2 class='section-title'>See your logs in a <span>live Wazuh demo.</span></h2>
-      <p class='section-copy' style='margin-top:22px'>A short scoping call is all it takes: we map your log sources, size the deployment, and show you exactly what your SOC dashboard will look like.</p>
+      <div class='kicker'>Kontakt</div>
+      <h2 class='section-title'>Pogledajte svoje logove u <span>Wazuh demou uživo.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>Dovoljan je kratak uvodni razgovor: mapiramo vaše izvore logova, dimenzionišemo implementaciju i pokazujemo vam kako će tačno izgledati vaš Wazuh dashboard.</p>
       <div class='contact-methods'>
         <div class='method'><div class='method-dot'>@</div><div><small>Email</small><b><a href='mailto:info@obserion.com'>info@obserion.com</a></b></div></div>
-        <div class='method'><div class='method-dot'>☎</div><div><small>Phone</small><b><a href='tel:+381000000000'>+381 00 000 0000</a></b></div></div>
-        <div class='method'><div class='method-dot'>⌖</div><div><small>Location</small><b>Pirot, Serbia</b></div></div>
+        <div class='method'><div class='method-dot'>⌖</div><div><small>Lokacija</small><b>Pirot, Srbija</b></div></div>
       </div>
     </div>
 
     <form class='card form reveal delay-1' onsubmit='handleSubmit(event)'>
       <div class='form-row'>
-        <div class='field'><label>First Name</label><input type='text' placeholder='Marko' required></div>
-        <div class='field'><label>Last Name</label><input type='text' placeholder='Jovanović' required></div>
+        <div class='field'><label>Ime</label><input type='text' name='first' placeholder='Marko' required></div>
+        <div class='field'><label>Prezime</label><input type='text' name='last' placeholder='Jovanović' required></div>
       </div>
-      <div class='field'><label>Business Email</label><input type='email' placeholder='marko@company.com' required></div>
-      <div class='field'><label>Company</label><input type='text' placeholder='Your company name'></div>
-      <div class='field'><label>Service Interest</label><select><option>Wazuh SIEM Deployment</option><option>Managed SOC (24/7)</option><option>SOC Complete</option><option>Firewall & Fortinet</option><option>Incident Response</option></select></div>
-      <div class='field'><label>Message</label><textarea placeholder='Tell us about your security needs...'></textarea></div>
-      <button class='btn btn-primary' type='submit'><span>Send Message</span><span class='arrow'>→</span></button>
-      <div class='success' id='form-success'>✓ Message sent. We'll be in touch shortly.</div>
+      <div class='field'><label>Poslovni email</label><input type='email' name='email' placeholder='marko@firma.rs' required></div>
+      <div class='field'><label>Kompanija</label><input type='text' name='company' placeholder='Naziv vaše firme'></div>
+      <div class='field'><label>Usluga</label><select name='service'><option>Implementacija SIEM-a</option><option>Implementacija + upravljano praćenje</option><option>Firewall i Fortinet</option><option>Još nismo sigurni</option></select></div>
+      <div class='field'><label>Poruka</label><textarea name='message' placeholder='Recite nam nešto o vašim bezbednosnim potrebama...'></textarea></div>
+      <button class='btn btn-primary' type='submit'><span>Pošaljite poruku</span><span class='arrow'>→</span></button>
+      <p class='form-consent'>Slanjem ove forme saglasni ste da vaše podatke koristimo kako bismo odgovorili na vaš upit. Pogledajte našu <a href='privacy.html'>Politiku privatnosti</a>.</p>
+      <div class='success' id='form-success'>✓ Vaša email aplikacija bi trebalo da se otvori sa pripremljenom porukom — ili nam pišite direktno na info@obserion.com.</div>
     </form>
   </div>
 </section>
@@ -1026,20 +1067,20 @@ footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,
     <div class='footer-grid'>
       <div>
         <a class='logo' href='#hero'><span class='logo-dot'></span>Obserion<span class='grad'>.</span></a>
-        <p style='margin-top:16px;max-width:310px'>Wazuh SIEM deployment and 24/7 SOC-as-a-Service — threat detection, response, compliance reporting, and Fortinet expertise for businesses that cannot afford to compromise.</p>
+        <p style='margin-top:16px;max-width:310px'>Implementacija Wazuh SIEM-a na vašoj infrastrukturi i upravljano praćenje — detekcija pretnji, detekcija ranjivosti, izveštavanje o usklađenosti i Fortinet ekspertiza za preduzeća koja ne pristaju na kompromis.</p>
       </div>
-      <div><div class='footer-title'>Services</div><ul class='footer-links'><li><a href='#services'>Wazuh SIEM Deployment</a></li><li><a href='#services'>Managed SOC · 24/7</a></li><li><a href='#services'>Threat Detection & Response</a></li><li><a href='#services'>Firewall & Fortinet</a></li><li><a href='#pricing'>Pricing</a></li></ul></div>
-      <div><div class='footer-title'>Company</div><ul class='footer-links'><li><a href='#soc'>Obserion SOC</a></li><li><a href='#testimonials'>Clients</a></li><li><a href='#faq'>FAQ</a></li><li><a href='#contact'>Contact</a></li></ul></div>
-      <div><div class='footer-title'>Legal</div><ul class='footer-links'><li><a href='#'>Privacy Policy</a></li><li><a href='#'>Terms of Service</a></li><li><a href='#'>Cookie Policy</a></li><li><a href='#'>GDPR</a></li></ul></div>
+      <div><div class='footer-title'>Usluge</div><ul class='footer-links'><li><a href='#services'>Implementacija Wazuh SIEM-a</a></li><li><a href='#services'>Upravljano praćenje</a></li><li><a href='#services'>Detekcija i odgovor na pretnje</a></li><li><a href='#services'>Firewall i Fortinet</a></li><li><a href='#pricing'>Cenovnik</a></li></ul></div>
+      <div><div class='footer-title'>Kompanija</div><ul class='footer-links'><li><a href='#soc'>Kako funkcioniše</a></li><li><a href='#testimonials'>Klijenti</a></li><li><a href='#faq'>Pitanja</a></li><li><a href='#contact'>Kontakt</a></li></ul></div>
+      <div><div class='footer-title'>Pravno</div><ul class='footer-links'><li><a href='privacy.html'>Politika privatnosti</a></li></ul></div>
     </div>
     <div class='footer-bottom'>
-      <div class='footer-copy'>© 2026 <span class='grad'>Obserion</span>. All rights reserved. Pirot, Serbia.</div>
-      <div class='footer-copy'>Built for security. Designed for trust.</div>
+      <div class='footer-copy'>© 2026 <span class='grad'>Obserion</span>. Sva prava zadržana. Pirot, Srbija.</div>
+      <div class='footer-copy'>Napravljeno za bezbednost. Dizajnirano za poverenje.</div>
     </div>
   </div>
 </footer>
 
-<button class='to-top' id='toTop' aria-label='Back to top'>↑</button>
+<button class='to-top' id='toTop' aria-label='Nazad na vrh'>↑</button>
 
 <script>
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1089,7 +1130,9 @@ drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeDrawer))
 /* SMOOTH ANCHORS */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
-    const target=document.querySelector(a.getAttribute('href'));
+    const href=a.getAttribute('href');
+    if(href.length<2){e.preventDefault();return;}
+    const target=document.querySelector(href);
     if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth'});}
   });
 });
@@ -1147,16 +1190,19 @@ document.querySelectorAll('.faq-q').forEach(q=>{
   });
 });
 
-/* FORM */
+/* FORM — composes a pre-filled email (no backend needed; swap for Formspree/FormSubmit later) */
 function handleSubmit(e){
   e.preventDefault();
-  const btn=e.target.querySelector('button');
-  btn.querySelector('span').textContent='Sending...';
-  setTimeout(()=>{
-    btn.style.display='none';
-    document.getElementById('form-success').style.display='block';
-    e.target.reset();
-  },900);
+  const f=e.target;
+  const v=n=>(f.elements[n]&&f.elements[n].value.trim())||'';
+  const subject='Upit: '+v('service')+' — '+v('company');
+  const body='Ime: '+v('first')+' '+v('last')
+    +'\nEmail: '+v('email')
+    +'\nKompanija: '+v('company')
+    +'\nUsluga: '+v('service')
+    +'\n\n'+v('message');
+  window.location.href='mailto:info@obserion.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  document.getElementById('form-success').style.display='block';
 }
 
 /* CARD SPOTLIGHT + 3D TILT */
@@ -1204,7 +1250,7 @@ if(!reduceMotion && window.matchMedia('(hover:hover)').matches){
 
 /* HERO TYPEWRITER */
 const typeEl=document.getElementById('typeWord');
-const phrases=['detected.','triaged.','contained.','reported.'];
+const phrases=['otkrivene.','analizirane.','zaustavljene.','prijavljene.'];
 if(typeEl&&!reduceMotion){
   let pi=0,ci=phrases[0].length,deleting=true;
   setTimeout(function tick(){
@@ -1263,7 +1309,7 @@ if(heroBars.length&&!reduceMotion){
   },1400);
 }
 
-/* SOC MONITOR BARS */
+/* EVENT MONITOR BARS */
 const barsEl=document.getElementById('monitorBars');
 const heights=[45,72,38,85,60,92,55,30,78,65,88,42,70,58,95,35,80,45,62,75,40,88,52,30];
 function buildBars(){
@@ -1424,8 +1470,8 @@ updateTime();setInterval(updateTime,1000);
       if(opts.gdpr)h+="<td>"+tags(al.gd)+"</td>";
       h+="<td>"+lvlBadge(al.l)+"</td><td class='wz-mono'>"+al.r+"</td></tr>";
       if(expanded.has(al.u)){
-        const cols=(opts.fim?6:7)+(opts.pci?1:0)+(opts.gdpr?1:0)-(opts.fim?1:0);
-        h+="<tr class='wz-expand'><td colspan='9'><div class='wz-json'>"+alertJson(al)+"</div></td></tr>";
+        const cols=4+(opts.fim?2:3)+(opts.pci?1:0)+(opts.gdpr?1:0);
+        h+="<tr class='wz-expand'><td colspan='"+cols+"'><div class='wz-json'>"+alertJson(al)+"</div></td></tr>";
       }
       al._new=false;
     });
@@ -1589,8 +1635,8 @@ updateTime();setInterval(updateTime,1000);
       [2800,{a:'web-srv02',r:5712,l:10,d:'sshd: SSHD brute force trying to get access to the system',m:'T1110',g:'sshd,authentication_failures',pci:'11.4,10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
       [4200,{a:'web-srv02',r:5763,l:10,d:'sshd: brute force attack — 40+ failures from 185.220.101.45',m:'T1110',g:'sshd,authentication_failures',pci:'11.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
     ],ar:[
-      [5200,'Active response executed','firewall-drop: 185.220.101.45 blocked for 600s',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
-      [6200,'SOC escalation','Analyst notified — case #2640 opened',null]
+      [5200,'Active response izvršen','firewall-drop: 185.220.101.45 blokiran na 600s',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'Eskalacija analitičaru','Analitičar obavešten — otvoren slučaj #2640',null]
     ],end:7000},
     ransom:{go:'fim',iso:'hr-lap-07',steps:[
       [400,{a:'hr-lap-07',r:554,l:5,d:'File added to the system',g:'ossec,syscheck',pci:'11.5',fim:{p:'C:\\Users\\mira\\AppData\\Local\\Temp\\svchost.exe',ac:'added'},loc:'syscheck'}],
@@ -1599,9 +1645,9 @@ updateTime();setInterval(updateTime,1000);
       [4100,{a:'hr-lap-07',r:100210,l:12,d:'Custom: Mass file rename detected - possible ransomware activity',m:'T1486',g:'local,syscheck,ransomware',pci:'11.5',loc:'syscheck'}],
       [5200,{a:'hr-lap-07',r:100211,l:12,d:'Custom: Shadow copy deletion attempt detected (vssadmin)',m:'T1490',g:'local,windows,ransomware',loc:'EventChannel'}]
     ],ar:[
-      [6000,'Active response executed','host-isolation: hr-lap-07 quarantined from network',null],
-      [6900,'Process terminated','kill-process: PID 4412 (svchost.exe) on hr-lap-07',null],
-      [7700,'SOC escalation','Incident #2641 opened — analyst engaged',null]
+      [6000,'Active response izvršen','host-isolation: hr-lap-07 izolovan sa mreže',null],
+      [6900,'Proces prekinut','kill-process: PID 4412 (svchost.exe) na hr-lap-07',null],
+      [7700,'Eskalacija analitičaru','Otvoren slučaj #2641 — analitičar angažovan',null]
     ],end:8400},
     recon:{go:'th',steps:[
       [400,{a:'dc-srv01',r:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',m:'T1046',g:'ossec',pci:'10.2.7',loc:'netstat listening ports'}],
@@ -1609,8 +1655,8 @@ updateTime();setInterval(updateTime,1000);
       [3000,{a:'web-srv02',r:31151,l:10,d:'Multiple web server 400 error codes from same source ip (91.240.118.20)',m:'T1595',g:'web,web_scan,recon',pci:'11.4',loc:'/var/log/nginx/access.log'}],
       [4300,{a:'dc-srv01',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
     ],ar:[
-      [5300,'Active response executed','firewall-drop: 91.240.118.20 added to blocklist',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
-      [6200,'Perimeter hardened','FortiGate: source ASN rate-limited',null]
+      [5300,'Active response izvršen','firewall-drop: 91.240.118.20 dodat na blok listu',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'Perimetar ojačan','FortiGate: izvorni ASN ograničen (rate-limit)',null]
     ],end:7000}
   };
 
@@ -1621,14 +1667,14 @@ updateTime();setInterval(updateTime,1000);
     if(running)return;
     running=true;setBtns(true);
     const sc=SC[key];
-    statusEl.className='demo-status attack';statusEl.textContent='● ATTACK IN PROGRESS';
+    statusEl.className='demo-status attack';statusEl.textContent='● NAPAD U TOKU';
     goPage(sc.go);
     sc.steps.forEach(s=>timers.push(setTimeout(()=>addAlert(Object.assign({},s[1])),s[0])));
     if(sc.iso)timers.push(setTimeout(()=>{const ag=AGENTS.find(a=>a.name===sc.iso);if(ag)ag.st='isolated';render();},5800));
-    sc.ar.forEach(s=>timers.push(setTimeout(()=>{toast(s[1],s[2],s[1].indexOf('escalation')<0);if(s[3])addAlert(Object.assign({},s[3]));},s[0])));
+    sc.ar.forEach(s=>timers.push(setTimeout(()=>{toast(s[1],s[2],s[1].indexOf('Eskalacija')<0);if(s[3])addAlert(Object.assign({},s[3]));},s[0])));
     timers.push(setTimeout(()=>{
       statusEl.className='demo-status contained';
-      statusEl.textContent='✓ THREAT CONTAINED · MTTD '+(Math.random()*3+1.2).toFixed(1)+'s';
+      statusEl.textContent='✓ PRETNJA ZAUSTAVLJENA · MTTD '+(Math.random()*3+1.2).toFixed(1)+'s';
       running=false;setBtns(false);
     },sc.end));
   }
@@ -1636,7 +1682,7 @@ updateTime();setInterval(updateTime,1000);
     timers.forEach(clearTimeout);timers=[];running=false;
     AGENTS.forEach(a=>{a.st=a.name==='mail-srv01'?'disconnected':'active';});
     toasts.innerHTML='';seed();
-    statusEl.className='demo-status secure';statusEl.textContent='● SYSTEM SECURE';
+    statusEl.className='demo-status secure';statusEl.textContent='● SISTEM BEZBEDAN';
     setBtns(false);goPage('home');
   }
 

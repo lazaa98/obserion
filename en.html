@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Obserion — Wazuh SIEM Deployment & Managed Monitoring</title>
+<meta name='description' content='Wazuh SIEM deployment on your own infrastructure and managed monitoring for small and mid-sized companies: automated alerting, business-day alert review, a monthly security report, and Fortinet firewall expertise.'>
+<meta name='theme-color' content='#030613'>
+<link rel='icon' type='image/png' href='logo.png'>
+<link rel='apple-touch-icon' href='logo.png'>
+<meta property='og:type' content='website'>
+<meta property='og:title' content='Obserion — Wazuh SIEM Deployment & Managed Monitoring'>
+<meta property='og:description' content='Wazuh SIEM deployment on your own infrastructure and managed monitoring: automated alerting, business-day alert review, a monthly security report, and Fortinet firewall expertise.'>
+<meta property='og:image' content='logo.png'>
+<meta name='twitter:card' content='summary'>
+<meta name='twitter:title' content='Obserion — Wazuh SIEM Deployment & Managed Monitoring'>
+<meta name='twitter:description' content='Wazuh SIEM deployment on your own infrastructure and managed monitoring for small and mid-sized companies.'>
+<script type='application/ld+json'>
+{
+  "@context":"https://schema.org",
+  "@type":"ProfessionalService",
+  "name":"Obserion",
+  "description":"Wazuh SIEM deployment on the customer's own infrastructure and managed monitoring: automated alerting, business-day alert review, monthly security reports, and Fortinet firewall expertise.",
+  "email":"info@obserion.com",
+  "address":{"@type":"PostalAddress","addressLocality":"Pirot","addressCountry":"RS"},
+  "areaServed":"Europe",
+  "knowsAbout":["Wazuh SIEM","Threat Detection","Managed Monitoring","Fortinet","PCI DSS","GDPR"]
+}
+</script>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@600;700;800&display=swap' rel='stylesheet'>
+<style>
+:root{
+  --bg:#030613;
+  --bg-soft:#071022;
+  --panel:#0b1428;
+  --panel-2:#0e1a34;
+  --cyan:#00e5ff;
+  --blue:#3b82f6;
+  --purple:#8b5cf6;
+  --red:#ff365f;
+  --green:#00ff9d;
+  --yellow:#ffd166;
+  --text:#edf5ff;
+  --muted:#8ea0bb;
+  --dim:#586a87;
+  --border:rgba(0,229,255,.16);
+  --border-soft:rgba(255,255,255,.08);
+  --glow:0 0 70px rgba(0,229,255,.18);
+  --radius:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,canvas{max-width:100%}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 15% -10%,rgba(0,229,255,.16),transparent 34%),
+    radial-gradient(circle at 85% 8%,rgba(139,92,246,.16),transparent 34%),
+    linear-gradient(180deg,#030613 0%,#05091a 45%,#030613 100%);
+  color:var(--text);
+  overflow-x:hidden;
+}
+/* animated grid backdrop */
+body:before{
+  content:'';
+  position:fixed;inset:0;z-index:-2;
+  background-image:
+    linear-gradient(rgba(0,229,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.035) 1px,transparent 1px);
+  background-size:54px 54px;
+  mask-image:radial-gradient(circle at 50% 10%,black 0%,transparent 72%);
+  animation:gridDrift 32s linear infinite;
+}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:54px 54px}}
+/* film grain */
+body:after{
+  content:'';
+  position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.028;
+  background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');
+}
+/* cursor-following ambient glow */
+.cursor-glow{
+  position:fixed;top:0;left:0;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,255,.10),rgba(139,92,246,.05) 40%,transparent 70%);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:-1;
+  transition:opacity .4s ease;will-change:transform;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+.container{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.kicker{
+  font-family:'Space Mono',monospace;
+  color:var(--cyan);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-size:11px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:18px;
+}
+.kicker:before{content:'';width:26px;height:1px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.section-title{
+  font-family:Syne,sans-serif;
+  font-size:clamp(38px,5vw,72px);
+  line-height:.95;
+  letter-spacing:-.055em;
+}
+.section-title span,.grad{
+  background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple),var(--cyan));
+  background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:gradShift 8s ease infinite;
+}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.section-copy{color:var(--muted);line-height:1.75;font-size:16px;max-width:690px}
+.glass{
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
+  border:1px solid var(--border-soft);
+  box-shadow:0 20px 80px rgba(0,0,0,.3);
+  backdrop-filter:blur(18px);
+}
+/* card with animated gradient border + cursor spotlight */
+.card{
+  position:relative;overflow:hidden;border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(14,26,52,.92),rgba(7,16,34,.9));
+  border:1px solid var(--border-soft);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),border-color .35s ease,box-shadow .35s ease;
+}
+.card:before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(0,229,255,.16),transparent 42%);
+  opacity:0;transition:opacity .4s ease;pointer-events:none;z-index:1;
+}
+.card>*{position:relative;z-index:2}
+.card:hover:before{opacity:1}
+.card:hover{border-color:rgba(0,229,255,.28);box-shadow:var(--glow)}
+.tilt{transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0)) translateY(var(--ty,0));transition:transform .18s ease,border-color .35s ease,box-shadow .35s ease;will-change:transform}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:50px;padding:0 24px;border-radius:16px;border:1px solid transparent;
+  font-family:'Space Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;
+  transition:.25s ease;cursor:pointer;position:relative;overflow:hidden;
+}
+.btn>*{position:relative;z-index:2}
+.btn-primary{background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));background-size:200% 100%;color:white;box-shadow:0 0 42px rgba(59,130,246,.24)}
+.btn-primary:hover{background-position:100% 0;transform:translateY(-2px) scale(1.02);box-shadow:0 0 70px rgba(0,229,255,.34)}
+/* shine sweep on hover */
+.btn-primary:after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s ease;z-index:1}
+.btn-primary:hover:after{left:160%}
+.btn-ghost{border-color:var(--border-soft);color:var(--muted);background:rgba(255,255,255,.035)}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--text);background:rgba(0,229,255,.07);transform:translateY(-2px)}
+.btn .arrow{transition:transform .25s ease}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* SCROLL PROGRESS */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:1001;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));box-shadow:0 0 14px rgba(0,229,255,.6)}
+
+/* PRELOADER */
+.preloader{
+  position:fixed;inset:0;z-index:10000;display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 35%,rgba(0,229,255,.14),transparent 32%),
+    radial-gradient(circle at 70% 60%,rgba(139,92,246,.12),transparent 28%),
+    #030613;
+  transition:opacity .75s ease,visibility .75s ease;
+}
+.preloader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.preloader-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.055) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at 50% 50%,black 0%,transparent 74%);
+}
+.loader-card{
+  position:relative;width:min(420px,calc(100% - 44px));border-radius:34px;padding:34px;
+  background:linear-gradient(180deg,rgba(14,26,52,.9),rgba(7,16,34,.78));
+  border:1px solid rgba(0,229,255,.2);box-shadow:0 0 90px rgba(0,229,255,.16);overflow:hidden;
+}
+.loader-card:before{
+  content:'';position:absolute;inset:-50%;
+  background:conic-gradient(from 0deg,transparent,rgba(0,229,255,.16),transparent,rgba(139,92,246,.13),transparent);
+  animation:loaderSpin 3.2s linear infinite;z-index:-1;
+}
+.loader-brand{display:flex;align-items:center;gap:13px;font-family:Syne,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.06em;margin-bottom:22px}
+.loader-mark{width:18px;height:18px;border-radius:50%;background:var(--cyan);box-shadow:0 0 32px var(--cyan);animation:loaderPulse 1.2s ease-in-out infinite}
+.loader-status{font-family:'Space Mono',monospace;color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+.loader-terminal{display:grid;gap:8px;margin-bottom:22px;color:var(--muted);font-family:'Space Mono',monospace;font-size:11px}
+.loader-terminal span{display:flex;justify-content:space-between;gap:12px;opacity:0;transform:translateX(-8px);animation:lineIn .4s ease forwards}
+.loader-terminal span:nth-child(1){animation-delay:.2s}
+.loader-terminal span:nth-child(2){animation-delay:.6s}
+.loader-terminal span:nth-child(3){animation-delay:1s}
+@keyframes lineIn{to{opacity:1;transform:translateX(0)}}
+.loader-terminal b{color:var(--green);font-weight:400}
+.loader-bar{height:10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);overflow:hidden;position:relative}
+.loader-bar:before{content:'';position:absolute;inset:0;width:42%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));box-shadow:0 0 28px rgba(0,229,255,.35);animation:loaderProgress 1.7s cubic-bezier(.22,1,.36,1) forwards}
+.loader-scan{position:absolute;left:0;right:0;top:-40%;height:80px;background:linear-gradient(180deg,transparent,rgba(0,229,255,.16),transparent);animation:loaderScan 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes loaderSpin{to{transform:rotate(1turn)}}
+@keyframes loaderPulse{0%,100%{transform:scale(.85);opacity:.65}50%{transform:scale(1.1);opacity:1}}
+@keyframes loaderProgress{from{width:0}to{width:100%}}
+@keyframes loaderScan{0%{top:-45%}100%{top:110%}}
+
+/* REVEALS */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}.delay-4{transition-delay:.32s}.delay-5{transition-delay:.4s}
+
+/* NAV */
+.nav{position:fixed;top:16px;left:0;right:0;z-index:1000;transition:.3s ease}
+.nav-inner{
+  width:min(1180px,calc(100% - 40px));margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:14px 16px;border-radius:22px;
+  background:rgba(3,6,19,.55);border:1px solid rgba(255,255,255,.09);
+  backdrop-filter:blur(18px);transition:.3s ease;
+}
+.nav.scrolled .nav-inner{padding:10px 16px;background:rgba(3,6,19,.82);box-shadow:0 18px 60px rgba(0,0,0,.45);border-color:rgba(0,229,255,.16)}
+.logo{font-family:Syne,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan);animation:pulse 2.2s infinite}
+.nav-links{display:flex;align-items:center;gap:6px;list-style:none;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.nav-links a{color:var(--muted);padding:8px 12px;border-radius:10px;transition:.25s ease;position:relative}
+.nav-links a:hover{color:var(--text);background:rgba(0,229,255,.06)}
+.nav-links a.active{color:var(--cyan)}
+.nav-links a.active:after{content:'';position:absolute;left:12px;right:12px;bottom:2px;height:1px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.lang{display:flex;gap:2px;border:1px solid var(--border-soft);border-radius:12px;padding:3px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em}
+.lang a{padding:5px 9px;border-radius:9px;color:var(--muted);transition:.25s ease}
+.lang a:hover{color:var(--text)}
+.lang a.on{background:rgba(0,229,255,.12);color:var(--cyan)}
+.hamburger{display:none;width:44px;height:44px;border-radius:13px;border:1px solid var(--border-soft);background:rgba(255,255,255,.04);cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:5px}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:.3s ease}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* mobile drawer */
+.mobile-drawer{position:fixed;inset:0;z-index:999;background:rgba(3,6,19,.96);backdrop-filter:blur(20px);display:flex;flex-direction:column;justify-content:center;gap:8px;padding:0 32px;opacity:0;visibility:hidden;transition:.4s ease;transform:translateY(-12px)}
+.mobile-drawer.open{opacity:1;visibility:visible;transform:translateY(0)}
+.mobile-drawer a{font-family:Syne,sans-serif;font-size:34px;font-weight:700;letter-spacing:-.04em;padding:10px 0;border-bottom:1px solid var(--border-soft);transition:.25s ease}
+.mobile-drawer a:hover{color:var(--cyan);padding-left:12px}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;padding:138px 0 40px;display:flex;align-items:center;overflow:hidden}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.hero-layout{display:grid;grid-template-columns:1fr .92fr;gap:48px;align-items:center}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--border);
+  background:rgba(0,229,255,.07);color:var(--cyan);
+  font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  margin-bottom:26px;
+}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 20px var(--green);animation:pulse 1.8s infinite}
+.hero h1{font-family:Syne,sans-serif;font-size:clamp(54px,7.5vw,104px);line-height:.86;letter-spacing:-.075em}
+.hero h1 .outline{-webkit-text-stroke:1px rgba(255,255,255,.28);color:transparent;display:block}
+.hero p{margin-top:28px;color:var(--muted);font-size:17px;line-height:1.75;max-width:590px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.trust-row{display:flex;align-items:center;gap:18px;margin-top:30px;color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;flex-wrap:wrap}
+.trust-row .tick{color:var(--green)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:42px;background:var(--border-soft);border:1px solid var(--border-soft);border-radius:24px;overflow:hidden}
+.stat{background:rgba(7,16,34,.78);padding:20px;transition:.3s ease;position:relative}
+.stat:hover{background:rgba(0,229,255,.06)}
+.stat-num{font-family:Syne,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.05em}
+.stat-num span{color:var(--cyan)}
+.stat-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;margin-top:4px}
+.command{
+  border-radius:34px;padding:22px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,rgba(14,26,52,.72),rgba(7,16,34,.88));
+  border:1px solid rgba(0,229,255,.18);box-shadow:0 0 100px rgba(0,229,255,.12);
+  animation:float 6s ease-in-out infinite;will-change:transform;
+}
+.command:after{content:'';position:absolute;inset:-35%;background:conic-gradient(from 90deg,transparent,rgba(0,229,255,.12),transparent,rgba(139,92,246,.12),transparent);animation:spin 12s linear infinite;z-index:0}
+.command>*{position:relative;z-index:1}
+.window-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.dots{display:flex;gap:8px}.dots span{width:10px;height:10px;border-radius:50%;display:block}.dots span:nth-child(1){background:var(--red)}.dots span:nth-child(2){background:var(--yellow)}.dots span:nth-child(3){background:var(--green)}
+.command-title{font-family:'Space Mono',monospace;color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.command-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.metric{border-radius:20px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);padding:18px;transition:.3s ease}
+.metric:hover{border-color:var(--border);background:rgba(0,229,255,.05)}
+.metric small{color:var(--muted);font-size:12px}.metric b{display:block;font-family:Syne,sans-serif;font-size:34px;margin-top:6px;letter-spacing:-.05em}
+.chart{grid-column:1/-1;border-radius:24px;background:rgba(3,6,19,.65);border:1px solid var(--border-soft);padding:18px}
+.bars{height:160px;display:flex;align-items:end;gap:8px}
+.bars i{display:block;flex:1;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--cyan),var(--blue));opacity:.72;animation:barIn .9s ease both;transition:height .6s ease}
+.bars i:nth-child(4n){background:linear-gradient(180deg,var(--purple),var(--blue))}
+.bars i.alert{background:linear-gradient(180deg,var(--red),#7f1d1d);opacity:.9}
+.alert-list{grid-column:1/-1;display:grid;gap:10px}
+.alert-row{display:flex;justify-content:space-between;gap:12px;align-items:center;border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);font-size:13px;transition:.3s ease}
+.alert-row:hover{transform:translateX(4px);border-color:var(--border)}
+.sev{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase}.sev.red{color:var(--red)}.sev.yellow{color:var(--yellow)}.sev.green{color:var(--green)}
+@keyframes pulse{0%,100%{opacity:.55;box-shadow:0 0 0 0 rgba(0,229,255,.45)}50%{opacity:1;box-shadow:0 0 0 9px rgba(0,229,255,0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes spin{to{transform:rotate(1turn)}}
+@keyframes barIn{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+
+/* TYPEWRITER (fixed-size box so layout never shifts) */
+.type-box{display:inline-grid;white-space:nowrap;text-align:left;vertical-align:top}
+.type-box>*{grid-area:1/1}
+.type-sizer{visibility:hidden;pointer-events:none;user-select:none}
+.type-cursor{display:inline-block;animation:blink 1s steps(1) infinite;font-weight:400;-webkit-text-stroke:0;color:var(--cyan);-webkit-text-fill-color:var(--cyan)}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* TERMINAL (Wazuh alert feed) */
+.term{grid-column:1/-1;border-radius:20px;background:rgba(2,4,12,.85);border:1px solid var(--border-soft);overflow:hidden;font-family:'Space Mono',monospace}
+.term-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--dim);font-size:10px;letter-spacing:.06em}
+.term-live{color:var(--red);font-weight:700;animation:blink 1.4s steps(1) infinite}
+.term-body{padding:12px 14px;display:grid;gap:7px;font-size:11px;line-height:1.5;min-height:118px}
+.term-body div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(6px);animation:termIn .35s ease forwards}
+@keyframes termIn{to{opacity:1;transform:translateY(0)}}
+.term-body .t-time{color:var(--dim)}
+.term-body .t-crit{color:var(--red)}
+.term-body .t-med{color:var(--yellow)}
+.term-body .t-ok{color:var(--green)}
+.term-body .t-info{color:var(--cyan)}
+
+/* DETECTION PIPELINE FLOW */
+.flow{display:flex;align-items:stretch;gap:0;margin:0 0 56px;border:1px solid var(--border-soft);border-radius:26px;padding:26px 22px;background:linear-gradient(180deg,rgba(14,26,52,.6),rgba(7,16,34,.7));position:relative;overflow:hidden}
+.flow:before{content:'';position:absolute;inset:0;background:radial-gradient(600px circle at 50% -40%,rgba(0,229,255,.08),transparent 60%);pointer-events:none}
+.flow-node{flex:1;text-align:center;padding:10px 8px;position:relative;z-index:1}
+.flow-ico{width:52px;height:52px;margin:0 auto 12px;border-radius:18px;background:rgba(0,229,255,.08);border:1px solid var(--border);display:grid;place-items:center;font-size:22px;animation:nodePulse 3s ease-in-out infinite}
+.flow-node:nth-child(3) .flow-ico{animation-delay:.5s}
+.flow-node:nth-child(5) .flow-ico{animation-delay:1s}
+.flow-node:nth-child(7) .flow-ico{animation-delay:1.5s}
+@keyframes nodePulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.0)}50%{box-shadow:0 0 26px 2px rgba(0,229,255,.22)}}
+.flow-node b{display:block;font-family:Syne,sans-serif;font-size:15px;letter-spacing:-.02em}
+.flow-node small{display:block;margin-top:4px;color:var(--dim);font-family:'Space Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em}
+.flow-alert .flow-ico{background:rgba(255,54,95,.1);border-color:rgba(255,54,95,.35);animation:alertPulse 2s ease-in-out infinite}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,54,95,0)}50%{box-shadow:0 0 28px 3px rgba(255,54,95,.3)}}
+.flow-link{flex:.6;position:relative;align-self:center;height:2px;margin-top:-34px;background:linear-gradient(90deg,rgba(0,229,255,.1),rgba(0,229,255,.3),rgba(0,229,255,.1))}
+.flow-link:before{content:'';position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan);transform:translateY(-50%);animation:packet 2.2s linear infinite}
+.flow-link:nth-of-type(4):before{animation-delay:.7s}
+.flow-link:nth-of-type(6):before{animation-delay:1.4s;background:var(--red);box-shadow:0 0 14px var(--red)}
+@keyframes packet{0%{left:-4%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:100%;opacity:0}}
+@keyframes packetV{0%{top:-8%;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+
+/* RADAR */
+.radar{width:58px;height:58px;border-radius:50%;position:relative;flex:none;border:1px solid rgba(0,229,255,.3);background:radial-gradient(circle,rgba(0,229,255,.05),transparent 70%);overflow:hidden}
+.radar:before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,229,255,.55),transparent 70deg);animation:radarSweep 2.6s linear infinite}
+.radar:after{content:'';position:absolute;inset:18%;border-radius:50%;border:1px solid rgba(0,229,255,.2)}
+@keyframes radarSweep{to{transform:rotate(1turn)}}
+.radar i{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blipFade 2.6s ease-in-out infinite}
+.radar i:nth-child(1){top:26%;left:58%}
+.radar i:nth-child(2){top:62%;left:30%;animation-delay:.9s}
+.radar i:nth-child(3){top:48%;left:70%;animation-delay:1.7s;background:var(--red);box-shadow:0 0 8px var(--red)}
+@keyframes blipFade{0%,15%{opacity:1}60%,100%{opacity:.12}}
+
+/* WAZUH DEMO — toolbar */
+.demo-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.demo-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em}
+.demo-btn{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,229,255,.06);color:var(--cyan);cursor:pointer;transition:.25s ease}
+.demo-btn:hover:not(:disabled){background:rgba(0,229,255,.15);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,229,255,.22)}
+.demo-btn:disabled{opacity:.35;cursor:not-allowed}
+.demo-reset{border-color:var(--border-soft);color:var(--muted);background:rgba(255,255,255,.04)}
+.demo-reset:hover:not(:disabled){background:rgba(255,255,255,.09);box-shadow:none;color:var(--text)}
+.demo-status{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;padding:11px 16px;border-radius:12px;border:1px solid transparent;transition:.4s ease;margin-left:auto}
+.demo-status.secure{color:var(--green);border-color:rgba(0,255,157,.3);background:rgba(0,255,157,.05)}
+.demo-status.attack{color:var(--red);border-color:rgba(255,54,95,.5);background:rgba(255,54,95,.08);animation:statusBlink 1s steps(1) infinite}
+.demo-status.contained{color:var(--cyan);border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.07)}
+@keyframes statusBlink{50%{opacity:.5}}
+
+/* WAZUH REPLICA — light app window */
+.wz{position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 110px rgba(0,0,0,.55),0 0 80px rgba(0,229,255,.07);background:#fff;color:#343741;font-family:Inter,system-ui,sans-serif;text-align:left}
+.wz-chrome{display:flex;align-items:center;gap:14px;background:#0b1428;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.wz-url{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:rgba(255,255,255,.07);border-radius:8px;padding:6px 12px;flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wz-top{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#fff;border-bottom:1px solid #d3dae6}
+.wz-burger{display:none;border:1px solid #d3dae6;background:#fff;border-radius:6px;width:34px;height:34px;cursor:pointer;color:#343741;font-size:15px}
+.wz-logo{font-weight:800;color:#1a1c21;font-size:17px;display:flex;align-items:center;gap:7px;letter-spacing:-.02em}
+.wz-search{flex:1;display:flex;align-items:center;gap:8px;border:1px solid #d3dae6;border-radius:6px;padding:8px 12px;color:#69707d;background:#fbfcfd;font-family:'Space Mono',monospace;font-size:11px;white-space:nowrap;overflow:hidden}
+.wz-search b{color:#3585F9;font-weight:400}
+.wz-time{font-size:12px;color:#343741;border:1px solid #d3dae6;border-radius:6px;padding:8px 11px;white-space:nowrap}
+.wz-avatar{width:30px;height:30px;border-radius:50%;background:#3585F9;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.wz-body{display:flex;min-height:560px;background:#f7f8fc;position:relative}
+.wz-nav{width:216px;flex:none;background:#fff;border-right:1px solid #d3dae6;padding:8px 0 16px;overflow-y:auto;z-index:4}
+.wz-group{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#98a2b3;padding:16px 16px 5px;font-weight:700}
+.wz-nav a{display:block;padding:7px 16px;font-size:13px;color:#343741;cursor:pointer;border-left:3px solid transparent;transition:.15s ease}
+.wz-nav a:hover{background:#f0f4fa;color:#006bb4}
+.wz-nav a.on{background:#e6f0fa;color:#006bb4;border-left-color:#006bb4;font-weight:600}
+.wz-main{flex:1;padding:18px;min-width:0}
+.wz-h{font-size:19px;font-weight:700;margin-bottom:3px;color:#1a1c21}
+.wz-sub{font-size:12px;color:#69707d;margin-bottom:16px}
+.wz-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.wz-card{background:#fff;border:1px solid #d3dae6;border-radius:8px;padding:13px 15px;transition:.25s ease}
+.wz-card.bump{box-shadow:0 0 0 2px rgba(53,133,249,.35);transform:translateY(-2px)}
+.wz-card small{font-size:11px;color:#69707d;display:block;margin-bottom:3px}
+.wz-card b{font-size:25px;font-weight:700;color:#1a1c21}
+.sv-crit{color:#bd271e!important}.sv-high{color:#e7664c!important}.sv-med{color:#d6a100!important}.sv-low{color:#6092c0!important}.sv-ok{color:#007871!important}
+.wz-panel{background:#fff;border:1px solid #d3dae6;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.wz-panel-h{padding:11px 14px;font-size:13px;font-weight:600;border-bottom:1px solid #eef1f7;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#1a1c21;flex-wrap:wrap}
+.wz-scroll{overflow-x:auto}
+.wz-table{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
+.wz-table th{text-align:left;padding:8px 12px;color:#69707d;font-weight:600;border-bottom:1px solid #d3dae6;background:#fbfcfd;white-space:nowrap}
+.wz-table td{padding:8px 12px;border-bottom:1px solid #eef1f7;vertical-align:top;color:#343741}
+.wz-table tr.click{cursor:pointer}
+.wz-table tr.click:hover{background:#f0f4fa}
+.wz-table tr.new-row td{animation:wzNew 1.6s ease}
+@keyframes wzNew{0%{background:#fff8e1}100%{background:transparent}}
+.wz-mono{font-family:'Space Mono',monospace;font-size:10.5px;color:#69707d;white-space:nowrap}
+.wz-lvl{display:inline-block;min-width:30px;text-align:center;border-radius:4px;font-weight:700;font-size:11px;padding:2px 7px;color:#fff}
+.wz-lvl.l0{background:#6092c0}.wz-lvl.l7{background:#d6a100}.wz-lvl.l12{background:#e7664c}.wz-lvl.l15{background:#bd271e}
+.wz-pill{display:inline-block;border-radius:10px;padding:2px 9px;font-size:11px;font-weight:600}
+.wz-pill.act{background:#e6f5f3;color:#007871}.wz-pill.dis{background:#fbe9e7;color:#bd271e}.wz-pill.iso{background:#fff3d6;color:#9a7b00}
+.wz-tag{display:inline-block;background:#e6f0fa;color:#006bb4;border-radius:4px;padding:2px 6px;font-size:10.5px;margin:1px 3px 1px 0;font-family:'Space Mono',monospace}
+.wz-json{font-family:'Space Mono',monospace;font-size:10.5px;white-space:pre-wrap;word-break:break-word;color:#343741;padding:12px 14px;background:#f7f8fc;border-radius:6px;line-height:1.7;margin:6px 0}
+.wz-json .k{color:#006bb4}.wz-json .s{color:#007871}.wz-json .n{color:#bd271e}
+.wz-cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wz-evo{display:flex;align-items:flex-end;gap:4px;height:120px;padding:14px}
+.wz-evo i{flex:1;background:#6092c0;border-radius:2px 2px 0 0;min-height:3px;transition:height .5s ease}
+.wz-evo i.hot{background:#e7664c}
+.wz-donut-wrap{display:flex;align-items:center;gap:18px;padding:14px}
+.wz-donut{width:118px;height:118px;border-radius:50%;flex:none;position:relative}
+.wz-donut:after{content:'';position:absolute;inset:26%;border-radius:50%;background:#fff}
+.wz-legend{font-size:12px;display:grid;gap:6px}
+.wz-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px}
+.wz-input{border:1px solid #d3dae6;border-radius:6px;padding:7px 11px;font-size:12px;width:240px;max-width:100%;outline:none;font-family:inherit;color:#343741}
+.wz-input:focus{border-color:#3585F9;box-shadow:0 0 0 2px rgba(53,133,249,.15)}
+.wz-bar{height:8px;border-radius:4px;background:#eef1f7;overflow:hidden;min-width:90px}
+.wz-bar i{display:block;height:100%;border-radius:4px;background:#007871}
+.wz-toasts{position:absolute;top:108px;right:14px;display:grid;gap:8px;z-index:9;max-width:300px}
+.wz-toast{background:#fff;border:1px solid #d3dae6;border-left:4px solid #007871;border-radius:8px;padding:10px 13px;font-size:12px;color:#343741;box-shadow:0 10px 30px rgba(0,0,0,.18);animation:toastIn .35s ease}
+.wz-toast b{display:block;font-size:12px;margin-bottom:2px}
+.wz-toast small{color:#69707d;font-size:11px}
+.wz-toast.warn{border-left-color:#bd271e}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.wz-empty{padding:36px 20px;text-align:center;color:#98a2b3;font-size:12px}
+
+/* STRIP */
+.strip{overflow:hidden;background:linear-gradient(90deg,var(--cyan),#7dd3fc);padding:13px 0;color:#03111f;position:relative}
+.strip-track{display:flex;width:max-content;animation:marquee 24s linear infinite}
+.strip:hover .strip-track{animation-play-state:paused}
+.strip span{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding-right:44px;white-space:nowrap;display:flex;align-items:center;gap:44px}
+.strip span:after{content:'◆';font-size:8px;opacity:.5}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{padding:112px 0;position:relative}
+.split-head{display:flex;justify-content:space-between;gap:34px;align-items:end;margin-bottom:52px}
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.service{padding:28px;min-height:330px}
+.num{font-family:'Space Mono',monospace;color:var(--cyan);font-size:11px;letter-spacing:.18em;margin-bottom:22px}
+.icon{width:54px;height:54px;border-radius:18px;background:rgba(0,229,255,.08);border:1px solid var(--border);display:grid;place-items:center;margin-bottom:24px;transition:.35s cubic-bezier(.22,1,.36,1)}
+.service:hover .icon{background:rgba(0,229,255,.16);transform:translateY(-3px) rotate(-6deg);box-shadow:0 8px 30px rgba(0,229,255,.25)}
+.icon svg{width:28px;height:28px;stroke:var(--cyan)}
+.service h3{font-family:Syne,sans-serif;font-size:23px;margin-bottom:12px;letter-spacing:-.03em}
+.service p{color:var(--muted);font-size:14px;line-height:1.7}
+.stack{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+.stack-panel{padding:34px}
+.pipeline{display:grid;gap:12px;margin-top:28px}
+.pipe{display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;padding:16px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);transition:.3s ease}
+.pipe:hover{border-color:var(--border);background:rgba(0,229,255,.05);transform:translateX(5px)}
+.pipe-index{width:38px;height:38px;border-radius:14px;background:rgba(0,229,255,.08);display:grid;place-items:center;font-family:'Space Mono',monospace;color:var(--cyan);font-size:11px}
+.pipe strong{display:block;margin-bottom:4px}.pipe small{color:var(--muted)}
+.pipe-tag{font-family:'Space Mono',monospace;color:var(--green);font-size:10px;text-transform:uppercase}
+.health{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.health-card{padding:20px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);transition:.3s ease}
+.health-card:hover{border-color:var(--border);background:rgba(0,229,255,.05)}
+.health-card b{font-family:Syne,sans-serif;font-size:30px}.health-card small{display:block;color:var(--muted);margin-top:4px}
+.soc{position:relative;overflow:hidden}
+.soc:before{content:'SIEM';position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-family:Syne,sans-serif;font-weight:800;font-size:30vw;color:rgba(0,229,255,.025);letter-spacing:-.12em;z-index:-1}
+.soc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);border-radius:30px;overflow:hidden}
+.soc-card{background:rgba(7,16,34,.82);padding:32px;min-height:240px;position:relative;transition:.35s ease;overflow:hidden}
+.soc-card:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,rgba(0,229,255,.12),transparent 45%);opacity:0;transition:.35s ease}
+.soc-card:hover:before{opacity:1}
+.soc-card:hover{background:rgba(10,22,46,.95)}
+.soc-card b{position:absolute;right:24px;top:18px;font-family:Syne,sans-serif;font-size:62px;color:rgba(0,229,255,.08);letter-spacing:-.08em;transition:.35s ease}
+.soc-card:hover b{color:rgba(0,229,255,.2)}
+.soc-card h3{font-family:Syne,sans-serif;font-size:22px;margin:44px 0 12px;position:relative}
+.soc-card p{color:var(--muted);font-size:14px;line-height:1.72;position:relative}
+.ops{margin-top:20px;display:grid;grid-template-columns:1.4fr .8fr;gap:18px}
+.monitor{padding:28px}
+.monitor-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:24px}
+.monitor-bars{height:180px;display:grid;grid-template-columns:repeat(24,1fr);gap:7px;align-items:end}
+.monitor-bar{background:linear-gradient(180deg,var(--cyan),var(--blue));border-radius:8px 8px 0 0;opacity:.72;transition:height .55s cubic-bezier(.22,1,.36,1),background .4s ease}
+.monitor-bar.alert{background:linear-gradient(180deg,var(--red),#7f1d1d);opacity:.94}
+.event-stream{padding:28px;display:grid;gap:12px}
+.event{border-radius:18px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);padding:16px;transition:.3s ease;position:relative;overflow:hidden}
+.event:hover{border-color:var(--border);transform:translateX(4px)}
+.event:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan);opacity:.5}
+.event:nth-child(2):before{background:var(--red)}
+.event:nth-child(3):before{background:var(--yellow)}
+.event:nth-child(4):before{background:var(--green)}
+.event small{font-family:'Space Mono',monospace;color:var(--dim);font-size:10px;text-transform:uppercase}.event strong{display:block;margin:6px 0;color:var(--text)}.event p{color:var(--muted);font-size:13px;line-height:1.55}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:start;max-width:940px;margin-inline:auto}
+.price-card{padding:34px}
+.price-card.featured{border-color:rgba(0,229,255,.55);box-shadow:var(--glow)}
+.price-card.featured:before{opacity:.6}
+.badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(0,229,255,.09);border:1px solid var(--border);font-family:'Space Mono',monospace;color:var(--cyan);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.price{font-family:Syne,sans-serif;font-size:56px;font-weight:800;letter-spacing:-.07em;margin:20px 0 4px}.price small{font-family:Inter,sans-serif;font-size:16px;color:var(--muted);font-weight:400;letter-spacing:0}
+.price-fine{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+.price-desc{color:var(--muted);font-size:14px;line-height:1.65;margin-bottom:24px}
+.features{list-style:none;display:grid;gap:11px;margin:24px 0 30px}
+.features li{color:var(--muted);font-size:14px;display:flex;gap:10px;align-items:flex-start}.features li:before{content:'✓';color:var(--cyan);font-weight:700;flex:none}
+.testimonials{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.quote{padding:36px;position:relative}
+.quote .mark{position:absolute;top:18px;right:30px;font-family:Syne,sans-serif;font-size:90px;line-height:1;color:rgba(0,229,255,.1)}
+.quote p{font-size:17px;line-height:1.75;color:var(--text);font-style:italic;margin-bottom:28px;position:relative}
+.author{display:flex;align-items:center;gap:14px}.avatar{width:46px;height:46px;border-radius:16px;border:1px solid var(--border);background:rgba(0,229,255,.08);display:grid;place-items:center;font-family:Syne,sans-serif;color:var(--cyan);font-weight:800}.role{color:var(--muted);font-size:13px;margin-top:4px}
+.faq-wrap{display:grid;grid-template-columns:.75fr 1.25fr;gap:40px}
+.faq-list{border-top:1px solid var(--border-soft)}
+.faq-item{border-bottom:1px solid var(--border-soft)}
+.faq-q{padding:24px 0;display:flex;justify-content:space-between;gap:20px;align-items:center;cursor:pointer;font-family:Syne,sans-serif;font-size:20px;transition:.25s ease}
+.faq-q:hover{color:var(--cyan)}
+.faq-icon{width:32px;height:32px;border-radius:12px;border:1px solid var(--border-soft);display:grid;place-items:center;color:var(--cyan);transition:.3s;flex:none}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--cyan);color:#03111f}
+.faq-a{max-height:0;overflow:hidden;color:var(--muted);line-height:1.75;transition:max-height .4s ease,padding .4s ease}
+.faq-item.open .faq-a{max-height:260px;padding-bottom:24px}
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px;align-items:start}
+.contact-info{padding:36px}
+.contact-methods{display:grid;gap:12px;margin-top:28px}
+.method{display:flex;gap:14px;align-items:center;padding:16px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid var(--border-soft);transition:.3s ease}
+.method:hover{border-color:var(--border);background:rgba(0,229,255,.05);transform:translateX(4px)}
+.method-dot{width:38px;height:38px;border-radius:14px;background:rgba(0,229,255,.08);border:1px solid var(--border);display:grid;place-items:center;color:var(--cyan);flex:none}
+.method small{font-family:'Space Mono',monospace;color:var(--dim);text-transform:uppercase;font-size:10px}.method b{display:block;margin-top:4px}
+.form{padding:32px;display:grid;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:8px}
+.field label{font-family:'Space Mono',monospace;color:var(--dim);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;background:rgba(3,6,19,.5);border:1px solid var(--border-soft);border-radius:16px;color:var(--text);padding:14px 16px;outline:none;transition:.25s ease}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,.08);background:rgba(3,6,19,.7)}
+.field textarea{min-height:130px;resize:vertical}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2300e5ff' d='M6 8 0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+.field option{background:#0b1428;color:var(--text)}
+.success{display:none;color:var(--green);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.08em}
+.form-consent{color:var(--dim);font-size:12px;line-height:1.6}.form-consent a{color:var(--cyan)}
+footer{padding:52px 0;border-top:1px solid var(--border-soft);background:rgba(3,6,19,.55)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px;margin-bottom:36px}
+.footer-copy,.footer p,.footer-links a{color:var(--muted);font-size:13px;line-height:1.7}
+.footer-title{font-family:'Space Mono',monospace;color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.18em;margin-bottom:14px}
+.footer-links{list-style:none;display:grid;gap:8px}.footer-links a{transition:.25s ease}.footer-links a:hover{color:var(--cyan);padding-left:4px}
+.footer-bottom{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--border-soft);padding-top:24px}
+
+/* BACK TO TOP */
+.to-top{position:fixed;right:24px;bottom:24px;width:48px;height:48px;border-radius:14px;border:1px solid var(--border);background:rgba(11,20,40,.85);backdrop-filter:blur(12px);color:var(--cyan);display:grid;place-items:center;cursor:pointer;z-index:998;opacity:0;visibility:hidden;transform:translateY(12px);transition:.35s ease;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.to-top.show{opacity:1;visibility:visible;transform:translateY(0)}
+.to-top:hover{background:rgba(0,229,255,.12);transform:translateY(-3px)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .container{width:min(100% - 36px,1180px)}
+  .nav-inner{width:calc(100% - 36px)}
+  .hero-layout{grid-template-columns:1fr .9fr;gap:32px}
+  .hero h1{font-size:clamp(48px,7vw,86px)}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:920px){
+  .nav{top:10px}
+  .nav-inner{width:calc(100% - 24px);padding:12px 14px;border-radius:20px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .logo{font-size:21px}
+  .nav .btn{min-height:42px;padding:0 14px;font-size:10px;border-radius:13px}
+
+  .hero{min-height:auto;padding:112px 0 72px;align-items:flex-start}
+  .hero-layout{grid-template-columns:1fr;gap:34px}
+  .hero h1{font-size:clamp(46px,10vw,76px);line-height:.9;letter-spacing:-.065em}
+  .hero p{font-size:16px;max-width:680px}
+  .command{animation:none;border-radius:28px;padding:18px;width:100%;max-width:680px;margin:0 auto}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+
+  .split-head{display:block;margin-bottom:36px}
+  .section-copy{margin-top:18px}
+  section{padding:88px 0}
+
+  .stack,.ops,.faq-wrap,.contact-grid{grid-template-columns:1fr}
+  .wz-burger{display:block}
+  .wz-nav{position:absolute;left:0;top:0;bottom:0;transform:translateX(-103%);transition:.3s ease;box-shadow:20px 0 50px rgba(0,0,0,.12)}
+  .wz.nav-open .wz-nav{transform:none}
+  .wz-search{display:none}
+  .wz-cards{grid-template-columns:repeat(2,1fr)}
+  .wz-cols2{grid-template-columns:1fr}
+  .flow{flex-direction:column;gap:4px;padding:22px 18px}
+  .flow-link{width:2px;height:34px;flex:none;margin:0 auto;background:linear-gradient(180deg,rgba(0,229,255,.1),rgba(0,229,255,.3),rgba(0,229,255,.1))}
+  .flow-link:before{animation:packetV 2.2s linear infinite;left:50%;transform:translateX(-50%)}
+  .soc-grid{grid-template-columns:repeat(2,1fr)}
+  .pricing-grid{grid-template-columns:1fr;max-width:620px;margin-inline:auto}
+  .testimonials{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  :root{--radius:22px}
+  .container{width:calc(100% - 28px)}
+  .nav-inner{width:calc(100% - 20px);gap:10px}
+  .nav-cta{gap:8px}
+  .logo{font-size:19px}.logo-dot{width:8px;height:8px}
+  .nav .btn{width:auto;padding:0 14px;min-height:38px;font-size:9px;letter-spacing:.06em;white-space:nowrap}
+  .nav .btn .arrow{display:none}
+  .mobile-drawer a{font-size:28px}
+
+  .hero{padding:96px 0 56px}
+  .hero-badge{font-size:9px;letter-spacing:.11em;padding:7px 10px;margin-bottom:20px}
+  .hero h1{font-size:clamp(42px,15vw,62px);line-height:.92;letter-spacing:-.06em}
+  .hero p{font-size:15px;line-height:1.65;margin-top:20px}
+  .hero-actions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:26px}
+  .btn{width:100%;min-height:48px;padding:0 18px;border-radius:14px;font-size:10px}
+  .trust-row{gap:12px;font-size:10px}
+  .stats-row{margin-top:30px;border-radius:18px}
+  .stat{padding:16px 14px}.stat-num{font-size:28px}.stat-label{font-size:9px;letter-spacing:.1em}
+
+  .command{padding:14px;border-radius:24px}
+  .window-top{margin-bottom:14px}.command-title{font-size:9px;letter-spacing:.08em;text-align:right}
+  .command-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .metric{padding:14px;border-radius:16px}.metric small{font-size:11px}.metric b{font-size:28px}
+  .chart,.alert-list,.term{grid-column:1/-1}
+  .chart{padding:14px;border-radius:18px}.bars{height:120px;gap:5px}.bars i{border-radius:7px 7px 0 0}
+  .alert-row{font-size:12px;padding:11px 12px;align-items:flex-start}.sev{font-size:9px;white-space:nowrap}
+  .term-body{font-size:10px;min-height:104px}
+  .demo-btn{padding:9px 12px;font-size:10px;flex:1}
+  .demo-label,.demo-status{width:100%;text-align:center}
+  .wz{border-radius:16px}
+  .wz-time{display:none}
+  .wz-main{padding:12px}
+  .wz-cards{gap:8px}.wz-card b{font-size:21px}
+  .wz-toasts{top:96px;right:8px;max-width:240px}
+
+  .strip{padding:10px 0}.strip span{font-size:10px;padding-right:28px;gap:28px}
+  section{padding:72px 0}
+  .kicker{font-size:10px;letter-spacing:.16em;margin-bottom:14px}
+  .section-title{font-size:clamp(34px,12vw,48px);line-height:1;letter-spacing:-.055em}
+  .section-copy{font-size:15px;line-height:1.65}
+
+  .services-grid,.soc-grid,.health,.footer-grid{grid-template-columns:1fr}
+  .service{min-height:auto;padding:24px}.icon{width:48px;height:48px;margin-bottom:18px}.service h3{font-size:22px}
+  .stack-panel,.monitor,.event-stream,.contact-info,.form,.price-card,.quote{padding:24px}
+  .pipe{grid-template-columns:34px 1fr;gap:12px}.pipe-tag{grid-column:2;font-size:9px}.pipe-index{width:34px;height:34px;border-radius:12px}
+  .health-card b{font-size:28px}
+
+  .soc-card{min-height:auto;padding:24px}.soc-card b{font-size:48px;right:18px;top:14px}.soc-card h3{margin-top:34px;font-size:21px}
+  .ops{gap:14px}.monitor-head{display:block}.monitor-head span{display:inline-block;margin-top:14px}.monitor-bars{grid-template-columns:repeat(12,1fr);height:150px;gap:5px}
+  .event{padding:14px}
+
+  .price{font-size:48px}.features li{font-size:13px}
+  .faq-wrap{gap:28px}.faq-q{font-size:18px;padding:20px 0}.faq-a{font-size:14px}
+  .contact-grid{gap:14px}.form-row{grid-template-columns:1fr}.method{padding:14px}.method b{font-size:14px;overflow-wrap:anywhere}
+  .field input,.field select,.field textarea{border-radius:14px;padding:13px 14px;font-size:14px}
+  .footer-bottom{display:grid;gap:8px;text-align:left}.footer-copy{font-size:12px}
+  .to-top{right:16px;bottom:16px;width:44px;height:44px}
+}
+@media(max-width:430px){
+  .container{width:calc(100% - 22px)}
+  .nav-inner{width:calc(100% - 16px);padding:10px 12px;gap:8px}
+  .logo{font-size:17px}
+  .nav .btn{padding:0 12px;font-size:8.5px;letter-spacing:.05em;min-height:36px}
+
+  .hero{padding-top:88px}
+  .hero h1{font-size:clamp(38px,16vw,54px)}
+  .hero-badge{max-width:100%;white-space:normal;text-align:center;justify-content:center}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stat{padding:14px 12px}.stat-num{font-size:25px}
+
+  .command-grid{grid-template-columns:1fr}
+  .chart,.alert-list,.term{grid-column:auto}
+  .bars{height:110px}
+  .metric b{font-size:26px}
+  .monitor-bars{grid-template-columns:repeat(8,1fr);height:135px}
+  .section-title{font-size:38px}
+  .price{font-size:42px}
+}
+@media(hover:none){.cursor-glow{display:none}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+  .cursor-glow{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class='cursor-glow' id='cursorGlow'></div>
+<div class='scroll-progress' id='scrollProgress'></div>
+
+<div class='preloader' id='preloader' aria-label='Loading Obserion website'>
+  <div class='preloader-grid'></div>
+  <div class='loader-card'>
+    <div class='loader-scan'></div>
+    <div class='loader-brand'><span class='loader-mark'></span>Obserion<span class='grad'>.</span></div>
+    <div class='loader-status'><span>Initializing SIEM</span><span id='loaderPercent'>0%</span></div>
+    <div class='loader-terminal'>
+      <span>Starting wazuh-manager <b>OK</b></span>
+      <span>Connecting agents <b>OK</b></span>
+      <span>Loading detection rules <b>OK</b></span>
+    </div>
+    <div class='loader-bar'></div>
+  </div>
+</div>
+
+<nav class='nav' id='navbar'>
+  <div class='nav-inner'>
+    <a class='logo' href='#hero'><span class='logo-dot'></span>Obserion<span class='grad'>.</span></a>
+    <ul class='nav-links' id='navLinks'>
+      <li><a href='#services'>Services</a></li>
+      <li><a href='#soc'>How it works</a></li>
+      <li><a href='#demo'>Demo</a></li>
+      <li><a href='#stack'>Wazuh</a></li>
+      <li><a href='#pricing'>Pricing</a></li>
+      <li><a href='#faq'>FAQ</a></li>
+    </ul>
+    <div class='nav-cta'>
+      <div class='lang'><a href='index.html'>SR</a><a href='en.html' class='on'>EN</a></div>
+      <a class='btn btn-primary' data-magnetic href='#contact'><span>Get Protected</span><span class='arrow'>→</span></a>
+      <button class='hamburger' id='hamburger' aria-label='Open menu'><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class='mobile-drawer' id='mobileDrawer'>
+  <a href='#services'>Services</a>
+  <a href='#soc'>How it works</a>
+  <a href='#demo'>Demo</a>
+  <a href='#stack'>Wazuh</a>
+  <a href='#pricing'>Pricing</a>
+  <a href='#faq'>FAQ</a>
+  <a href='#contact'>Contact</a>
+  <a class='drawer-lang' href='index.html'>SR · Srpski</a>
+</div>
+
+<header class='hero' id='hero'>
+  <canvas id='hero-canvas'></canvas>
+  <div class='container hero-layout'>
+    <div>
+      <div class='hero-badge reveal'><span class='live-dot'></span>Wazuh SIEM · Your Infrastructure · Managed Monitoring</div>
+      <h1 class='reveal delay-1'>Threats <span class='type-box'><span class='type-sizer' aria-hidden='true'>contained._</span><span class='type-live'><span class='grad' id='typeWord'>detected.</span><span class='type-cursor'>_</span></span></span><span class='outline'>Before damage.</span></h1>
+      <p class='reveal delay-2'>Obserion deploys <strong style='color:var(--text)'>Wazuh SIEM</strong> on your own server or cloud and, if you want, keeps watching it for you: agent rollout, log collection, custom rules, MITRE ATT&CK-mapped alerts, vulnerability detection, and a monthly security report. No SIEM license. Your logs stay with you.</p>
+      <div class='hero-actions reveal delay-3'>
+        <a href='#contact' class='btn btn-primary' data-magnetic><span>Get a Quote</span><span class='arrow'>→</span></a>
+        <a href='#soc' class='btn btn-ghost' data-magnetic>See how it works</a>
+      </div>
+      <div class='trust-row reveal delay-3'>
+        <span><span class='tick'>✓</span> Open-source SIEM — €0 license</span>
+        <span><span class='tick'>✓</span> MITRE ATT&CK aligned</span>
+        <span><span class='tick'>✓</span> No long-term lock-in</span>
+      </div>
+      <div class='stats-row reveal delay-3'>
+        <div class='stat'><div class='stat-num'>24<span>/7</span></div><div class='stat-label'>Automated Alerting</div></div>
+        <div class='stat'><div class='stat-num'>€<span>0</span></div><div class='stat-label'>SIEM License Cost</div></div>
+        <div class='stat'><div class='stat-num'>1<span style='font-size:17px'> business day</span></div><div class='stat-label'>Analyst Review of Critical Alerts</div></div>
+        <div class='stat'><div class='stat-num' style='font-size:26px;line-height:38px'>Monthly</div><div class='stat-label'>Security Report in Plain Language</div></div>
+      </div>
+    </div>
+
+    <div class='command reveal delay-2' id='heroCommand'>
+      <div class='window-top'>
+        <div class='dots'><span></span><span></span><span></span></div>
+        <div class='command-title'>Obserion · Wazuh Console</div>
+      </div>
+      <div class='command-grid'>
+        <div class='metric'><small>Agents Online</small><b style='color:var(--green)'><span data-count='12'>0</span></b></div>
+        <div class='metric'><small>Events / sec</small><b id='epsMetric'>418</b></div>
+        <div class='chart'>
+          <div style='display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:14px'>
+            <span>Live event ingestion</span><span style='color:var(--green)'>● wazuh-manager: active</span>
+          </div>
+          <div class='bars'>
+            <i style='height:35%;animation-delay:.05s'></i><i style='height:52%;animation-delay:.1s'></i><i style='height:68%;animation-delay:.15s'></i><i style='height:44%;animation-delay:.2s'></i><i style='height:80%;animation-delay:.25s'></i><i class='alert' style='height:94%;animation-delay:.3s'></i><i style='height:72%;animation-delay:.35s'></i><i style='height:88%;animation-delay:.4s'></i><i style='height:61%;animation-delay:.45s'></i><i style='height:78%;animation-delay:.5s'></i>
+          </div>
+        </div>
+        <div class='term' aria-hidden='true'>
+          <div class='term-head'><span>tail -f /var/ossec/logs/alerts.json</span><span class='term-live'>LIVE</span></div>
+          <div class='term-body' id='socTerminal'></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class='strip'>
+  <div class='strip-track'>
+    <span>Wazuh SIEM</span><span>Managed Monitoring</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Your Infrastructure</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
+    <span>Wazuh SIEM</span><span>Managed Monitoring</span><span>Threat Detection</span><span>MITRE ATT&CK</span><span>File Integrity Monitoring</span><span>Vulnerability Detection</span><span>Your Infrastructure</span><span>Compliance · PCI DSS · GDPR</span><span>Fortinet Expertise</span>
+  </div>
+</div>
+
+<section id='services'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Services</div>
+        <h2 class='section-title reveal delay-1'>Enterprise-grade visibility — <span>at SMB cost.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>One core offer: we deploy Wazuh SIEM on your own infrastructure and, if you want, keep monitoring it — detection, alert review, tuning, and reporting. Firewall and Fortinet expertise included where it matters.</p>
+    </div>
+
+    <div class='services-grid'>
+      <article class='card service tilt reveal'>
+        <div class='num'>01</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M4 5h16v5c0 5.2-3.4 9.4-8 11-4.6-1.6-8-5.8-8-11V5z' stroke-width='1.7'/><path d='M8 12h8M8 15h5M8 9h8' stroke-width='1.7'/></svg></div>
+        <h3>Wazuh SIEM Deployment</h3><p>Full Wazuh rollout: manager, indexer, and dashboard installation, agent deployment across servers and endpoints, log source onboarding, custom rules and decoders, and noise tuning — sized for your environment.</p>
+      </article>
+      <article class='card service tilt reveal delay-1'>
+        <div class='num'>02</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><circle cx='12' cy='12' r='8' stroke-width='1.7'/><circle cx='12' cy='12' r='3' stroke-width='1.7'/><path d='M12 2v4M12 18v4M2 12h4M18 12h4' stroke-width='1.7'/></svg></div>
+        <h3>Managed Monitoring</h3><p>Automated alerting, analyst review on business days, escalation of real threats, continuous rule tuning, platform updates, and a monthly report.</p>
+      </article>
+      <article class='card service tilt reveal delay-2'>
+        <div class='num'>03</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><path d='M12 3l7 3v5c0 5-3.3 8.7-7 10-3.7-1.3-7-5-7-10V6l7-3z' stroke-width='1.7'/><path d='M8.5 12l2.4 2.4L16 9.2' stroke-width='1.7'/></svg></div>
+        <h3>Threat Detection & Response</h3><p>MITRE ATT&CK mapped detections, brute-force and lateral-movement alerts, file integrity monitoring, and vulnerability detection. Active response available as an option, enabled only on your written request.</p>
+      </article>
+      <article class='card service tilt reveal delay-3'>
+        <div class='num'>04</div><div class='icon'><svg fill='none' viewBox='0 0 24 24'><rect x='3' y='5' width='7' height='5' stroke-width='1.7'/><rect x='14' y='5' width='7' height='5' stroke-width='1.7'/><rect x='8.5' y='14' width='7' height='5' stroke-width='1.7'/><path d='M6.5 10v2h5.5v2M17.5 10v2H12v2' stroke-width='1.7'/></svg></div>
+        <h3>Firewall & Fortinet</h3><p>FortiGate configuration, VPN, segmentation, IPS profiles, and firewall log integration into Wazuh — so your network layer feeds the same monitoring pipeline as your endpoints.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id='stack'>
+  <div class='container stack'>
+    <div class='card stack-panel reveal'>
+      <div class='kicker'>Wazuh Deployment</div>
+      <h2 class='section-title'>From zero to <span>operational SIEM.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>A proven rollout path: design the architecture, deploy the stack on your infrastructure, tune detections to your environment, then hand it to your team fully documented — or let managed monitoring take over.</p>
+      <div class='pipeline'>
+        <div class='pipe'><div class='pipe-index'>01</div><div><strong>Scope & Design</strong><small>Sizing, log sources, single-node or cluster architecture, retention planning.</small></div><span class='pipe-tag'>Week 1</span></div>
+        <div class='pipe'><div class='pipe-index'>02</div><div><strong>Deploy</strong><small>Wazuh manager, indexer, dashboard, agent rollout, firewall and cloud log onboarding.</small></div><span class='pipe-tag'>Week 1–2</span></div>
+        <div class='pipe'><div class='pipe-index'>03</div><div><strong>Tune</strong><small>Custom rules and decoders, CDB lists, noise reduction, MITRE ATT&CK mapping.</small></div><span class='pipe-tag'>Week 2–3</span></div>
+        <div class='pipe'><div class='pipe-index'>04</div><div><strong>Operate</strong><small>Handover to your team, or managed monitoring starts.</small></div><span class='pipe-tag'>Live</span></div>
+      </div>
+    </div>
+
+    <div class='card stack-panel reveal delay-1'>
+      <div class='kicker'>Out of the Box</div>
+      <h3 style='font-family:Syne,sans-serif;font-size:34px;letter-spacing:-.05em;margin-bottom:12px'>What Wazuh watches for you.</h3>
+      <p class='section-copy'>One open-source platform, no license fees — covering the capabilities SMBs usually pay enterprise prices for.</p>
+      <div class='health'>
+        <div class='health-card'><b>FIM</b><small>File integrity monitoring</small></div>
+        <div class='health-card'><b>Vulns</b><small>CVE detection on every agent</small></div>
+        <div class='health-card'><b>SCA</b><small>Configuration assessment & hardening</small></div>
+        <div class='health-card'><b>Compliance</b><small>PCI DSS · GDPR · ISO 27001 reports</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id='soc' class='soc'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>How It Works</div>
+        <h2 class='section-title reveal delay-1'>Managed monitoring, <span>built on Wazuh.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>Every log from every endpoint, server, and firewall flows into one detection pipeline on your own infrastructure — analyzed in real time, mapped to MITRE ATT&CK, and reviewed by an analyst who escalates only what matters.</p>
+    </div>
+
+    <div class='flow reveal' aria-label='Wazuh detection pipeline'>
+      <div class='flow-node'><div class='flow-ico'>🖥</div><b>Endpoints & Servers</b><small>Wazuh agents</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node'><div class='flow-ico'>⚙</div><b>Wazuh Manager</b><small>On your infrastructure</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node'><div class='flow-ico'>🗄</div><b>Indexer</b><small>On your infrastructure</small></div>
+      <div class='flow-link'></div>
+      <div class='flow-node flow-alert'><div class='flow-ico'>⚡</div><b>Analyst Review</b><small>Business days</small></div>
+    </div>
+
+    <div class='soc-grid'>
+      <div class='soc-card reveal'><b>01</b><h3>Log Analysis & Correlation</h3><p>Endpoint, server, firewall, and cloud logs correlated in real time by the Wazuh ruleset — thousands of events reduced to the alerts that matter.</p></div>
+      <div class='soc-card reveal delay-1'><b>02</b><h3>MITRE ATT&CK Mapping</h3><p>Every detection is mapped to ATT&CK tactics and techniques, so you see exactly what stage of an attack triggered the alert.</p></div>
+      <div class='soc-card reveal delay-2'><b>03</b><h3>File Integrity Monitoring</h3><p>Critical files, registries, and configs watched for unauthorized changes — ransomware and tampering caught at first touch.</p></div>
+      <div class='soc-card reveal'><b>04</b><h3>Vulnerability Detection</h3><p>Continuous CVE scanning on every agent, matched against installed software — know what's exploitable before attackers do.</p></div>
+      <div class='soc-card reveal delay-1'><b>05</b><h3>Active Response</h3><p>Optional automated containment — block brute-force sources, isolate suspicious processes, disable compromised accounts — enabled only on your written request.</p></div>
+      <div class='soc-card reveal delay-2'><b>06</b><h3>Compliance Reporting</h3><p>PCI DSS, GDPR, NIST, and ISO 27001 oriented reports generated from real telemetry — evidence your auditors can use.</p></div>
+    </div>
+
+    <div class='ops'>
+      <div class='card monitor reveal'>
+        <div class='monitor-head'>
+          <div><div class='kicker' style='margin-bottom:8px'>Live Security Events</div><h3 style='font-family:Syne,sans-serif;font-size:30px;letter-spacing:-.04em'>Wazuh Event Ingestion</h3></div>
+          <div style='display:flex;align-items:center;gap:14px'>
+            <div class='radar' aria-hidden='true'><i></i><i></i><i></i></div>
+            <span style='color:var(--green);font-family:Space Mono,monospace;font-size:11px'>● OPERATIONAL</span>
+          </div>
+        </div>
+        <div class='monitor-bars' id='monitorBars'></div>
+        <div style='display:flex;justify-content:space-between;color:var(--muted);font-family:Space Mono,monospace;font-size:10px;margin-top:18px'>
+          <span><span style='color:var(--cyan)'>■</span> Normal traffic</span>
+          <span><span style='color:var(--red)'>■</span> Anomaly</span>
+          <span>Updated: <span id='liveTime'></span></span>
+        </div>
+      </div>
+
+      <div class='card event-stream reveal delay-1'>
+        <div class='kicker'>Alert Feed</div>
+        <div class='event'><small>Level 12 · T1110</small><strong>SSH brute-force detected</strong><p>40+ failed logins from single source. Active response blocked the IP.</p></div>
+        <div class='event'><small>Level 10 · T1078</small><strong>Privileged login anomaly</strong><p>Admin account authenticated outside business hours from new device.</p></div>
+        <div class='event'><small>Level 7 · FIM</small><strong>System file modified</strong><p>Unexpected change in /etc/passwd flagged by file integrity monitoring.</p></div>
+        <div class='event'><small>Resolved</small><strong>Endpoint contained</strong><p>Suspicious process isolated; system returned to baseline and verified.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id='demo'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Demo</div>
+        <h2 class='section-title reveal delay-1'>Interactive demo — <span>simulated data.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>A faithful replica of the Wazuh dashboard we deploy: same navigation, same modules, same rule IDs and alert format. Browse Threat Hunting, FIM, vulnerabilities, MITRE ATT&CK and agents — then launch an attack and watch it light up.</p>
+    </div>
+
+    <div class='demo-toolbar reveal'>
+      <span class='demo-label'>Simulate attack ▸</span>
+      <button class='demo-btn' data-scenario='brute'>SSH Brute-Force</button>
+      <button class='demo-btn' data-scenario='ransom'>Ransomware</button>
+      <button class='demo-btn' data-scenario='recon'>Network Recon</button>
+      <button class='demo-btn demo-reset' id='demoReset'>↺ Reset</button>
+      <span class='demo-status secure' id='demoStatus'>● SYSTEM SECURE</span>
+    </div>
+
+    <div class='wz reveal' id='wzApp'>
+      <div class='wz-chrome'>
+        <div class='dots'><span></span><span></span><span></span></div>
+        <div class='wz-url'>🔒 https://siem.demo.obserion.local/app/wz-home — Wazuh v4.12</div>
+      </div>
+      <div class='wz-top'>
+        <button class='wz-burger' id='wzBurger' aria-label='Toggle menu'>☰</button>
+        <div class='wz-logo'><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M2 6l4.5 12L12 8l5.5 10L22 6' stroke='#3585F9' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>wazuh<span style='color:#3585F9'>.</span></div>
+        <div class='wz-search'><span style='opacity:.55'>⌕</span> rule.level >= 3 AND agent.name : <b>*</b></div>
+        <div class='wz-time'>🗓 Last 24 hours ▾</div>
+        <div class='wz-avatar'>OB</div>
+      </div>
+      <div class='wz-body'>
+        <nav class='wz-nav' id='wzNav'>
+          <a data-page='home' class='on'>⌂&ensp;Overview</a>
+          <div class='wz-group'>Endpoint security</div>
+          <a data-page='sca'>Configuration Assessment</a>
+          <a data-page='malware'>Malware Detection</a>
+          <a data-page='fim'>File Integrity Monitoring</a>
+          <div class='wz-group'>Threat intelligence</div>
+          <a data-page='th'>Threat Hunting</a>
+          <a data-page='vuln'>Vulnerability Detection</a>
+          <a data-page='mitre'>MITRE ATT&CK</a>
+          <div class='wz-group'>Security operations</div>
+          <a data-page='pci'>PCI DSS</a>
+          <a data-page='gdpr'>GDPR</a>
+          <div class='wz-group'>Agents management</div>
+          <a data-page='agents'>Summary</a>
+          <div class='wz-group'>Server management</div>
+          <a data-page='rules'>Rules</a>
+          <a data-page='status'>Status</a>
+        </nav>
+        <main class='wz-main' id='wzMain'></main>
+      </div>
+      <div class='wz-toasts' id='wzToasts'></div>
+    </div>
+    <p class='reveal' style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px'>* Simulated data for illustration — the interface mirrors a real Wazuh 4.x deployment. Want it on your infrastructure? <a href='#contact' style='color:var(--cyan)'>Book a live demo →</a></p>
+  </div>
+</section>
+
+<section id='law'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Compliance</div>
+        <h2 class='section-title reveal delay-1'>Serbia's <span>Information Security Law.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>Serbia's Law on Information Security (Official Gazette RS 91/2025) lists monitoring of ICT systems and retention of security event data among its protection measures, and requires operators to report incidents within 24 hours of becoming aware of them. A deployed and tuned SIEM gives you the logs and alerts to do both. Whether the law applies to you depends on your sector and size. We do not give legal advice.</p>
+    </div>
+  </div>
+</section>
+
+<section id='pricing'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Pricing</div>
+        <h2 class='section-title reveal delay-1'>SIEM power, <span>SMB pricing.</span></h2>
+      </div>
+      <p class='section-copy reveal delay-2'>Wazuh is open source — you pay for expertise and operations, not licenses. Simple pricing based on the number of devices.</p>
+    </div>
+
+    <div class='pricing-grid'>
+      <article class='card price-card tilt reveal'>
+        <span class='badge'>SIEM Deployment</span>
+        <div class='price'>€490<small> one-time</small></div>
+        <div class='price-fine'>Up to 25 devices · €790 for 26–50 devices</div>
+        <p class='price-desc'>Production-ready Wazuh SIEM on your own server or cloud — yours to keep, fully documented.</p>
+        <ul class='features'><li>Architecture design and sizing</li><li>Manager, indexer and dashboard setup on your server or cloud</li><li>Agent rollout, firewall and log source onboarding</li><li>14 days of rule and noise tuning</li><li>Handover documentation and a 1-hour walkthrough</li><li>The SIEM is yours. No monthly fee.</li></ul>
+        <a class='btn btn-ghost' style='width:100%' href='mailto:info@obserion.com?subject=SIEM%20Deployment'>Request Deployment</a>
+      </article>
+      <article class='card price-card featured tilt reveal delay-1'>
+        <span class='badge'>Most Popular · Deployment + Managed Monitoring</span>
+        <div class='price'>€7<small> per device / month</small></div>
+        <div class='price-fine'>Minimum €150/month · plus the one-time deployment fee</div>
+        <p class='price-desc'>We deploy the SIEM and then keep watching it for you — alerts, review, tuning, and a monthly report.</p>
+        <ul class='features'><li>Everything in SIEM Deployment</li><li>Automated critical alerts 24/7 by email</li><li>Analyst alert review on business days</li><li>Continuous rule and noise tuning</li><li>Wazuh updates and health checks</li><li>Monthly security report in plain language</li><li>Remote access over a connection you control</li><li>3-month minimum, then cancel with 30 days' notice</li></ul>
+        <a class='btn btn-primary' style='width:100%' href='mailto:info@obserion.com?subject=Deployment%20%2B%20Managed%20Monitoring'><span>Get a Quote</span></a>
+      </article>
+    </div>
+    <p style='color:var(--dim);font-family:Space Mono,monospace;font-size:11px;margin-top:18px;line-height:1.7'>A device is any endpoint with a Wazuh agent or any log source such as a firewall or server. More than 50 devices, multiple sites, or Fortinet work: fixed quote after a scoping call. The SIEM runs on your own server or cloud account; we do not host it. Wazuh has no license fee.</p>
+  </div>
+</section>
+
+<section id='testimonials'>
+  <div class='container'>
+    <div class='split-head'>
+      <div>
+        <div class='kicker reveal'>Testimonials</div>
+        <h2 class='section-title reveal delay-1'>Trusted by <span>real businesses.</span></h2>
+      </div>
+    </div>
+    <div class='testimonials'>
+      <article class='card quote tilt reveal'>
+        <span class='mark'>&ldquo;</span>
+        <p>Managing and working with Lazar has been a pleasure. He gives it his all when dealing with problems. Very goal driven and hard working individual.</p>
+        <div class='author'><div class='avatar'>AD</div><div><strong>Adrian Dunbar</strong><div class='role'>Founder, Resolute SA Pirot</div></div></div>
+      </article>
+      <article class='card quote tilt reveal delay-1'>
+        <span class='mark'>&ldquo;</span>
+        <p>Lazar is a highly capable Security Engineer with deep Fortinet expertise. He is quick to understand complex issues and offer a suitable solution for any problem.</p>
+        <div class='author'><div class='avatar'>FR</div><div><strong>Frank Raa</strong><div class='role'>Founder, Netkey Security</div></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id='faq'>
+  <div class='container faq-wrap'>
+    <div>
+      <div class='kicker reveal'>FAQ</div>
+      <h2 class='section-title reveal delay-1'>Quick <span>answers.</span></h2>
+      <p class='section-copy reveal delay-2' style='margin-top:22px'>Straight answers about Wazuh, SIEM deployment, managed monitoring, and pricing.</p>
+    </div>
+    <div class='faq-list reveal delay-2'>
+      <div class='faq-item open'><div class='faq-q'>What is Wazuh, and why do you use it?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh is a widely used open-source SIEM and XDR platform. It delivers log analysis, threat detection, file integrity monitoring, vulnerability detection, and compliance reporting — with zero license cost. You get enterprise-grade visibility for the price of expertise and operations only.</div></div>
+      <div class='faq-item'><div class='faq-q'>Where does the SIEM run?<span class='faq-icon'>+</span></div><div class='faq-a'>On your infrastructure: an on-premises server or your own cloud account. We do not host customer SIEMs, so your logs stay with you. For managed monitoring we connect remotely over a secure connection that you control and can switch off at any time.</div></div>
+      <div class='faq-item'><div class='faq-q'>What server do we need?<span class='faq-icon'>+</span></div><div class='faq-a'>For up to 25 devices: 4 vCPU, 8 GB of RAM and 50 GB of disk for 90 days of alerts. For 26–50 devices: 8 vCPU, 8 GB of RAM and 100 GB of disk. We size it with you on the scoping call.</div></div>
+      <div class='faq-item'><div class='faq-q'>What does managed monitoring include?<span class='faq-icon'>+</span></div><div class='faq-a'>Wazuh sends automated alerts 24/7. An analyst reviews alerts on business days, filters noise, investigates, and escalates real threats to you by email, at the latest by the end of the next business day. We tune rules continuously and send a monthly report.</div></div>
+      <div class='faq-item'><div class='faq-q'>Is this a 24/7 SOC?<span class='faq-icon'>+</span></div><div class='faq-a'>No. Alerting is automated 24/7, but analyst review happens on business days. If you need a staffed 24/7 SOC, we will tell you so on the scoping call.</div></div>
+      <div class='faq-item'><div class='faq-q'>What is in the monthly report?<span class='faq-icon'>+</span></div><div class='faq-a'>What was detected, what we did about it, open vulnerabilities, and what you should fix, in plain language.</div></div>
+      <div class='faq-item'><div class='faq-q'>Do we keep the SIEM if we cancel?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. The Wazuh deployment is yours — installed in your environment with full documentation and handover. If you stop managed monitoring, the platform keeps working and your team keeps full access. No lock-in.</div></div>
+      <div class='faq-item'><div class='faq-q'>Do you also handle firewalls and Fortinet?<span class='faq-icon'>+</span></div><div class='faq-a'>Yes. Hands-on FortiGate expertise — configuration, VPN, IPS profiles, segmentation — and firewall logs are integrated into Wazuh so monitoring covers your network and endpoints in one pipeline. (No official Fortinet partner status claimed.)</div></div>
+      <div class='faq-item'><div class='faq-q'>How are prices calculated?<span class='faq-icon'>+</span></div><div class='faq-a'>Deployment is a one-time fee based on device count: €490 for up to 25 devices, €790 for 26–50. Managed monitoring is €7 per device per month with a €150 monthly minimum — 3-month minimum term, then cancel with 30 days' notice. A device is any endpoint with a Wazuh agent or any log source such as a firewall or server. Larger environments get a fixed quote after a scoping call.</div></div>
+      <div class='faq-item'><div class='faq-q'>How can I get started?<span class='faq-icon'>+</span></div><div class='faq-a'>Book a short scoping call. We'll map your log sources, size the deployment, and give you a fixed quote — deployment typically goes live within two weeks.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id='contact'>
+  <div class='container contact-grid'>
+    <div class='card contact-info reveal'>
+      <div class='kicker'>Contact</div>
+      <h2 class='section-title'>See your logs in a <span>live Wazuh demo.</span></h2>
+      <p class='section-copy' style='margin-top:22px'>A short scoping call is all it takes: we map your log sources, size the deployment, and show you exactly what your Wazuh dashboard will look like.</p>
+      <div class='contact-methods'>
+        <div class='method'><div class='method-dot'>@</div><div><small>Email</small><b><a href='mailto:info@obserion.com'>info@obserion.com</a></b></div></div>
+        <div class='method'><div class='method-dot'>⌖</div><div><small>Location</small><b>Pirot, Serbia</b></div></div>
+      </div>
+    </div>
+
+    <form class='card form reveal delay-1' onsubmit='handleSubmit(event)'>
+      <div class='form-row'>
+        <div class='field'><label>First Name</label><input type='text' name='first' placeholder='Marko' required></div>
+        <div class='field'><label>Last Name</label><input type='text' name='last' placeholder='Jovanović' required></div>
+      </div>
+      <div class='field'><label>Business Email</label><input type='email' name='email' placeholder='marko@company.com' required></div>
+      <div class='field'><label>Company</label><input type='text' name='company' placeholder='Your company name'></div>
+      <div class='field'><label>Service Interest</label><select name='service'><option>SIEM Deployment</option><option>Deployment + Managed Monitoring</option><option>Firewall & Fortinet</option><option>Not sure yet</option></select></div>
+      <div class='field'><label>Message</label><textarea name='message' placeholder='Tell us about your security needs...'></textarea></div>
+      <button class='btn btn-primary' type='submit'><span>Send Message</span><span class='arrow'>→</span></button>
+      <p class='form-consent'>By sending this form you agree that we use your details to reply to your inquiry. See our <a href='privacy-en.html'>Privacy Policy</a>.</p>
+      <div class='success' id='form-success'>✓ Your email app should open with the message ready — or write us directly at info@obserion.com.</div>
+    </form>
+  </div>
+</section>
+
+<footer class='footer'>
+  <div class='container'>
+    <div class='footer-grid'>
+      <div>
+        <a class='logo' href='#hero'><span class='logo-dot'></span>Obserion<span class='grad'>.</span></a>
+        <p style='margin-top:16px;max-width:310px'>Wazuh SIEM deployment on your own infrastructure and managed monitoring — threat detection, vulnerability detection, compliance reporting, and Fortinet expertise for businesses that cannot afford to compromise.</p>
+      </div>
+      <div><div class='footer-title'>Services</div><ul class='footer-links'><li><a href='#services'>Wazuh SIEM Deployment</a></li><li><a href='#services'>Managed Monitoring</a></li><li><a href='#services'>Threat Detection & Response</a></li><li><a href='#services'>Firewall & Fortinet</a></li><li><a href='#pricing'>Pricing</a></li></ul></div>
+      <div><div class='footer-title'>Company</div><ul class='footer-links'><li><a href='#soc'>How it works</a></li><li><a href='#testimonials'>Clients</a></li><li><a href='#faq'>FAQ</a></li><li><a href='#contact'>Contact</a></li></ul></div>
+      <div><div class='footer-title'>Legal</div><ul class='footer-links'><li><a href='privacy-en.html'>Privacy Policy</a></li></ul></div>
+    </div>
+    <div class='footer-bottom'>
+      <div class='footer-copy'>© 2026 <span class='grad'>Obserion</span>. All rights reserved. Pirot, Serbia.</div>
+      <div class='footer-copy'>Built for security. Designed for trust.</div>
+    </div>
+  </div>
+</footer>
+
+<button class='to-top' id='toTop' aria-label='Back to top'>↑</button>
+
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* PRELOADER */
+const preloader=document.getElementById('preloader');
+const loaderPercent=document.getElementById('loaderPercent');
+let loaderValue=0;
+const loaderTimer=setInterval(()=>{
+  loaderValue=Math.min(100,loaderValue+Math.floor(Math.random()*14)+6);
+  if(loaderPercent)loaderPercent.textContent=loaderValue+'%';
+  if(loaderValue>=100)clearInterval(loaderTimer);
+},120);
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    if(loaderPercent)loaderPercent.textContent='100%';
+    if(preloader)preloader.classList.add('hidden');
+  },650);
+});
+setTimeout(()=>{if(preloader)preloader.classList.add('hidden');},3200);
+
+/* NAV scrolled state + scroll progress + back to top */
+const nav=document.getElementById('navbar');
+const progress=document.getElementById('scrollProgress');
+const toTop=document.getElementById('toTop');
+function onScroll(){
+  const y=window.scrollY;
+  nav.classList.toggle('scrolled',y>40);
+  const docH=document.documentElement.scrollHeight-window.innerHeight;
+  progress.style.width=(docH>0?(y/docH)*100:0)+'%';
+  toTop.classList.toggle('show',y>600);
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+/* MOBILE MENU */
+const hamburger=document.getElementById('hamburger');
+const drawer=document.getElementById('mobileDrawer');
+function closeDrawer(){hamburger.classList.remove('open');drawer.classList.remove('open');document.body.style.overflow=''}
+hamburger.addEventListener('click',()=>{
+  const open=hamburger.classList.toggle('open');
+  drawer.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+});
+drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeDrawer));
+
+/* SMOOTH ANCHORS */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const href=a.getAttribute('href');
+    if(href.length<2){e.preventDefault();return;}
+    const target=document.querySelector(href);
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth'});}
+  });
+});
+
+/* SCROLL REVEAL */
+const reveals=document.querySelectorAll('.reveal');
+const revealObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}
+  });
+},{threshold:.12});
+reveals.forEach(el=>revealObserver.observe(el));
+
+/* ANIMATED COUNTERS */
+const counters=document.querySelectorAll('[data-count]');
+const countObs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(!en.isIntersecting)return;
+    const el=en.target;countObs.unobserve(el);
+    const target=parseFloat(el.dataset.count);
+    const suffix=el.dataset.suffix||'';
+    if(reduceMotion){el.innerHTML=target+'<span>'+suffix+'</span>';return;}
+    let cur=0;const dur=1100;const start=performance.now();
+    function step(now){
+      const p=Math.min(1,(now-start)/dur);
+      const val=Math.round((1-Math.pow(1-p,3))*target);
+      el.innerHTML=val+'<span>'+suffix+'</span>';
+      if(p<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+},{threshold:.5});
+counters.forEach(c=>countObs.observe(c));
+
+/* ACTIVE NAV LINK ON SCROLL */
+const navLinkEls=[...document.querySelectorAll('#navLinks a')];
+const sectionIds=navLinkEls.map(a=>a.getAttribute('href'));
+const sectionObs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const id='#'+en.target.id;
+      navLinkEls.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px'});
+sectionIds.forEach(id=>{const s=document.querySelector(id);if(s)sectionObs.observe(s);});
+
+/* FAQ */
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    const open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!open)item.classList.add('open');
+  });
+});
+
+/* FORM — composes a pre-filled email (no backend needed; swap for Formspree/FormSubmit later) */
+function handleSubmit(e){
+  e.preventDefault();
+  const f=e.target;
+  const v=n=>(f.elements[n]&&f.elements[n].value.trim())||'';
+  const subject='Inquiry: '+v('service')+' — '+v('company');
+  const body='Name: '+v('first')+' '+v('last')
+    +'\nEmail: '+v('email')
+    +'\nCompany: '+v('company')
+    +'\nService: '+v('service')
+    +'\n\n'+v('message');
+  window.location.href='mailto:info@obserion.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  document.getElementById('form-success').style.display='block';
+}
+
+/* CARD SPOTLIGHT + 3D TILT */
+const cards=document.querySelectorAll('.card');
+cards.forEach(card=>{
+  card.addEventListener('pointermove',e=>{
+    const r=card.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    card.style.setProperty('--mx',mx+'px');
+    card.style.setProperty('--my',my+'px');
+    if(card.classList.contains('tilt')&&!reduceMotion&&window.innerWidth>920){
+      const px=(mx/r.width)-.5, py=(my/r.height)-.5;
+      card.style.setProperty('--ry',(px*7).toFixed(2)+'deg');
+      card.style.setProperty('--rx',(-py*7).toFixed(2)+'deg');
+      card.style.setProperty('--ty','-4px');
+    }
+  });
+  card.addEventListener('pointerleave',()=>{
+    card.style.setProperty('--rx','0deg');
+    card.style.setProperty('--ry','0deg');
+    card.style.setProperty('--ty','0');
+  });
+});
+
+/* MAGNETIC BUTTONS + CURSOR GLOW */
+const glow=document.getElementById('cursorGlow');
+let gx=window.innerWidth/2, gy=window.innerHeight/2, cgx=gx, cgy=gy;
+if(!reduceMotion && window.matchMedia('(hover:hover)').matches){
+  window.addEventListener('pointermove',e=>{gx=e.clientX;gy=e.clientY;});
+  (function loop(){
+    cgx+=(gx-cgx)*.12; cgy+=(gy-cgy)*.12;
+    glow.style.transform='translate('+cgx+'px,'+cgy+'px) translate(-50%,-50%)';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('[data-magnetic]').forEach(btn=>{
+    btn.addEventListener('pointermove',e=>{
+      const r=btn.getBoundingClientRect();
+      const x=e.clientX-(r.left+r.width/2);
+      const y=e.clientY-(r.top+r.height/2);
+      btn.style.transform='translate('+x*.25+'px,'+y*.35+'px)';
+    });
+    btn.addEventListener('pointerleave',()=>{btn.style.transform='';});
+  });
+}
+
+/* HERO TYPEWRITER */
+const typeEl=document.getElementById('typeWord');
+const phrases=['detected.','triaged.','contained.','reported.'];
+if(typeEl&&!reduceMotion){
+  let pi=0,ci=phrases[0].length,deleting=true;
+  setTimeout(function tick(){
+    const word=phrases[pi];
+    if(deleting){
+      ci--;typeEl.textContent=word.slice(0,ci);
+      if(ci===0){deleting=false;pi=(pi+1)%phrases.length;}
+      setTimeout(tick,45);
+    }else{
+      ci++;typeEl.textContent=phrases[pi].slice(0,ci);
+      if(ci===phrases[pi].length){deleting=true;setTimeout(tick,2400);}
+      else setTimeout(tick,90);
+    }
+  },2200);
+}
+
+/* WAZUH TERMINAL FEED */
+const termBody=document.getElementById('socTerminal');
+const termLines=[
+  ['t-crit','rule 5712 level 12','sshd: brute-force attack — active-response: IP blocked'],
+  ['t-info','rule 533 level 3','netstat: new listening port detected on srv-db01'],
+  ['t-med','rule 550 level 7','syscheck: integrity checksum changed /etc/passwd'],
+  ['t-ok','agent 014','keepalive OK — finance-pc-03 reconnected'],
+  ['t-med','rule 31151 level 10','MITRE T1078: admin login outside business hours'],
+  ['t-info','vulnerability-detector','CVE-2026-1337 matched on web-srv02 (high)'],
+  ['t-crit','rule 92657 level 12','MITRE T1486: mass file rename — possible ransomware'],
+  ['t-ok','active-response','threat contained — process isolated on host hr-lap-07'],
+];
+function termTime(){const d=new Date();return d.toTimeString().slice(0,8);}
+function pushTermLine(){
+  if(!termBody)return;
+  const l=termLines[Math.floor(Math.random()*termLines.length)];
+  const div=document.createElement('div');
+  div.innerHTML="<span class='t-time'>"+termTime()+"</span> <span class='"+l[0]+"'>["+l[1]+"]</span> "+l[2];
+  termBody.appendChild(div);
+  while(termBody.children.length>5)termBody.removeChild(termBody.firstChild);
+}
+if(termBody){
+  pushTermLine();pushTermLine();pushTermLine();pushTermLine();
+  if(!reduceMotion)setInterval(pushTermLine,2600);
+}
+
+/* EVENTS PER SECOND TICKER */
+const eps=document.getElementById('epsMetric');
+if(eps&&!reduceMotion){
+  setInterval(()=>{eps.textContent=(380+Math.floor(Math.random()*160)).toLocaleString();},1600);
+}
+
+/* HERO LIVE TRAFFIC BARS (continuous) */
+const heroBars=document.querySelectorAll('#heroCommand .bars i');
+if(heroBars.length&&!reduceMotion){
+  setInterval(()=>{
+    heroBars.forEach(b=>{
+      if(Math.random()>.45)b.style.height=(Math.random()*68+26)+'%';
+    });
+  },1400);
+}
+
+/* EVENT MONITOR BARS */
+const barsEl=document.getElementById('monitorBars');
+const heights=[45,72,38,85,60,92,55,30,78,65,88,42,70,58,95,35,80,45,62,75,40,88,52,30];
+function buildBars(){
+  if(!barsEl)return;
+  barsEl.innerHTML='';
+  for(let i=0;i<24;i++){
+    const bar=document.createElement('div');
+    bar.className='monitor-bar'+(i===10||i===18?' alert':'');
+    bar.style.height=heights[i]+'%';
+    barsEl.appendChild(bar);
+  }
+}
+buildBars();
+if(!reduceMotion){
+  setInterval(()=>{
+    if(!barsEl)return;
+    barsEl.querySelectorAll('.monitor-bar').forEach((b,i)=>{
+      if(Math.random()>.55)b.style.height=(Math.random()*78+16)+'%';
+    });
+  },1800);
+}
+
+/* LIVE CLOCK */
+function updateTime(){
+  const el=document.getElementById('liveTime');
+  if(el)el.textContent=new Date().toLocaleTimeString('en-GB');
+}
+updateTime();setInterval(updateTime,1000);
+
+/* ============ WAZUH DASHBOARD REPLICA ============ */
+(function(){
+  const app=document.getElementById('wzApp');if(!app)return;
+  const main=document.getElementById('wzMain');
+  const navEl=document.getElementById('wzNav');
+  const toasts=document.getElementById('wzToasts');
+  const statusEl=document.getElementById('demoStatus');
+  const btns=[...document.querySelectorAll('.demo-btn[data-scenario]')];
+  const resetBtn=document.getElementById('demoReset');
+  const urlEl=document.querySelector('.wz-url');
+
+  /* ---------- reference data ---------- */
+  const TQ={
+    T1110:['Brute Force','Credential Access'],T1486:['Data Encrypted for Impact','Impact'],
+    T1046:['Network Service Discovery','Discovery'],T1021:['Remote Services','Lateral Movement'],
+    T1078:['Valid Accounts','Initial Access'],T1548:['Abuse Elevation Control Mechanism','Privilege Escalation'],
+    T1565:['Data Manipulation','Impact'],T1595:['Active Scanning','Reconnaissance'],
+    T1490:['Inhibit System Recovery','Impact'],T1083:['File and Directory Discovery','Discovery']
+  };
+  let AGENTS=[
+    {id:'001',name:'web-srv02',ip:'10.0.1.12',os:'Ubuntu 22.04 LTS',grp:'linux,web',ver:'v4.12.0',st:'active'},
+    {id:'002',name:'dc-srv01',ip:'10.0.1.5',os:'Windows Server 2022',grp:'windows,domain-controllers',ver:'v4.12.0',st:'active'},
+    {id:'003',name:'srv-db01',ip:'10.0.1.20',os:'Debian 12',grp:'linux,db',ver:'v4.12.0',st:'active'},
+    {id:'004',name:'fin-pc-02',ip:'10.0.2.31',os:'Windows 11 Pro',grp:'windows,workstations',ver:'v4.12.0',st:'active'},
+    {id:'005',name:'hr-lap-07',ip:'10.0.2.44',os:'Windows 11 Pro',grp:'windows,workstations',ver:'v4.12.0',st:'active'},
+    {id:'006',name:'mail-srv01',ip:'10.0.1.25',os:'Ubuntu 24.04 LTS',grp:'linux,mail',ver:'v4.11.2',st:'disconnected'}
+  ];
+  const VULNS=[
+    {cve:'CVE-2024-3094',pkg:'xz-utils',vsn:'5.6.0',a:'web-srv02',sev:'Critical',cvss:10.0},
+    {cve:'CVE-2021-44228',pkg:'log4j-core',vsn:'2.14.1',a:'srv-db01',sev:'Critical',cvss:10.0},
+    {cve:'CVE-2024-21413',pkg:'Microsoft Outlook',vsn:'16.0.17126',a:'hr-lap-07',sev:'Critical',cvss:9.8},
+    {cve:'CVE-2023-4863',pkg:'libwebp',vsn:'1.2.4',a:'fin-pc-02',sev:'High',cvss:8.8},
+    {cve:'CVE-2024-6387',pkg:'openssh-server',vsn:'9.6p1',a:'web-srv02',sev:'High',cvss:8.1},
+    {cve:'CVE-2023-44487',pkg:'nginx',vsn:'1.24.0',a:'web-srv02',sev:'High',cvss:7.5},
+    {cve:'CVE-2024-28085',pkg:'util-linux',vsn:'2.39.3',a:'srv-db01',sev:'Medium',cvss:6.7},
+    {cve:'CVE-2023-50387',pkg:'bind9',vsn:'9.18.18',a:'mail-srv01',sev:'Medium',cvss:5.3}
+  ];
+  const RULES=[
+    {id:5710,l:5,d:'sshd: Attempt to login using a non-existent user',g:'syslog,sshd,authentication_failed',f:'0095-sshd_rules.xml'},
+    {id:5712,l:10,d:'sshd: SSHD brute force trying to get access to the system',g:'syslog,sshd,authentication_failures',f:'0095-sshd_rules.xml'},
+    {id:5715,l:3,d:'sshd: authentication success',g:'syslog,sshd,authentication_success',f:'0095-sshd_rules.xml'},
+    {id:5763,l:10,d:'sshd: brute force attack (multiple failed logins from same source)',g:'syslog,sshd,authentication_failures',f:'0095-sshd_rules.xml'},
+    {id:5402,l:3,d:'Successful sudo to ROOT executed',g:'syslog,sudo',f:'0025-sudo_rules.xml'},
+    {id:550,l:7,d:'Integrity checksum changed',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:554,l:5,d:'File added to the system',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:553,l:7,d:'File deleted',g:'ossec,syscheck',f:'0015-ossec_rules.xml'},
+    {id:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',g:'ossec',f:'0015-ossec_rules.xml'},
+    {id:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',f:'0245-web_rules.xml'},
+    {id:31151,l:10,d:'Multiple web server 400 error codes from same source ip',g:'web,web_scan,recon',f:'0245-web_rules.xml'},
+    {id:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',f:'0015-ossec_rules.xml'},
+    {id:87105,l:12,d:'VirusTotal: Alert - file detected as malicious by multiple engines',g:'virustotal,malware',f:'0490-virustotal_rules.xml'},
+    {id:100210,l:12,d:'Custom: Mass file rename detected - possible ransomware activity',g:'local,syscheck,ransomware',f:'local_rules.xml'},
+    {id:100211,l:12,d:'Custom: Shadow copy deletion attempt detected (vssadmin)',g:'local,windows,ransomware',f:'local_rules.xml'}
+  ];
+  const SCA=[
+    {p:'CIS Ubuntu Linux 22.04 LTS Benchmark v2.0.0',a:'web-srv02',pass:182,fail:63,na:12},
+    {p:'CIS Microsoft Windows Server 2022 Benchmark v3.0.0',a:'dc-srv01',pass:301,fail:94,na:28},
+    {p:'CIS Debian Linux 12 Benchmark v1.1.0',a:'srv-db01',pass:158,fail:51,na:9},
+    {p:'CIS Microsoft Windows 11 Enterprise Benchmark v3.0.0',a:'hr-lap-07',pass:214,fail:88,na:17}
+  ];
+  const DAEMONS=['wazuh-analysisd','wazuh-remoted','wazuh-logcollector','wazuh-syscheckd','wazuh-modulesd','wazuh-db','wazuh-execd','wazuh-authd'];
+
+  /* ---------- alert store ---------- */
+  let uid=0,alerts=[],page='home',timers=[],running=false,expanded=new Set();
+  const H=3600e3;
+  function mk(o){o.u=++uid;return o;}
+  function seed(){
+    uid=0;expanded.clear();
+    const n=Date.now();
+    alerts=[
+      mk({t:n-21*H,a:'web-srv02',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-20*H,a:'srv-db01',r:5402,l:3,d:'Successful sudo to ROOT executed',m:'T1548',g:'syslog,sudo',pci:'10.2.2',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-18*H,a:'fin-pc-02',r:550,l:7,d:'Integrity checksum changed',m:'T1565',g:'ossec,syscheck',pci:'11.5',gd:'II_5.1.f',fim:{p:'C:\\Windows\\System32\\drivers\\etc\\hosts',ac:'modified'},loc:'syscheck'}),
+      mk({t:n-16*H,a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',pci:'6.5,11.4',loc:'/var/log/nginx/access.log'}),
+      mk({t:n-14*H,a:'srv-db01',r:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',m:'T1046',g:'ossec',pci:'10.2.7',loc:'netstat listening ports'}),
+      mk({t:n-11*H,a:'dc-srv01',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'}),
+      mk({t:n-9*H,a:'web-srv02',r:23505,l:10,d:'CVE-2024-6387 affects openssh-server (high severity)',g:'vulnerability-detector',pci:'11.2.1',loc:'vulnerability-detector'}),
+      mk({t:n-7*H,a:'hr-lap-07',r:554,l:5,d:'File added to the system',g:'ossec,syscheck',pci:'11.5',fim:{p:'C:\\Users\\mira\\Downloads\\invoice_2641.zip',ac:'added'},loc:'syscheck'}),
+      mk({t:n-5*H,a:'mail-srv01',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}),
+      mk({t:n-3*H,a:'fin-pc-02',r:550,l:7,d:'Integrity checksum changed',m:'T1565',g:'ossec,syscheck',pci:'11.5',gd:'II_5.1.f',fim:{p:'C:\\Program Files\\FinApp\\config.xml',ac:'modified'},loc:'syscheck'}),
+      mk({t:n-2*H,a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',g:'web,accesslog',pci:'6.5',loc:'/var/log/nginx/access.log'}),
+      mk({t:n-1*H,a:'srv-db01',r:5715,l:3,d:'sshd: authentication success',m:'T1078',g:'sshd,authentication_success',gd:'IV_32.2',loc:'/var/log/auth.log'})
+    ];
+  }
+
+  /* ---------- helpers ---------- */
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const fmtT=t=>{const d=new Date(t);return d.toLocaleDateString('en-GB',{month:'short',day:'2-digit'})+' '+d.toTimeString().slice(0,8);};
+  const sevCls=l=>l>=15?'l15':l>=12?'l12':l>=7?'l7':'l0';
+  const sevName=l=>l>=15?'Critical':l>=12?'High':l>=7?'Medium':'Low';
+  function lvlBadge(l){return "<span class='wz-lvl "+sevCls(l)+"'>"+l+"</span>";}
+  function agentOf(n){return AGENTS.find(x=>x.name===n)||{id:'000',ip:'-'};}
+  function tags(s,cls){return s?s.split(',').map(x=>"<span class='wz-tag'>"+esc(x.trim())+"</span>").join(''):'—';}
+
+  function alertJson(al){
+    const ag=agentOf(al.a);const ru=RULES.find(r=>r.id===al.r);
+    const lines=[];
+    lines.push('{');
+    lines.push('  <span class="k">"timestamp"</span>: <span class="s">"'+new Date(al.t).toISOString()+'"</span>,');
+    lines.push('  <span class="k">"agent"</span>: { <span class="k">"id"</span>: <span class="s">"'+ag.id+'"</span>, <span class="k">"name"</span>: <span class="s">"'+al.a+'"</span>, <span class="k">"ip"</span>: <span class="s">"'+ag.ip+'"</span> },');
+    let rule='  <span class="k">"rule"</span>: {\n    <span class="k">"id"</span>: <span class="n">"'+al.r+'"</span>,\n    <span class="k">"level"</span>: <span class="n">'+al.l+'</span>,\n    <span class="k">"description"</span>: <span class="s">"'+esc(al.d)+'"</span>,\n    <span class="k">"groups"</span>: ['+(al.g||'').split(',').map(x=>'<span class="s">"'+x.trim()+'"</span>').join(', ')+'],\n    <span class="k">"firedtimes"</span>: <span class="n">'+(1+(al.u%7))+'</span>';
+    if(al.m&&TQ[al.m])rule+=',\n    <span class="k">"mitre"</span>: { <span class="k">"id"</span>: [<span class="s">"'+al.m+'"</span>], <span class="k">"technique"</span>: [<span class="s">"'+TQ[al.m][0]+'"</span>], <span class="k">"tactic"</span>: [<span class="s">"'+TQ[al.m][1]+'"</span>] }';
+    if(al.pci)rule+=',\n    <span class="k">"pci_dss"</span>: ['+al.pci.split(',').map(x=>'<span class="s">"'+x.trim()+'"</span>').join(', ')+']';
+    if(al.gd)rule+=',\n    <span class="k">"gdpr"</span>: [<span class="s">"'+al.gd+'"</span>]';
+    rule+='\n  },';
+    lines.push(rule);
+    if(al.fim)lines.push('  <span class="k">"syscheck"</span>: { <span class="k">"path"</span>: <span class="s">"'+esc(al.fim.p)+'"</span>, <span class="k">"event"</span>: <span class="s">"'+al.fim.ac+'"</span> },');
+    lines.push('  <span class="k">"location"</span>: <span class="s">"'+esc(al.loc||'')+'"</span>,');
+    lines.push('  <span class="k">"decoder"</span>: { <span class="k">"name"</span>: <span class="s">"'+(al.loc==='syscheck'?'syscheck_integrity_changed':(al.r>=31100&&al.r<31200?'web-accesslog':'sshd'))+'"</span> },');
+    lines.push('  <span class="k">"manager"</span>: { <span class="k">"name"</span>: <span class="s">"wazuh-manager-01"</span> }');
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  function alertTable(list,opts){
+    opts=opts||{};
+    if(!list.length)return "<div class='wz-empty'>No alerts found for the selected filters in the last 24 hours.</div>";
+    let h="<div class='wz-scroll'><table class='wz-table'><thead><tr><th>Time ↓</th><th>Agent</th>";
+    if(opts.fim)h+="<th>Path</th><th>Action</th>";
+    else h+="<th>Technique(s)</th><th>Tactic(s)</th><th>Description</th>";
+    if(opts.pci)h+="<th>PCI DSS</th>";
+    if(opts.gdpr)h+="<th>GDPR</th>";
+    h+="<th>Level</th><th>Rule ID</th></tr></thead><tbody>";
+    list.forEach(al=>{
+      h+="<tr class='click"+(al._new?" new-row":"")+"' data-u='"+al.u+"'><td class='wz-mono'>"+fmtT(al.t)+"</td><td>"+al.a+"</td>";
+      if(opts.fim)h+="<td class='wz-mono' style='white-space:normal;word-break:break-all'>"+esc(al.fim?al.fim.p:'—')+"</td><td>"+(al.fim?"<span class='wz-pill "+(al.fim.ac==='deleted'?'dis':al.fim.ac==='added'?'act':'iso')+"'>"+al.fim.ac+"</span>":'—')+"</td>";
+      else h+="<td>"+(al.m?"<span class='wz-tag'>"+al.m+"</span>":'—')+"</td><td style='font-size:11.5px'>"+(al.m&&TQ[al.m]?TQ[al.m][1]:'—')+"</td><td>"+esc(al.d)+"</td>";
+      if(opts.pci)h+="<td>"+tags(al.pci)+"</td>";
+      if(opts.gdpr)h+="<td>"+tags(al.gd)+"</td>";
+      h+="<td>"+lvlBadge(al.l)+"</td><td class='wz-mono'>"+al.r+"</td></tr>";
+      if(expanded.has(al.u)){
+        const cols=4+(opts.fim?2:3)+(opts.pci?1:0)+(opts.gdpr?1:0);
+        h+="<tr class='wz-expand'><td colspan='"+cols+"'><div class='wz-json'>"+alertJson(al)+"</div></td></tr>";
+      }
+      al._new=false;
+    });
+    return h+"</tbody></table></div>";
+  }
+
+  function evoBars(list){
+    const buckets=new Array(24).fill(0),hot=new Array(24).fill(false);
+    const n=Date.now();
+    list.forEach(al=>{const i=23-Math.min(23,Math.floor((n-al.t)/H));buckets[i]++;if(al.l>=12)hot[i]=true;});
+    const mx=Math.max.apply(null,buckets.concat([1]));
+    return "<div class='wz-evo'>"+buckets.map((b,i)=>"<i class='"+(hot[i]?'hot':'')+"' style='height:"+(b?8+(b/mx)*92:3)+"%' title='"+b+" alerts'></i>").join('')+"</div>";
+  }
+
+  function donut(segs){
+    const total=segs.reduce((s,x)=>s+x[1],0)||1;let acc=0;
+    const stops=segs.map(s=>{const a=acc/total*360;acc+=s[1];return s[2]+' '+a+'deg '+(acc/total*360)+'deg';}).join(',');
+    let h="<div class='wz-donut-wrap'><div class='wz-donut' style='background:conic-gradient("+stops+")'></div><div class='wz-legend'>";
+    segs.forEach(s=>{h+="<span><i style='background:"+s[2]+"'></i>"+s[0]+" — <b>"+s[1]+"</b></span>";});
+    return h+"</div></div>";
+  }
+
+  /* ---------- pages ---------- */
+  const PAGES={
+    home(){
+      const act=AGENTS.filter(a=>a.st==='active').length,dis=AGENTS.filter(a=>a.st==='disconnected').length,iso=AGENTS.filter(a=>a.st==='isolated').length;
+      const c={Critical:0,High:0,Medium:0,Low:0};alerts.forEach(a=>c[sevName(a.l)]++);
+      return "<div class='wz-h'>Overview</div><div class='wz-sub'>Global security posture — last 24 hours · index: wazuh-alerts-4.x-*</div>"
+      +"<div class='wz-cards'>"
+      +"<div class='wz-card'><small>Active agents</small><b class='sv-ok'>"+act+"</b></div>"
+      +"<div class='wz-card'><small>Disconnected"+(iso?' / isolated':'')+"</small><b class='"+((dis+iso)?'sv-crit':'sv-ok')+"'>"+(dis+iso)+"</b></div>"
+      +"<div class='wz-card'><small>Alerts (24h)</small><b>"+alerts.length+"</b></div>"
+      +"<div class='wz-card'><small>Level 12+ alerts</small><b class='"+(c.High+c.Critical?'sv-crit':'sv-ok')+"'>"+(c.High+c.Critical)+"</b></div>"
+      +"</div><div class='wz-cols2'>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts by severity</div>"+donut([['Critical',c.Critical,'#bd271e'],['High',c.High,'#e7664c'],['Medium',c.Medium,'#d6a100'],['Low',c.Low,'#6092c0']])+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts evolution <span class='wz-mono'>24 hours</span></div>"+evoBars(alerts)+"</div>"
+      +"</div><div class='wz-panel'><div class='wz-panel-h'>Latest alerts</div>"+alertTable(alerts.slice(0,6))+"</div>";
+    },
+    th(){
+      const a12=alerts.filter(a=>a.l>=12).length;
+      const af=alerts.filter(a=>[5710,5712,5760,5763].includes(a.r)).length;
+      const as=alerts.filter(a=>[5715,5402].includes(a.r)).length;
+      return "<div class='wz-h'>Threat Hunting</div><div class='wz-sub'>Browse through your security alerts, identifying issues and threats in your environment</div>"
+      +"<div class='wz-cards'>"
+      +"<div class='wz-card'><small>Total alerts</small><b>"+alerts.length+"</b></div>"
+      +"<div class='wz-card'><small>Level 12 or above</small><b class='"+(a12?'sv-crit':'sv-ok')+"'>"+a12+"</b></div>"
+      +"<div class='wz-card'><small>Authentication failure</small><b class='"+(af>3?'sv-high':'')+"'>"+af+"</b></div>"
+      +"<div class='wz-card'><small>Authentication success</small><b class='sv-ok'>"+as+"</b></div>"
+      +"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts evolution <span class='wz-mono'>splitted by rule.level</span></div>"+evoBars(alerts)+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Security alerts <span class='wz-mono'>click a row to inspect the alert document</span></div>"+alertTable(alerts)+"</div>";
+    },
+    fim(){
+      const f=alerts.filter(a=>a.fim);
+      const add=f.filter(a=>a.fim.ac==='added').length,mod=f.filter(a=>a.fim.ac==='modified').length,del=f.filter(a=>a.fim.ac==='deleted').length;
+      return "<div class='wz-h'>File Integrity Monitoring</div><div class='wz-sub'>Alerts related to file changes, including permissions, content, ownership and attributes</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Total FIM events</small><b>"+f.length+"</b></div><div class='wz-card'><small>Added</small><b class='sv-ok'>"+add+"</b></div><div class='wz-card'><small>Modified</small><b class='sv-med'>"+mod+"</b></div><div class='wz-card'><small>Deleted</small><b class='sv-crit'>"+del+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>FIM events</div>"+alertTable(f,{fim:true})+"</div>";
+    },
+    vuln(){
+      const c={Critical:0,High:0,Medium:0,Low:0};VULNS.forEach(v=>c[v.sev]++);
+      let rows=VULNS.map(v=>"<tr><td class='wz-mono'>"+v.cve+"</td><td>"+v.pkg+"</td><td class='wz-mono'>"+v.vsn+"</td><td>"+v.a+"</td><td><b class='sv-"+(v.sev==='Critical'?'crit':v.sev==='High'?'high':'med')+"'>"+v.sev+"</b></td><td class='wz-mono'>"+v.cvss.toFixed(1)+"</td></tr>").join('');
+      return "<div class='wz-h'>Vulnerability Detection</div><div class='wz-sub'>Discover what applications in your environment are affected by well-known vulnerabilities</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Critical</small><b class='sv-crit'>"+c.Critical+"</b></div><div class='wz-card'><small>High</small><b class='sv-high'>"+c.High+"</b></div><div class='wz-card'><small>Medium</small><b class='sv-med'>"+c.Medium+"</b></div><div class='wz-card'><small>Low</small><b class='sv-low'>"+c.Low+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Vulnerabilities <span class='wz-mono'>wazuh-states-vulnerabilities-*</span></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>CVE ID</th><th>Package</th><th>Version</th><th>Agent</th><th>Severity</th><th>CVSS3</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    mitre(){
+      const tc={};alerts.forEach(a=>{if(a.m&&TQ[a.m]){tc[a.m]=(tc[a.m]||0)+1;}});
+      const tacs={};Object.keys(tc).forEach(m=>{const t=TQ[m][1];tacs[t]=(tacs[t]||0)+tc[m];});
+      const cards=Object.entries(tacs).sort((x,y)=>y[1]-x[1]).slice(0,4).map(t=>"<div class='wz-card'><small>"+t[0]+"</small><b>"+t[1]+"</b></div>").join('')||"<div class='wz-card'><small>No tactics detected</small><b>0</b></div>";
+      const rows=Object.entries(tc).sort((x,y)=>y[1]-x[1]).map(m=>{
+        const last=alerts.find(a=>a.m===m[0]);
+        return "<tr><td><span class='wz-tag'>"+m[0]+"</span></td><td>"+TQ[m[0]][0]+"</td><td>"+TQ[m[0]][1]+"</td><td><b>"+m[1]+"</b></td><td class='wz-mono'>"+fmtT(last.t)+"</td></tr>";}).join('');
+      return "<div class='wz-h'>MITRE ATT&CK</div><div class='wz-sub'>Explore security alerts mapped to adversary tactics and techniques</div>"
+      +"<div class='wz-cards'>"+cards+"</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Techniques by alert count</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Technique ID</th><th>Technique</th><th>Tactic</th><th>Alerts</th><th>Last seen</th></tr></thead><tbody>"+(rows||"<tr><td colspan='5' class='wz-empty'>No technique activity</td></tr>")+"</tbody></table></div></div>";
+    },
+    sca(){
+      const rows=SCA.map(s=>{const tot=s.pass+s.fail;const sc=Math.round(s.pass/tot*100);
+        return "<tr><td>"+s.p+"</td><td>"+s.a+"</td><td class='sv-ok'><b>"+s.pass+"</b></td><td class='sv-crit'><b>"+s.fail+"</b></td><td class='wz-mono'>"+s.na+"</td><td><div style='display:flex;align-items:center;gap:8px'><div class='wz-bar' style='flex:1'><i style='width:"+sc+"%;background:"+(sc>75?'#007871':sc>55?'#d6a100':'#bd271e')+"'></i></div><b>"+sc+"%</b></div></td></tr>";}).join('');
+      return "<div class='wz-h'>Configuration Assessment</div><div class='wz-sub'>Scan your assets as part of a configuration assessment audit (CIS benchmarks)</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Policies</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Policy</th><th>Agent</th><th>Passed</th><th>Failed</th><th>N/A</th><th>Score</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    malware(){
+      const m=alerts.filter(a=>(a.g||'').match(/malware|virustotal|ransomware|rootcheck/));
+      return "<div class='wz-h'>Malware Detection</div><div class='wz-sub'>Check indicators of compromise triggered by malware infections or cyberattacks</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Malware alerts</small><b class='"+(m.length?'sv-crit':'sv-ok')+"'>"+m.length+"</b></div><div class='wz-card'><small>Rootcheck events</small><b>0</b></div><div class='wz-card'><small>VirusTotal hits</small><b class='"+(m.some(x=>x.r===87105)?'sv-crit':'sv-ok')+"'>"+m.filter(x=>x.r===87105).length+"</b></div><div class='wz-card'><small>Quarantined files</small><b>"+m.filter(x=>x.r===87105).length+"</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Malware-related alerts</div>"+alertTable(m)+"</div>";
+    },
+    pci(){
+      const p=alerts.filter(a=>a.pci);
+      return "<div class='wz-h'>PCI DSS</div><div class='wz-sub'>Global requirements for protecting cardholder data — alerts mapped to PCI DSS controls</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts with PCI DSS requirements</div>"+alertTable(p,{pci:true})+"</div>";
+    },
+    gdpr(){
+      const g=alerts.filter(a=>a.gd);
+      return "<div class='wz-h'>GDPR</div><div class='wz-sub'>General Data Protection Regulation — alerts mapped to GDPR articles</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Alerts with GDPR tags</div>"+alertTable(g,{gdpr:true})+"</div>";
+    },
+    agents(){
+      const act=AGENTS.filter(a=>a.st==='active').length,dis=AGENTS.filter(a=>a.st==='disconnected').length,iso=AGENTS.filter(a=>a.st==='isolated').length;
+      const rows=AGENTS.map(a=>"<tr><td class='wz-mono'>"+a.id+"</td><td><b>"+a.name+"</b></td><td class='wz-mono'>"+a.ip+"</td><td>"+tags(a.grp)+"</td><td>"+a.os+"</td><td class='wz-mono'>"+a.ver+"</td><td><span class='wz-pill "+(a.st==='active'?'act':a.st==='isolated'?'iso':'dis')+"'>"+a.st+"</span></td></tr>").join('');
+      return "<div class='wz-h'>Endpoints summary</div><div class='wz-sub'>Manage your agents, group them and check their status</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Active</small><b class='sv-ok'>"+act+"</b></div><div class='wz-card'><small>Disconnected</small><b class='"+(dis?'sv-crit':'sv-ok')+"'>"+dis+"</b></div><div class='wz-card'><small>Isolated (AR)</small><b class='"+(iso?'sv-med':'sv-ok')+"'>"+iso+"</b></div><div class='wz-card'><small>Coverage</small><b>"+Math.round(act/AGENTS.length*100)+"%</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Agents <button class='wz-input' style='width:auto;cursor:pointer;color:#006bb4;border-color:#006bb4;font-weight:600' onclick=\"document.getElementById('contact').scrollIntoView({behavior:'smooth'})\">⊕ Deploy new agent</button></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>ID</th><th>Name</th><th>IP</th><th>Group(s)</th><th>Operating system</th><th>Version</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    },
+    rules(){
+      return "<div class='wz-h'>Rules</div><div class='wz-sub'>Query and manage the detection ruleset (Wazuh Query Language)</div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Ruleset <input class='wz-input' id='wzRuleFilter' placeholder='Filter rules… e.g. sshd'></div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>ID</th><th>Description</th><th>Groups</th><th>Level</th><th>File</th></tr></thead><tbody id='wzRuleRows'>"+ruleRows('')+"</tbody></table></div></div>";
+    },
+    status(){
+      const rows=DAEMONS.map(d=>"<tr><td class='wz-mono'>"+d+"</td><td><span class='wz-pill act'>running</span></td></tr>").join('');
+      return "<div class='wz-h'>Status</div><div class='wz-sub'>Wazuh server daemons and analysis statistics</div>"
+      +"<div class='wz-cards'><div class='wz-card'><small>Events processed (24h)</small><b>2,418,907</b></div><div class='wz-card'><small>Events per second</small><b>"+(390+Math.floor(Math.random()*120))+"</b></div><div class='wz-card'><small>Alerts written</small><b>"+alerts.length+"</b></div><div class='wz-card'><small>Cluster</small><b class='sv-ok'>healthy</b></div></div>"
+      +"<div class='wz-panel'><div class='wz-panel-h'>Daemons</div><div class='wz-scroll'><table class='wz-table'><thead><tr><th>Daemon</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>";
+    }
+  };
+  function ruleRows(q){
+    q=q.toLowerCase();
+    return RULES.filter(r=>!q||String(r.id).includes(q)||r.d.toLowerCase().includes(q)||r.g.includes(q))
+      .map(r=>"<tr><td class='wz-mono'>"+r.id+"</td><td>"+esc(r.d)+"</td><td>"+tags(r.g)+"</td><td>"+lvlBadge(r.l)+"</td><td class='wz-mono'>"+r.f+"</td></tr>").join('')
+      ||"<tr><td colspan='5' class='wz-empty'>No rules match your filter.</td></tr>";
+  }
+
+  function render(){
+    main.innerHTML=PAGES[page]();
+    if(urlEl)urlEl.textContent='🔒 https://siem.demo.obserion.local/app/wz-'+page+' — Wazuh v4.12';
+    const rf=document.getElementById('wzRuleFilter');
+    if(rf)rf.addEventListener('input',()=>{document.getElementById('wzRuleRows').innerHTML=ruleRows(rf.value);});
+  }
+
+  /* ---------- interactions ---------- */
+  navEl.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-page]');if(!a)return;
+    navEl.querySelectorAll('a').forEach(x=>x.classList.remove('on'));
+    a.classList.add('on');page=a.dataset.page;render();
+    app.classList.remove('nav-open');
+  });
+  document.getElementById('wzBurger').addEventListener('click',()=>app.classList.toggle('nav-open'));
+  main.addEventListener('click',e=>{
+    const tr=e.target.closest('tr.click');if(!tr)return;
+    const u=+tr.dataset.u;
+    expanded.has(u)?expanded.delete(u):expanded.add(u);
+    render();
+  });
+
+  function toast(title,sub,warn){
+    const t=document.createElement('div');
+    t.className='wz-toast'+(warn?' warn':'');
+    t.innerHTML='<b>'+title+'</b><small>'+sub+'</small>';
+    toasts.appendChild(t);
+    timers.push(setTimeout(()=>{t.style.transition='opacity .5s';t.style.opacity='0';timers.push(setTimeout(()=>t.remove(),520));},5200));
+  }
+  function addAlert(o){o.t=Date.now();o._new=true;alerts.unshift(mk(o));render();}
+
+  /* ---------- attack scenarios ---------- */
+  const SC={
+    brute:{go:'th',steps:[
+      [400,{a:'web-srv02',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [1600,{a:'web-srv02',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4,10.2.5',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [2800,{a:'web-srv02',r:5712,l:10,d:'sshd: SSHD brute force trying to get access to the system',m:'T1110',g:'sshd,authentication_failures',pci:'11.4,10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}],
+      [4200,{a:'web-srv02',r:5763,l:10,d:'sshd: brute force attack — 40+ failures from 185.220.101.45',m:'T1110',g:'sshd,authentication_failures',pci:'11.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
+    ],ar:[
+      [5200,'Active response executed','firewall-drop: 185.220.101.45 blocked for 600s',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'Analyst escalation','Analyst notified — case #2640 opened',null]
+    ],end:7000},
+    ransom:{go:'fim',iso:'hr-lap-07',steps:[
+      [400,{a:'hr-lap-07',r:554,l:5,d:'File added to the system',g:'ossec,syscheck',pci:'11.5',fim:{p:'C:\\Users\\mira\\AppData\\Local\\Temp\\svchost.exe',ac:'added'},loc:'syscheck'}],
+      [1600,{a:'hr-lap-07',r:87105,l:12,d:'VirusTotal: Alert - file detected as malicious by multiple engines',m:'T1486',g:'virustotal,malware',pci:'5.1,11.4',loc:'virustotal'}],
+      [2900,{a:'hr-lap-07',r:550,l:7,d:'Integrity checksum changed — 14 files in C:\\Users\\mira\\Documents',m:'T1486',g:'ossec,syscheck,ransomware',pci:'11.5',fim:{p:'C:\\Users\\mira\\Documents\\Q2_report.xlsx.lockbit',ac:'modified'},loc:'syscheck'}],
+      [4100,{a:'hr-lap-07',r:100210,l:12,d:'Custom: Mass file rename detected - possible ransomware activity',m:'T1486',g:'local,syscheck,ransomware',pci:'11.5',loc:'syscheck'}],
+      [5200,{a:'hr-lap-07',r:100211,l:12,d:'Custom: Shadow copy deletion attempt detected (vssadmin)',m:'T1490',g:'local,windows,ransomware',loc:'EventChannel'}]
+    ],ar:[
+      [6000,'Active response executed','host-isolation: hr-lap-07 quarantined from network',null],
+      [6900,'Process terminated','kill-process: PID 4412 (svchost.exe) on hr-lap-07',null],
+      [7700,'Analyst escalation','Case #2641 opened — analyst engaged',null]
+    ],end:8400},
+    recon:{go:'th',steps:[
+      [400,{a:'dc-srv01',r:533,l:7,d:'Listened ports status (netstat) changed (new port opened or closed)',m:'T1046',g:'ossec',pci:'10.2.7',loc:'netstat listening ports'}],
+      [1700,{a:'web-srv02',r:31101,l:5,d:'Web server 400 error code',m:'T1595',g:'web,accesslog',pci:'6.5',loc:'/var/log/nginx/access.log'}],
+      [3000,{a:'web-srv02',r:31151,l:10,d:'Multiple web server 400 error codes from same source ip (91.240.118.20)',m:'T1595',g:'web,web_scan,recon',pci:'11.4',loc:'/var/log/nginx/access.log'}],
+      [4300,{a:'dc-srv01',r:5710,l:5,d:'sshd: Attempt to login using a non-existent user',m:'T1110',g:'sshd,authentication_failed',pci:'10.2.4',gd:'IV_35.7.d',loc:'/var/log/auth.log'}]
+    ],ar:[
+      [5300,'Active response executed','firewall-drop: 91.240.118.20 added to blocklist',{a:'web-srv02',r:651,l:3,d:'Host Blocked by firewall-drop Active Response',g:'ossec,active_response',loc:'active-response.log'}],
+      [6200,'Perimeter hardened','FortiGate: source ASN rate-limited',null]
+    ],end:7000}
+  };
+
+  function setBtns(dis){btns.forEach(b=>b.disabled=dis);}
+  function goPage(p){navEl.querySelectorAll('a').forEach(x=>x.classList.toggle('on',x.dataset.page===p));page=p;render();}
+
+  function run(key){
+    if(running)return;
+    running=true;setBtns(true);
+    const sc=SC[key];
+    statusEl.className='demo-status attack';statusEl.textContent='● ATTACK IN PROGRESS';
+    goPage(sc.go);
+    sc.steps.forEach(s=>timers.push(setTimeout(()=>addAlert(Object.assign({},s[1])),s[0])));
+    if(sc.iso)timers.push(setTimeout(()=>{const ag=AGENTS.find(a=>a.name===sc.iso);if(ag)ag.st='isolated';render();},5800));
+    sc.ar.forEach(s=>timers.push(setTimeout(()=>{toast(s[1],s[2],s[1].indexOf('escalation')<0);if(s[3])addAlert(Object.assign({},s[3]));},s[0])));
+    timers.push(setTimeout(()=>{
+      statusEl.className='demo-status contained';
+      statusEl.textContent='✓ THREAT CONTAINED · MTTD '+(Math.random()*3+1.2).toFixed(1)+'s';
+      running=false;setBtns(false);
+    },sc.end));
+  }
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];running=false;
+    AGENTS.forEach(a=>{a.st=a.name==='mail-srv01'?'disconnected':'active';});
+    toasts.innerHTML='';seed();
+    statusEl.className='demo-status secure';statusEl.textContent='● SYSTEM SECURE';
+    setBtns(false);goPage('home');
+  }
+
+  btns.forEach(b=>b.addEventListener('click',()=>run(b.dataset.scenario)));
+  resetBtn.addEventListener('click',reset);
+  seed();render();
+})();
+
+/* HERO PARTICLE NETWORK (mouse-reactive) */
+const canvas=document.getElementById('hero-canvas');
+const ctx=canvas.getContext('2d');
+let w,h,particles=[];
+const mouse={x:null,y:null};
+function particleCount(){return window.innerWidth<640?34:window.innerWidth<1024?52:78;}
+function resizeCanvas(){
+  w=canvas.width=canvas.offsetWidth;
+  h=canvas.height=canvas.offsetHeight;
+  particles=Array.from({length:particleCount()},()=>({
+    x:Math.random()*w,
+    y:Math.random()*h,
+    vx:(Math.random()-.5)*.35,
+    vy:(Math.random()-.5)*.35,
+    r:Math.random()*1.8+.5
+  }));
+}
+canvas.addEventListener('pointermove',e=>{
+  const r=canvas.getBoundingClientRect();
+  mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
+});
+canvas.addEventListener('pointerleave',()=>{mouse.x=mouse.y=null;});
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach((p,i)=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>w)p.vx*=-1;
+    if(p.y<0||p.y>h)p.vy*=-1;
+    // gentle attraction to cursor
+    if(mouse.x!=null){
+      const dx=mouse.x-p.x,dy=mouse.y-p.y,d=Math.hypot(dx,dy);
+      if(d<160){p.vx+=dx/d*.012;p.vy+=dy/d*.012;}
+    }
+    p.vx*=.995;p.vy*=.995;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,229,255,.42)';
+    ctx.fill();
+    for(let j=i+1;j<particles.length;j++){
+      const q=particles[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<125){
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle='rgba(0,229,255,'+(1-d/125)*.12+')';
+        ctx.stroke();
+      }
+    }
+    // line to cursor
+    if(mouse.x!=null){
+      const dx=p.x-mouse.x,dy=p.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<150){
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(mouse.x,mouse.y);
+        ctx.strokeStyle='rgba(139,92,246,'+(1-d/150)*.18+')';ctx.stroke();
+      }
+    }
+  });
+  requestAnimationFrame(draw);
+}
+resizeCanvas();
+if(!reduceMotion)draw();
+let rT;window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(resizeCanvas,150);});
+</script>
+</body>
+</html>
